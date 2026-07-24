@@ -1,0 +1,62 @@
+/* ============================================================
+ * ORTHO-PAY UI — Root Import Index
+ * Design System: Ollama-inspired (DESIGN.md)
+ * Import this file once at the root of your app.
+ *
+ * Import order matters — foundation tokens must load before
+ * themes and components that reference them.
+ * ============================================================ */
+
+/* 1. Foundation — tokens (CSS custom properties) */
+@import './foundation/colors.css';
+@import './foundation/typography.css';
+@import './foundation/border-radius.css';
+@import './foundation/spacing.css';
+@import './foundation/shadows.css';
+@import './foundation/breakpoints.css';
+@import './foundation/blur.css';
+@import './foundation/opacity.css';
+@import './foundation/z-index.css';
+@import './foundation/components.css';
+
+/* 2. Themes — override foundation tokens for dark mode */
+@import './themes/light.css';
+@import './themes/dark.css';
+@import './themes/high-contrast.css';
+
+/* 3. Motion — transitions, animations, reduced-motion */
+@import './motion/transitions.css';
+@import './motion/page-transitions.css';
+@import './motion/skeleton-loader.css';
+@import './motion/live-pulse.css';
+@import './motion/number-count.css';
+@import './motion/signal-alert.css';
+@import './motion/reduced-motion.css';
+
+/* 4. Accessibility — keyboard, screen-reader, focus, contrast */
+@import './accessibility/focus.css';
+@import './accessibility/keyboard.css';
+@import './accessibility/screen-reader.css';
+@import './accessibility/contrast.css';
+
+/* 5. Components — one file per component group */
+@import './components/buttons/button.css';
+@import './components/buttons/icon-button.css';
+@import './components/inputs/inputs.css';
+@import './components/cards/cards.css';
+@import './components/navigation/navigation.css';
+@import './components/overlays/overlays.css';
+
+/* 6. Utilities — spacing helpers, visibility, overflow */
+@import './utilities/spacing.css';
+@import './utilities/visibility.css';
+@import './utilities/overflow.css';
+@import './utilities/positioning.css';
+@import './utilities/transforms.css';
+
+/* 7. Responsiveness — breakpoint overrides */
+@import './responsiveness/mobile.css';
+@import './responsiveness/tablet.css';
+@import './responsiveness/desktop.css';
+@import './responsiveness/ultrawide.css';
+@import './responsiveness/orientation.css';

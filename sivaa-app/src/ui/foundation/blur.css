@@ -1,0 +1,19 @@
+/* ============================================================
+ * BIOS Foundation — Blur
+ * Backdrop blur values for frosted glass effects,
+ * sticky headers, and overlays.
+ * ============================================================ */
+
+:root {
+  --blur-none: 0;
+  --blur-xs: 4px;
+  --blur-sm: 8px;
+  --blur-md: 12px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
+
+  /* Semantic blur aliases */
+  --blur-sticky: var(--blur-sm);      /* sticky top bar / bottom nav */
+  --blur-overlay: var(--blur-lg);     /* modal / bottom sheet backdrop */
+  --blur-card: var(--blur-xs);        /* frosted card on photo */
+}

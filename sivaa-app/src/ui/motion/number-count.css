@@ -1,0 +1,47 @@
+/* ============================================================
+ * BIOS Motion — Number Count
+ * Animated number counting for stats and metrics.
+ * The CSS handles the transition; JS drives the value.
+ * ============================================================ */
+
+@keyframes count-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.number-count {
+  animation: count-up var(--duration-normal) var(--ease-out) both;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* Number change flash — subtle highlight when value updates */
+@keyframes number-flash {
+  0% {
+    color: var(--color-primary);
+  }
+  100% {
+    color: inherit;
+  }
+}
+
+.number-flash {
+  animation: number-flash var(--duration-slow) var(--ease-default) both;
+}
+
+.number-flash-up {
+  animation: number-flash var(--duration-slow) var(--ease-default) both;
+  --flash-color: var(--color-up);
+}
+
+.number-flash-down {
+  animation: number-flash var(--duration-slow) var(--ease-default) both;
+  --flash-color: var(--color-down);
+}

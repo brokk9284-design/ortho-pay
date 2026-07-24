@@ -1,0 +1,40 @@
+/* ============================================================
+ * BIOS Utilities — Transforms
+ * Scale, rotate, translate helpers.
+ * ============================================================ */
+
+/* Scale */
+.scale-90 { transform: scale(0.9); }
+.scale-95 { transform: scale(0.95); }
+.scale-100 { transform: scale(1); }
+.scale-105 { transform: scale(1.05); }
+.scale-110 { transform: scale(1.1); }
+
+/* Rotate */
+.rotate-0 { transform: rotate(0deg); }
+.rotate-90 { transform: rotate(90deg); }
+.rotate-180 { transform: rotate(180deg); }
+.rotate-270 { transform: rotate(270deg); }
+
+/* Translate */
+.translate-x-0 { transform: translateX(0); }
+.translate-x-full { transform: translateX(100%); }
+.translate-x-neg-full { transform: translateX(-100%); }
+.translate-y-0 { transform: translateY(0); }
+.translate-y-full { transform: translateY(100%); }
+.translate-y-neg-full { transform: translateY(-100%); }
+
+/* Center with transform */
+.center-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Transform origin */
+.origin-center { transform-origin: center; }
+.origin-top { transform-origin: top; }
+.origin-bottom { transform-origin: bottom; }
+.origin-left { transform-origin: left; }
+.origin-right { transform-origin: right; }

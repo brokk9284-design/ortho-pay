@@ -1,0 +1,34 @@
+/* ============================================================
+ * BIOS Foundation — Z-Index
+ * Stacking context management. Each layer has a reserved
+ * range. No z-index wars.
+ * ============================================================ */
+
+:root {
+  /* Base content — default stacking */
+  --z-base: 0;
+
+  /* Sticky elements (top bar, sticky headers) */
+  --z-sticky: 100;
+
+  /* Bottom navigation (mobile fixed) */
+  --z-bottom-nav: 200;
+
+  /* Sidebar (desktop fixed) */
+  --z-sidebar: 200;
+
+  /* Dropdowns, popovers */
+  --z-dropdown: 300;
+
+  /* Bottom sheets, modals, dialogs */
+  --z-overlay: 400;
+
+  /* Toasts, notifications */
+  --z-toast: 500;
+
+  /* Tooltips */
+  --z-tooltip: 600;
+
+  /* Full-screen loading, maintenance */
+  --z-fullscreen: 700;
+}

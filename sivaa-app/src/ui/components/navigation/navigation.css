@@ -1,0 +1,414 @@
+/* ============================================================
+ * ORTHO-PAY Component — Navigation
+ * Source: DESIGN.md → components → primary-nav, footer-section
+ *
+ * primary-nav: 56px height, white background, body-sm-strong links.
+ * Desktop: logo (left) → text links → search pill (center) → Download (right).
+ * Mobile: logo (left) → hamburger (right). Search expands full-width on tap.
+ * The black "Download" CTA stays visible at all widths — never collapses.
+ *
+ * footer-section: single row of caption-sm links, hairline top border.
+ *
+ * App surfaces (admin dashboard) use a sidebar at desktop (1024px+)
+ * and a top bar + hamburger at mobile.
+ * ============================================================ */
+
+/* --------------------------------------------------------
+ * Primary Nav — marketing (home, /pricing)
+ * -------------------------------------------------------- */
+.primary-nav {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--component-primary-nav-height);
+  padding: 0 var(--space-page-padding-mobile);
+  background-color: var(--component-primary-nav-bg);
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+@media (min-width: 1024px) {
+  .primary-nav {
+    padding: 0 var(--space-page-padding-desktop);
+  }
+}
+
+.primary-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.primary-nav-logo-mark {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+/* Desktop: text links cluster */
+.primary-nav-links {
+  display: none;
+  align-items: center;
+  gap: var(--space-xl);
+}
+
+@media (min-width: 1024px) {
+  .primary-nav-links {
+    display: flex;
+  }
+}
+
+.primary-nav-link {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-strong-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.primary-nav-link:hover {
+  color: var(--color-body);
+}
+
+/* Search pill — desktop: fixed 360px, tablet: 240px, mobile: hidden (icon triggers overlay) */
+.primary-nav-search {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .primary-nav-search {
+    display: flex;
+    flex: 1;
+    max-width: 240px;
+    margin: 0 var(--space-xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .primary-nav-search {
+    max-width: 360px;
+  }
+}
+
+/* Right actions cluster — Sign in + Download (always visible) */
+.primary-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+/* Hamburger — mobile only */
+.primary-nav-hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 1024px) {
+  .primary-nav-hamburger {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------
+ * Mobile drawer — stacked links on hamburger open
+ * -------------------------------------------------------- */
+.nav-drawer {
+  position: fixed;
+  top: var(--component-primary-nav-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 400;
+  background-color: var(--color-canvas);
+  border-top: 1px solid var(--color-hairline);
+  padding: var(--space-xl) var(--space-page-padding-mobile);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  overflow-y: auto;
+  transform: translateY(-100%);
+  transition: transform 200ms ease;
+}
+
+.nav-drawer-open {
+  transform: translateY(0);
+}
+
+.nav-drawer-link {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md-size);
+  font-weight: var(--text-body-strong-weight);
+  color: var(--color-ink);
+  text-decoration: none;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+/* --------------------------------------------------------
+ * Admin / App top bar (authenticated screens)
+ * -------------------------------------------------------- */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--component-primary-nav-height);
+  padding: 0 var(--space-page-padding-mobile);
+  background-color: var(--color-canvas);
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+[data-theme='dark'] .top-bar {
+  background-color: var(--color-canvas); /* --color-canvas is dark in dark mode */
+  border-bottom-color: var(--color-hairline);
+}
+
+@media (min-width: 1024px) {
+  .top-bar {
+    padding: 0 var(--space-page-padding-desktop);
+    margin-left: 240px; /* sidebar width */
+  }
+}
+
+/* --------------------------------------------------------
+ * Admin sidebar — desktop only (1024px+)
+ * -------------------------------------------------------- */
+.sidebar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    z-index: var(--z-sticky);
+    background-color: var(--color-canvas);
+    border-right: 1px solid var(--color-hairline);
+    padding: var(--space-lg) 0;
+    overflow-y: auto;
+  }
+
+  [data-theme='dark'] .sidebar {
+    background-color: var(--color-canvas);
+    border-right-color: var(--color-hairline);
+  }
+}
+
+.sidebar-logo {
+  padding: 0 var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 var(--space-sm);
+  flex: 1;
+}
+
+.sidebar-nav-section-label {
+  padding: var(--space-lg) var(--space-md) var(--space-xs);
+  font-family: var(--font-body);
+  font-size: var(--text-caption-sm-size);
+  font-weight: 600;
+  color: var(--color-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  color: var(--color-body);
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  transition: background-color 120ms ease,
+              color 120ms ease;
+}
+
+.sidebar-nav-item:hover,
+.sidebar-nav-item-active {
+  background-color: var(--color-surface-soft);
+  color: var(--color-ink);
+}
+
+.sidebar-nav-item-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: var(--space-lg);
+  border-top: 1px solid var(--color-hairline);
+}
+
+/* --------------------------------------------------------
+ * Tabs — activity screen, filter tabs
+ * -------------------------------------------------------- */
+.tabs-list {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--color-hairline);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.tabs-list::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs-tab {
+  padding: var(--space-sm) var(--space-lg);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  color: var(--color-mute);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 120ms ease,
+              border-color 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tabs-tab:hover {
+  color: var(--color-body);
+}
+
+.tabs-tab-active {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-ink);
+}
+
+.tabs-panel {
+  padding: var(--space-lg) 0;
+}
+
+.tabs-panel-hidden {
+  display: none;
+}
+
+/* --------------------------------------------------------
+ * Pagination
+ * -------------------------------------------------------- */
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pagination-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  color: var(--color-body);
+  text-decoration: none;
+  transition: background-color 120ms ease,
+              color 120ms ease;
+}
+
+.pagination-item:hover {
+  background-color: var(--color-surface-soft);
+  color: var(--color-ink);
+}
+
+.pagination-item-active {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.pagination-item-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------
+ * Footer — marketing footer-section
+ * -------------------------------------------------------- */
+.footer {
+  background-color: var(--component-footer-bg);
+  border-top: var(--component-footer-border-top);
+  padding: var(--component-footer-padding);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+}
+
+.footer-link {
+  font-family: var(--font-body);
+  font-size: var(--text-caption-sm-size);
+  font-weight: var(--text-caption-sm-weight);
+  color: var(--component-footer-text);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.footer-link:hover {
+  color: var(--color-ink);
+}
+
+.footer-copyright {
+  font-family: var(--font-body);
+  font-size: var(--text-caption-sm-size);
+  color: var(--color-mute);
+  margin-top: var(--space-sm);
+  text-align: center;
+}
+
+/* --------------------------------------------------------
+ * Focus visible — nav elements
+ * -------------------------------------------------------- */
+.primary-nav-link:focus-visible,
+.sidebar-nav-item:focus-visible,
+.tabs-tab:focus-visible,
+.footer-link:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}

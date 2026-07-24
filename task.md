@@ -1,0 +1,26 @@
+# Task Checklist — SIVAA Payment Platform
+
+- `[/]` **Build Step 1: Database Setup & Migrations**
+  - `[x]` Create initial schema file containing SQL structure.
+  - `[ ]` Draft Row Level Security (RLS) policies for user profiles, wallets, and payments.
+  - `[ ]` Establish triggers to populate `audit_logs` and handle new user signup auto-wallet creation.
+- `[x]` **Build Step 2: Shared UI & Design Tokens Integration**
+  - `[x]` Sync root styles inside `packages/ui` from the source of truth `sivaa-app/src/ui/index.css`.
+  - `[x]` Configure global Nunito display and default systems fonts loading.
+- `[ ]` **Build Step 3: API Route Development**
+  - `[ ]` Implement auth APIs: `/api/v1/auth/login` and `/api/v1/auth/register` with auto §ID assignment.
+  - `[ ]` Implement wallet and transaction APIs (calculating dynamic fees matching 3%/2%/1% tiers).
+  - `[ ]` Implement administrative endpoint interfaces (reversals, freeze, settings).
+- `[/]` **Build Step 4: Admin Dashboard Frontend**
+  - `[x]` Build layout utilizing dark-mode by default.
+  - `[ ]` Implement Verification Queue layout with manual receipt reconciliation.
+  - `[ ]` Construct Fee Rules controls.
+- `[ ]` **Build Step 5: Mobile App Core Features**
+  - `[ ]` Set up React Native / Expo client screens framework.
+  - `[ ]` Develop Send Flow (ID verification screen -> amount confirmation -> receipt upload).
+- `[ ]` **Build Step 6: End-to-End Integration Verification**
+  - `[ ]` Run testing scripts validating database security limits.
+  - `[ ]` Verify transaction flow visually via local environment testing.
+- `[ ]` **Build Step 7: Production Deployment**
+  - `[ ]` Push Supabase migration scripts.
+  - `[ ]` Link and deploy admin app to Vercel production hosting.

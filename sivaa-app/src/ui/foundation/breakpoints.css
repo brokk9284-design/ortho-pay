@@ -1,0 +1,37 @@
+/* ============================================================
+ * ORTHO-PAY Foundation — Breakpoints
+ * Source: DESIGN.md → Responsive Behavior
+ * Mobile-first: default styles target 0-639px.
+ * Min-width media queries escalate upward.
+ * ============================================================ */
+
+:root {
+  /* Breakpoint reference values */
+  --bp-mobile: 0px;
+  --bp-tablet-narrow: 768px;   /* pricing 1-up, hamburger nav */
+  --bp-tablet: 850px;          /* pricing 2+1 layout */
+  --bp-desktop: 1024px;        /* sidebar visible */
+  --bp-desktop-large: 1280px;  /* full desktop default */
+
+  /* Content container max-widths */
+  --container-reading: 720px;  /* single reading column (home, /pricing body) */
+  --container-pricing: 960px;  /* 3-up pricing grid */
+  --container-admin: 1200px;   /* admin dashboard max width */
+}
+
+/*
+ * Media query breakpoint reference (mobile-first):
+ *
+ *   Mobile   (default):  no media query — 0px+
+ *   Tablet   narrow:     @media (min-width: 768px)  { ... }
+ *   Tablet:              @media (min-width: 850px)  { ... }
+ *   Desktop:             @media (min-width: 1024px) { ... }
+ *   Desktop large:       @media (min-width: 1280px) { ... }
+ *
+ * Collapsing strategy per DESIGN.md:
+ *   - Pricing grid: 3-up → 2+1 at 850px → 1-up at 768px
+ *   - Primary nav: horizontal → hamburger at 768px
+ *   - Automate split: 50/50 → stacked vertical at tablet
+ *   - Hero headline: 36px desktop → ~28px mobile
+ *   - Section spacing: 88px → 64px tablet → 48px mobile
+ */

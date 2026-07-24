@@ -1,0 +1,49 @@
+/* ============================================================
+ * BIOS Motion — Reduced Motion
+ * Disables all animations for users who prefer reduced motion.
+ * ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Replace shimmer with static color */
+  .skeleton {
+    animation: none;
+    background: var(--color-surface-strong);
+  }
+
+  /* Replace live pulse with static dot */
+  .live-dot,
+  .live-dot::after {
+    animation: none;
+  }
+
+  .live-dot::after {
+    display: none;
+  }
+
+  /* Replace signal entrance with instant appear */
+  .signal-card-enter,
+  .signal-card-flash {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Replace number count with instant appear */
+  .number-count,
+  .number-flash,
+  .number-flash-up,
+  .number-flash-down {
+    animation: none;
+  }
+}

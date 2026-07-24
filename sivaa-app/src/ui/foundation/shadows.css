@@ -1,0 +1,17 @@
+/* ============================================================
+ * ORTHO-PAY Foundation — Shadows
+ * Source: DESIGN.md → Elevation & Depth:
+ *
+ * The system has NO drop-shadow elevation at all.
+ * Nothing lifts, nothing floats, nothing layers.
+ * The only depth cue beyond hairline borders is the single
+ * dark surface (--color-surface-dark) used on the Max pricing
+ * card to draw attention — color, not shadow.
+ *
+ * --shadow-none is defined for explicit "no shadow" intent.
+ * Do not introduce new shadow tokens.
+ * ============================================================ */
+
+:root {
+  --shadow-none: none; /* The only shadow in the system */
+}

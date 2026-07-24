@@ -1,0 +1,44 @@
+/* ============================================================
+ * BIOS Motion — Signal Alert
+ * Entrance animation for in-game signal cards.
+ * Signals should feel urgent but not jarring.
+ * ============================================================ */
+
+@keyframes signal-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes signal-flash {
+  0% {
+    background-color: transparent;
+  }
+  20% {
+    background-color: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.signal-card-enter {
+  animation: signal-enter var(--duration-slow) var(--ease-out) both;
+}
+
+.signal-card-flash {
+  animation: signal-flash var(--duration-slower) var(--ease-default) both;
+}
+
+/* Staggered entrance for multiple signals */
+.signal-stagger-1 { animation-delay: 0ms; }
+.signal-stagger-2 { animation-delay: 60ms; }
+.signal-stagger-3 { animation-delay: 120ms; }
+.signal-stagger-4 { animation-delay: 180ms; }
+.signal-stagger-5 { animation-delay: 240ms; }
+.signal-stagger-6 { animation-delay: 300ms; }

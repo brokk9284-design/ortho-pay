@@ -1,0 +1,14 @@
+/* ============================================================
+ * BIOS Responsiveness — Orientation
+ * Adjustments for landscape/portrait on mobile.
+ * ============================================================ */
+
+/* Landscape phone — more horizontal space, less vertical */
+@media (max-width: 1023px) and (orientation: landscape) {
+  :root {
+    /* Reduce section padding in landscape to fit more content */
+    --space-section: 40px;
+  }
+}
+
+/* Portrait — default, no overrides needed */

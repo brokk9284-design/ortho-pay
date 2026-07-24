@@ -1,0 +1,51 @@
+/* ============================================================
+ * BIOS Utilities — Positioning
+ * Position helpers using foundation tokens.
+ * ============================================================ */
+
+.position-relative { position: relative; }
+.position-absolute { position: absolute; }
+.position-fixed { position: fixed; }
+.position-sticky { position: sticky; }
+
+/* Sticky top — for top bars */
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+/* Fixed bottom — for mobile bottom nav */
+.fixed-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-bottom-nav);
+}
+
+/* Fixed sidebar — for desktop sidebar */
+.fixed-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--space-sidebar-width);
+  z-index: var(--z-sidebar);
+}
+
+/* Full size within parent */
+.full-size {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Inset helpers */
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.top-0 { top: 0; }
+.right-0 { right: 0; }
+.bottom-0 { bottom: 0; }
+.left-0 { left: 0; }

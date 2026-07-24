@@ -1,0 +1,52 @@
+/* ============================================================
+ * BIOS Utilities — Visibility
+ * Show/hide elements by breakpoint.
+ * Mobile-first: visible by default, hidden with .hidden
+ * ============================================================ */
+
+.hidden { display: none !important; }
+
+/* Show only on mobile (hidden at tablet+) */
+.mobile-only {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .mobile-only { display: none !important; }
+}
+
+/* Show only on tablet+ (hidden on mobile) */
+.tablet-up {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .tablet-up { display: block; }
+}
+
+/* Show only on desktop+ (hidden below 1024px) */
+.desktop-up {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .desktop-up { display: block; }
+}
+
+/* Show only on mobile and tablet (hidden at desktop) */
+.below-desktop {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .below-desktop { display: none !important; }
+}
+
+/* Show only on ultrawide (hidden below 1440px) */
+.ultrawide-up {
+  display: none;
+}
+
+@media (min-width: 1440px) {
+  .ultrawide-up { display: block; }
+}

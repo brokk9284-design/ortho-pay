@@ -1,0 +1,41 @@
+/* ============================================================
+ * ORTHO-PAY Responsiveness — Mobile (default: 0-767px)
+ * Source: DESIGN.md → Responsive Behavior → Collapsing Strategy
+ *
+ * Mobile-first: these are the BASE styles — no media query.
+ * Breakpoint overrides scale UP from here.
+ * ============================================================ */
+
+/* --------------------------------------------------------
+ * Token overrides for mobile viewport
+ * Applied at the :root level inside a max-width query so
+ * tokens automatically cascade to all components.
+ * -------------------------------------------------------- */
+@media (max-width: 767px) {
+  :root {
+    /* Hero headline: 36px desktop → ~28px mobile */
+    --text-display-xl-size: 28px;
+    --text-display-xl-line-height: 1.15;
+
+    /* Major section headlines: 30px → 24px */
+    --text-display-lg-size: 24px;
+
+    /* Section spacing: 88px → 48px */
+    --space-section: 48px;
+
+    /* Card padding: 32px → 20px */
+    --space-card-padding: 20px;
+
+    /* Footer padding tightens */
+    --component-footer-padding: 32px var(--space-lg);
+  }
+}
+
+/* Very small phones (≤375px) */
+@media (max-width: 375px) {
+  :root {
+    --text-display-xl-size: 26px;
+    --text-display-lg-size: 22px;
+    --space-section: 40px;
+  }
+}

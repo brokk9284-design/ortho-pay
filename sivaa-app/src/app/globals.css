@@ -1,0 +1,27 @@
+@import "../ui/index.css";
+@import "tailwindcss";
+
+/* Set theme variable mappings */
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-ink: var(--color-ink);
+  --color-body: var(--color-body);
+  --color-canvas: var(--color-canvas);
+  --color-surface-soft: var(--color-surface-soft);
+  --color-surface-card: var(--color-surface-card);
+  --color-surface-dark: var(--color-surface-dark);
+  --color-hairline: var(--color-hairline);
+  --color-hairline-strong: var(--color-hairline-strong);
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+@media (min-width: 1024px) {
+  .dashboard-main {
+    margin-left: 240px;
+  }
+}

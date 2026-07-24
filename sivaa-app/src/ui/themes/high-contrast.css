@@ -1,0 +1,46 @@
+/* ============================================================
+ * BIOS Themes — High Contrast (accessibility)
+ * Maximizes contrast for WCAG AAA compliance.
+ * ============================================================ */
+
+[data-theme='high-contrast'] {
+  /* Brand */
+  --color-primary: #0040cc;
+  --color-primary-active: #003399;
+  --color-primary-disabled: #666666;
+
+  /* Surfaces — pure white/black for max contrast */
+  --color-canvas: #ffffff;
+  --color-surface-soft: #f0f0f0;
+  --color-surface-strong: #e0e0e0;
+  --color-surface-card: #ffffff;
+  --color-surface-dark: #000000;
+  --color-surface-dark-elevated: #1a1a1a;
+
+  /* Hairlines — darker for visibility */
+  --color-hairline: #999999;
+  --color-hairline-soft: #cccccc;
+
+  /* Text — pure black for max contrast */
+  --color-ink: #000000;
+  --color-body: #333333;
+  --color-body-strong: #000000;
+  --color-muted: #555555;
+  --color-muted-soft: #777777;
+
+  /* Trading semantics — darker for contrast */
+  --color-up: #007a3e;
+  --color-down: #a01010;
+
+  /* Focus ring — thicker */
+  --focus-ring-width: 3px;
+}
+
+[data-theme='high-contrast'] :focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+[data-theme='high-contrast'] * {
+  border-color: var(--color-hairline);
+}

@@ -1,0 +1,334 @@
+/* ============================================================
+ * ORTHO-PAY Component — Cards & Containers
+ * Source: DESIGN.md → components → terminal-card, pricing-card,
+ *         pricing-card-dark, feature-bullet, faq-row, cta-strip-dark
+ *
+ * Rules:
+ *   - Cards use --radius-lg (12px) only. No radius-xl, no pills.
+ *   - Border is 1px solid --color-hairline. No shadows.
+ *   - pricing-card-dark is the only inverted surface. One per page.
+ *   - FAQ rows are always expanded — no accordion collapse.
+ * ============================================================ */
+
+/* --------------------------------------------------------
+ * terminal-card — the home page's only product preview
+ * macOS traffic-light dots + terminal output in code-sm.
+ * -------------------------------------------------------- */
+.terminal-card {
+  background-color: var(--component-terminal-card-bg);
+  color: var(--component-terminal-card-text);
+  border-radius: var(--component-terminal-card-radius);
+  padding: var(--component-terminal-card-padding);
+  border: var(--component-terminal-card-border);
+  font-family: var(--font-mono);
+}
+
+.terminal-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--component-terminal-dot-gap);
+  margin-bottom: var(--space-md);
+}
+
+.terminal-dot {
+  width: var(--component-terminal-dot-size);
+  height: var(--component-terminal-dot-size);
+  border-radius: var(--component-terminal-dot-radius);
+  flex-shrink: 0;
+}
+
+.terminal-dot-red    { background-color: var(--color-terminal-red); }
+.terminal-dot-yellow { background-color: var(--color-terminal-yellow); }
+.terminal-dot-green  { background-color: var(--color-terminal-green); }
+
+.terminal-card-body {
+  font-size: var(--text-code-sm-size);
+  font-weight: var(--text-code-sm-weight);
+  line-height: var(--text-code-sm-line-height);
+}
+
+.terminal-line-command {
+  color: var(--color-ink);
+}
+
+.terminal-line-comment {
+  color: var(--color-mute);
+}
+
+/* --------------------------------------------------------
+ * install-snippet — the signature curl pill
+ * Sits directly below the hero headline.
+ * -------------------------------------------------------- */
+.install-snippet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  background-color: var(--component-install-snippet-bg);
+  color: var(--component-install-snippet-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-md-size);
+  font-weight: var(--text-code-md-weight);
+  line-height: var(--text-code-md-line-height);
+  border-radius: var(--component-install-snippet-radius);
+  padding: var(--component-install-snippet-padding);
+  height: var(--component-install-snippet-height);
+  width: 100%;
+  max-width: 480px;
+}
+
+.install-snippet-copy {
+  flex-shrink: 0;
+  color: var(--color-mute);
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+
+.install-snippet-copy:hover {
+  color: var(--color-ink);
+}
+
+/* --- Mobile: install snippet wraps, copy icon stays right --- */
+@media (max-width: 639px) {
+  .install-snippet {
+    height: auto;
+    min-height: var(--component-install-snippet-height);
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+}
+
+/* --------------------------------------------------------
+ * command-tag — inline command chip
+ * Used in "Automate your work" section for example commands.
+ * -------------------------------------------------------- */
+.command-tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--component-command-tag-bg);
+  color: var(--component-command-tag-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm-size);
+  font-weight: var(--text-code-sm-weight);
+  border-radius: var(--component-command-tag-radius);
+  padding: var(--component-command-tag-padding);
+}
+
+/* --------------------------------------------------------
+ * pricing-card — Free / Pro tiers (light background)
+ * Layout: icon → tier name → description → price → CTA → divider → features
+ * -------------------------------------------------------- */
+.pricing-card {
+  background-color: var(--component-pricing-card-bg);
+  color: var(--component-pricing-card-text);
+  border-radius: var(--component-pricing-card-radius);
+  padding: var(--component-pricing-card-padding);
+  border: var(--component-pricing-card-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.pricing-card-eyebrow {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.pricing-card-tier-name {
+  font-family: var(--font-body);
+  font-size: var(--text-heading-md-size);
+  font-weight: var(--text-heading-md-weight);
+  line-height: var(--text-heading-md-line-height);
+  color: var(--color-ink);
+}
+
+.pricing-card-description {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-strong-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  color: var(--color-body);
+}
+
+.pricing-card-price {
+  font-family: var(--font-display);
+  font-size: var(--text-display-lg-size);
+  font-weight: var(--text-display-lg-weight);
+  line-height: var(--text-display-lg-line-height);
+  color: var(--color-ink);
+}
+
+.pricing-card-period {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  color: var(--color-mute);
+}
+
+.pricing-card-divider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-hairline);
+}
+
+.pricing-card-features-label {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-strong-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  color: var(--color-ink);
+}
+
+.pricing-card-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+}
+
+/* --------------------------------------------------------
+ * feature-bullet — pricing card list item
+ * Inline checkmark + body-sm text in charcoal.
+ * -------------------------------------------------------- */
+.feature-bullet {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  font-weight: var(--text-body-sm-weight);
+  color: var(--component-feature-bullet-text);
+  line-height: var(--text-body-sm-line-height);
+}
+
+.feature-bullet-check {
+  flex-shrink: 0;
+  color: var(--color-ink);
+  font-size: var(--text-body-sm-size);
+  line-height: var(--text-body-sm-line-height);
+}
+
+/* --------------------------------------------------------
+ * pricing-card-dark — Max tier (inverted)
+ * Identical layout to pricing-card but inverted.
+ * The inversion is the system's single "look here" cue.
+ * Use exactly once per page.
+ * -------------------------------------------------------- */
+.pricing-card-dark {
+  background-color: var(--component-pricing-card-dark-bg);
+  color: var(--component-pricing-card-dark-text);
+  border-radius: var(--component-pricing-card-dark-radius);
+  padding: var(--component-pricing-card-dark-padding);
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.pricing-card-dark .pricing-card-tier-name,
+.pricing-card-dark .pricing-card-price {
+  color: var(--color-on-dark);
+}
+
+.pricing-card-dark .pricing-card-description {
+  color: var(--color-on-dark-mute);
+}
+
+.pricing-card-dark .pricing-card-period {
+  color: var(--color-on-dark-mute);
+}
+
+.pricing-card-dark .pricing-card-divider {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.pricing-card-dark .pricing-card-features-label {
+  color: var(--color-on-dark);
+}
+
+.pricing-card-dark .feature-bullet {
+  color: var(--color-on-dark-mute);
+}
+
+.pricing-card-dark .feature-bullet-check {
+  color: var(--color-on-dark);
+}
+
+/* --------------------------------------------------------
+ * faq-row — /pricing FAQ entry
+ * Always expanded — no accordion. Question in heading-sm,
+ * answer in body-md / body color.
+ * -------------------------------------------------------- */
+.faq-row {
+  background-color: var(--component-faq-row-bg);
+  padding: var(--component-faq-row-padding);
+  border-bottom: var(--component-faq-row-border-bottom);
+}
+
+.faq-row-question {
+  font-family: var(--font-body);
+  font-size: var(--text-heading-sm-size);
+  font-weight: var(--text-heading-sm-weight);
+  line-height: var(--text-heading-sm-line-height);
+  color: var(--color-ink);
+  margin-bottom: var(--space-xs);
+}
+
+.faq-row-answer {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md-size);
+  font-weight: var(--text-body-md-weight);
+  line-height: var(--text-body-md-line-height);
+  color: var(--color-body);
+}
+
+/* --------------------------------------------------------
+ * cta-strip-dark — rare dark CTA band between sections
+ * Used sparingly — never twice on the same page fold.
+ * -------------------------------------------------------- */
+.cta-strip-dark {
+  background-color: var(--component-cta-strip-dark-bg);
+  color: var(--component-cta-strip-dark-text);
+  border-radius: var(--component-cta-strip-dark-radius);
+  padding: var(--component-cta-strip-dark-padding);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xl);
+}
+
+.cta-strip-dark-headline {
+  font-family: var(--font-display);
+  font-size: var(--text-heading-lg-size);
+  font-weight: var(--text-heading-lg-weight);
+  line-height: var(--text-heading-lg-line-height);
+  color: var(--color-on-dark);
+}
+
+/* --- Pricing grid layout: 3-up at desktop, 1-up at mobile --- */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xl);
+  max-width: var(--space-pricing-max-width);
+  margin: 0 auto;
+}
+
+@media (max-width: 849px) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Mobile: reduce card padding --- */
+@media (max-width: 639px) {
+  .pricing-card,
+  .pricing-card-dark {
+    padding: var(--space-xl);
+  }
+
+  .cta-strip-dark {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

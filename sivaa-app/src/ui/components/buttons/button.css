@@ -1,0 +1,181 @@
+/* ============================================================
+ * ORTHO-PAY Component — Buttons
+ * Source: DESIGN.md → components → button-*
+ *
+ * Rule: Every button is --radius-full (9999px). No exceptions.
+ * There are no medium-radius buttons in this system.
+ * Single-color CTA system: pure black pill for every primary action.
+ * ============================================================ */
+
+/* --- Base button --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-button-size);
+  font-weight: var(--text-button-weight);
+  line-height: var(--text-button-line-height);
+  letter-spacing: var(--text-button-letter-spacing);
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 120ms ease,
+              color 120ms ease,
+              opacity 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------
+ * button-primary — the universal ORTHO-PAY CTA
+ * Background black, text white, height 36px, padding 8px 20px.
+ * Used for every primary action: Download, Sign in, Get Pro, Get Max.
+ * -------------------------------------------------------- */
+.btn-primary {
+  background-color: var(--component-button-primary-bg);
+  color: var(--component-button-primary-text);
+  padding: var(--component-button-primary-padding);
+  height: var(--component-button-primary-height);
+  border-radius: var(--component-button-primary-radius);
+}
+
+.btn-primary:active:not(:disabled) {
+  background-color: var(--component-button-primary-active-bg);
+}
+
+.btn-primary:disabled {
+  background-color: var(--component-button-disabled-bg);
+  color: var(--component-button-disabled-text);
+}
+
+/* --------------------------------------------------------
+ * button-secondary — white pill with hairline border
+ * Used as secondary affordance paired with a primary button.
+ * -------------------------------------------------------- */
+.btn-secondary {
+  background-color: var(--component-button-secondary-bg);
+  color: var(--component-button-secondary-text);
+  padding: var(--component-button-secondary-padding);
+  height: var(--component-button-secondary-height);
+  border-radius: var(--component-button-secondary-radius);
+  border: 1px solid var(--color-hairline-strong);
+}
+
+.btn-secondary:active:not(:disabled) {
+  background-color: var(--color-surface-soft);
+}
+
+.btn-secondary:disabled {
+  background-color: var(--component-button-disabled-bg);
+  color: var(--component-button-disabled-text);
+  border-color: var(--color-hairline);
+}
+
+/* --------------------------------------------------------
+ * button-pill-on-dark — white pill on dark Max pricing card
+ * Inverts the standard primary so the dark card is the anchor.
+ * -------------------------------------------------------- */
+.btn-pill-on-dark {
+  background-color: var(--component-button-pill-on-dark-bg);
+  color: var(--component-button-pill-on-dark-text);
+  padding: var(--component-button-pill-on-dark-padding);
+  border-radius: var(--component-button-pill-on-dark-radius);
+}
+
+.btn-pill-on-dark:active:not(:disabled) {
+  opacity: 0.9;
+}
+
+/* --------------------------------------------------------
+ * button-disabled — standalone disabled state
+ * -------------------------------------------------------- */
+.btn-disabled,
+.btn:disabled {
+  background-color: var(--component-button-disabled-bg);
+  color: var(--component-button-disabled-text);
+  border-radius: var(--radius-full);
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------
+ * Size modifiers
+ * -------------------------------------------------------- */
+.btn-sm {
+  padding: 6px 16px;
+  height: 32px;
+  font-size: 13px;
+}
+
+.btn-lg {
+  padding: 12px 28px;
+  height: 44px;
+}
+
+/* --------------------------------------------------------
+ * Full-width modifier
+ * -------------------------------------------------------- */
+.btn-full {
+  width: 100%;
+}
+
+/* --------------------------------------------------------
+ * Icon-only button (e.g. copy icon on install snippet)
+ * -------------------------------------------------------- */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  color: var(--color-ink);
+  border: none;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-icon:active:not(:disabled) {
+  background-color: var(--color-surface-soft);
+}
+
+.btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------
+ * Button group — horizontal cluster
+ * -------------------------------------------------------- */
+.btn-group {
+  display: inline-flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+/* --------------------------------------------------------
+ * Mobile: full-width primary on narrow screens
+ * -------------------------------------------------------- */
+@media (max-width: 639px) {
+  .btn-primary.btn-full-mobile,
+  .btn-secondary.btn-full-mobile {
+    width: 100%;
+  }
+}
+
+/* --------------------------------------------------------
+ * Focus-visible ring (a11y)
+ * -------------------------------------------------------- */
+.btn:focus-visible,
+.btn-icon:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}

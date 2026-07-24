@@ -1,0 +1,28 @@
+/* ============================================================
+ * ORTHO-PAY Foundation — Spacing
+ * Source: DESIGN.md → spacing:
+ *
+ * Base unit: 8px. Finer 2/4/6px steps for tight inline gaps.
+ * The --space-section (88px) token is the single most important
+ * token — it is the vertical gap between every major content block.
+ * ============================================================ */
+
+:root {
+  --space-xxs: 2px;     /* Tightest inline gap (e.g. traffic-light dot gap) */
+  --space-xs: 4px;      /* Small inline gap */
+  --space-sm: 8px;      /* Compact padding / gap */
+  --space-md: 12px;     /* Medium padding */
+  --space-lg: 16px;     /* Standard padding — terminal card, FAQ row vertical */
+  --space-xl: 24px;     /* Section subgroup gap, CTA strip padding (v) */
+  --space-xxl: 32px;    /* Pricing card internal padding */
+  --space-section: 88px; /* Between every major page section — the layout rhythm */
+
+  /* --- Semantic aliases --- */
+  --space-page-padding-mobile: var(--space-lg);      /* 16px */
+  --space-page-padding-tablet: var(--space-xxl);     /* 32px */
+  --space-page-padding-desktop: var(--space-xxl);    /* 32px */
+  --space-card-padding: var(--space-xxl);            /* 32px — pricing card interior */
+  --space-nav-height: 56px;                          /* Primary nav height */
+  --space-content-max-width: 720px;                  /* Narrow reading column (home) */
+  --space-pricing-max-width: 960px;                  /* 3-up pricing grid max */
+}

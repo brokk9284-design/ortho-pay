@@ -1,0 +1,146 @@
+/* ============================================================
+ * ORTHO-PAY Foundation — Component Tokens
+ * Source: DESIGN.md → components:
+ *
+ * Pre-composed component tokens referencing foundation vars.
+ * These are semantic aliases — no new values, only composition.
+ * Every component reference token maps to DESIGN.md component names.
+ * ============================================================ */
+
+:root {
+  /* --------------------------------------------------------
+   * Primary Navigation
+   * Height 56px. Desktop: llama icon + text links + search pill + Download.
+   * -------------------------------------------------------- */
+  --component-primary-nav-bg: var(--color-canvas);
+  --component-primary-nav-text: var(--color-ink);
+  --component-primary-nav-height: var(--space-nav-height);
+
+  /* --------------------------------------------------------
+   * Buttons
+   * All buttons use --radius-full (9999px). No exceptions.
+   * -------------------------------------------------------- */
+
+  /* button-primary — black pill, every primary action */
+  --component-button-primary-bg: var(--color-primary);
+  --component-button-primary-text: var(--color-on-primary);
+  --component-button-primary-radius: var(--radius-full);
+  --component-button-primary-padding: 8px 20px;
+  --component-button-primary-height: 36px;
+
+  /* button-primary pressed */
+  --component-button-primary-active-bg: var(--color-ink-deep);
+
+  /* button-secondary — white pill with hairline border */
+  --component-button-secondary-bg: var(--color-canvas);
+  --component-button-secondary-text: var(--color-ink);
+  --component-button-secondary-radius: var(--radius-full);
+  --component-button-secondary-padding: 8px 20px;
+  --component-button-secondary-height: 36px;
+
+  /* button-pill-on-dark — white pill on dark Max card */
+  --component-button-pill-on-dark-bg: var(--color-canvas);
+  --component-button-pill-on-dark-text: var(--color-ink);
+  --component-button-pill-on-dark-radius: var(--radius-full);
+  --component-button-pill-on-dark-padding: 8px 20px;
+
+  /* button-disabled */
+  --component-button-disabled-bg: var(--color-surface-soft);
+  --component-button-disabled-text: var(--color-mute);
+  --component-button-disabled-radius: var(--radius-full);
+
+  /* --------------------------------------------------------
+   * Inputs & Forms
+   * -------------------------------------------------------- */
+
+  /* search-pill — nav search, "Search models" placeholder */
+  --component-search-pill-bg: var(--color-surface-soft);
+  --component-search-pill-text: var(--color-ink);
+  --component-search-pill-radius: var(--radius-full);
+  --component-search-pill-padding: 8px 16px;
+  --component-search-pill-height: 36px;
+
+  /* search-pill focused */
+  --component-search-pill-focused-bg: var(--color-canvas);
+
+  /* text-input — standard form field */
+  --component-text-input-bg: var(--color-canvas);
+  --component-text-input-text: var(--color-ink);
+  --component-text-input-radius: var(--radius-full);
+  --component-text-input-padding: 8px 16px;
+  --component-text-input-height: 40px;
+  --component-text-input-border: 1px solid var(--color-hairline);
+  --component-text-input-focus-border: 1px solid var(--color-ink);
+
+  /* install-snippet — the signature curl install pill */
+  --component-install-snippet-bg: var(--color-surface-soft);
+  --component-install-snippet-text: var(--color-ink);
+  --component-install-snippet-radius: var(--radius-full);
+  --component-install-snippet-padding: 12px 20px;
+  --component-install-snippet-height: 48px;
+
+  /* command-tag — small inline command chip */
+  --component-command-tag-bg: var(--color-surface-soft);
+  --component-command-tag-text: var(--color-ink);
+  --component-command-tag-radius: var(--radius-full);
+  --component-command-tag-padding: 6px 12px;
+
+  /* --------------------------------------------------------
+   * Cards & Containers
+   * Cards use --radius-lg (12px). No pills, no sharp corners.
+   * -------------------------------------------------------- */
+
+  /* terminal-card — home page product preview */
+  --component-terminal-card-bg: var(--color-canvas);
+  --component-terminal-card-text: var(--color-ink);
+  --component-terminal-card-radius: var(--radius-lg);
+  --component-terminal-card-padding: var(--space-lg);
+  --component-terminal-card-border: 1px solid var(--color-hairline);
+
+  /* terminal-traffic-lights — macOS dots inside terminal card */
+  --component-terminal-dot-size: 12px;
+  --component-terminal-dot-radius: var(--radius-full);
+  --component-terminal-dot-gap: var(--space-xs);
+
+  /* pricing-card — Free / Pro tiers (light) */
+  --component-pricing-card-bg: var(--color-canvas);
+  --component-pricing-card-text: var(--color-ink);
+  --component-pricing-card-radius: var(--radius-lg);
+  --component-pricing-card-padding: var(--space-card-padding);
+  --component-pricing-card-border: 1px solid var(--color-hairline);
+
+  /* pricing-card-dark — Max tier (inverted). One per page. */
+  --component-pricing-card-dark-bg: var(--color-surface-dark);
+  --component-pricing-card-dark-text: var(--color-on-dark);
+  --component-pricing-card-dark-radius: var(--radius-lg);
+  --component-pricing-card-dark-padding: var(--space-card-padding);
+
+  /* feature-bullet — pricing card list item */
+  --component-feature-bullet-text: var(--color-charcoal);
+
+  /* faq-row — /pricing FAQ entry */
+  --component-faq-row-bg: var(--color-canvas);
+  --component-faq-row-text: var(--color-ink);
+  --component-faq-row-padding: var(--space-lg) 0;
+  --component-faq-row-border-bottom: 1px solid var(--color-hairline);
+
+  /* cta-strip-dark — rare dark CTA band between sections */
+  --component-cta-strip-dark-bg: var(--color-surface-dark);
+  --component-cta-strip-dark-text: var(--color-on-dark);
+  --component-cta-strip-dark-radius: var(--radius-lg);
+  --component-cta-strip-dark-padding: 24px 32px;
+
+  /* --------------------------------------------------------
+   * Inline Links
+   * -------------------------------------------------------- */
+  --component-link-inline-text: var(--color-ink);      /* underline on default */
+  --component-link-mute-text: var(--color-body);       /* underline on default */
+
+  /* --------------------------------------------------------
+   * Footer
+   * -------------------------------------------------------- */
+  --component-footer-bg: var(--color-canvas);
+  --component-footer-text: var(--color-body);
+  --component-footer-padding: 32px 24px;
+  --component-footer-border-top: 1px solid var(--color-hairline);
+}

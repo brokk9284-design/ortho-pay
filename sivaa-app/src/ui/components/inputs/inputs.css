@@ -1,0 +1,347 @@
+/* ============================================================
+ * ORTHO-PAY Component — Inputs & Forms
+ * Source: DESIGN.md → components → search-pill, text-input,
+ *         install-snippet (see cards.css for snippet pill)
+ *
+ * Rules:
+ *   - All inputs use --radius-full (9999px) — pills, not boxes.
+ *   - Focus: 1px ink border + --color-focus-ring blue ring (a11y).
+ *   - No colored validation states except error (red border).
+ *   - Touch targets minimum 36px height, 40px for text-input.
+ * ============================================================ */
+
+/* --------------------------------------------------------
+ * search-pill — primary nav search
+ * Default: surface-soft background. Focused: white + focus ring.
+ * -------------------------------------------------------- */
+.search-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background-color: var(--component-search-pill-bg);
+  color: var(--component-search-pill-text);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  border-radius: var(--component-search-pill-radius);
+  padding: var(--component-search-pill-padding);
+  height: var(--component-search-pill-height);
+  border: none;
+  width: 100%;
+  max-width: 360px;
+  transition: background-color 120ms ease,
+              box-shadow 120ms ease;
+}
+
+.search-pill:focus-within {
+  background-color: var(--component-search-pill-focused-bg);
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+  outline: none;
+}
+
+.search-pill-icon {
+  flex-shrink: 0;
+  color: var(--color-mute);
+  width: 16px;
+  height: 16px;
+}
+
+.search-pill-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  color: var(--color-ink);
+  min-width: 0;
+}
+
+.search-pill-input::placeholder {
+  color: var(--color-mute);
+}
+
+/* --------------------------------------------------------
+ * text-input — standard form field (pill shape)
+ * Height 40px, white background, hairline border.
+ * -------------------------------------------------------- */
+.input {
+  display: block;
+  width: 100%;
+  background-color: var(--component-text-input-bg);
+  color: var(--component-text-input-text);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md-size);
+  font-weight: var(--text-body-md-weight);
+  line-height: var(--text-body-md-line-height);
+  border-radius: var(--component-text-input-radius);
+  padding: var(--component-text-input-padding);
+  height: var(--component-text-input-height);
+  border: var(--component-text-input-border);
+  transition: border-color 120ms ease,
+              box-shadow 120ms ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.input::placeholder {
+  color: var(--color-mute);
+}
+
+.input:focus {
+  border: var(--component-text-input-focus-border);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+  outline: none;
+}
+
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-error {
+  border-color: #ef4444;
+}
+
+.input-error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+}
+
+/* --------------------------------------------------------
+ * Input group — label + input + hint/error
+ * -------------------------------------------------------- */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.input-label {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  color: var(--color-ink);
+}
+
+.input-hint {
+  font-family: var(--font-body);
+  font-size: var(--text-caption-sm-size);
+  color: var(--color-mute);
+}
+
+.input-error-text {
+  font-family: var(--font-body);
+  font-size: var(--text-caption-sm-size);
+  color: #ef4444;
+}
+
+/* --------------------------------------------------------
+ * Textarea — multi-line input (pill shape, resizable)
+ * -------------------------------------------------------- */
+.textarea {
+  display: block;
+  width: 100%;
+  background-color: var(--component-text-input-bg);
+  color: var(--component-text-input-text);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md-size);
+  border-radius: var(--radius-lg); /* Cards radius for multi-line fields */
+  padding: var(--space-md) var(--space-lg);
+  border: var(--component-text-input-border);
+  min-height: 96px;
+  resize: vertical;
+  transition: border-color 120ms ease,
+              box-shadow 120ms ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.textarea:focus {
+  border: var(--component-text-input-focus-border);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+  outline: none;
+}
+
+/* --------------------------------------------------------
+ * Checkbox — custom square checkbox
+ * -------------------------------------------------------- */
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  color: var(--color-ink);
+}
+
+.checkbox-input {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-hairline-strong);
+  background-color: var(--color-canvas);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background-color 120ms ease,
+              border-color 120ms ease;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.checkbox-input:checked {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.checkbox-input:checked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--color-on-primary);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-input:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------
+ * Radio — custom radio button
+ * -------------------------------------------------------- */
+.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  color: var(--color-ink);
+}
+
+.radio-input {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-hairline-strong);
+  background-color: var(--color-canvas);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 120ms ease;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.radio-input:checked {
+  border-color: var(--color-primary);
+}
+
+.radio-input:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+}
+
+.radio-input:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------
+ * Toggle switch
+ * -------------------------------------------------------- */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  color: var(--color-ink);
+}
+
+.toggle-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-track {
+  width: 44px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-hairline-strong);
+  position: relative;
+  transition: background-color 120ms ease;
+  flex-shrink: 0;
+}
+
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-canvas);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 120ms ease;
+}
+
+.toggle-input:checked + .toggle-track {
+  background-color: var(--color-primary);
+}
+
+.toggle-input:checked + .toggle-track::after {
+  transform: translateX(20px);
+}
+
+.toggle-input:focus-visible + .toggle-track {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------
+ * Mobile: larger touch targets
+ * -------------------------------------------------------- */
+@media (max-width: 639px) {
+  .checkbox-input,
+  .radio-input {
+    width: 24px;
+    height: 24px;
+  }
+
+  .toggle-track {
+    width: 48px;
+    height: 28px;
+  }
+
+  .toggle-track::after {
+    width: 24px;
+    height: 24px;
+  }
+
+  .toggle-input:checked + .toggle-track::after {
+    transform: translateX(20px);
+  }
+
+  /* Search pill compresses on mobile */
+  .search-pill {
+    max-width: 240px;
+  }
+}

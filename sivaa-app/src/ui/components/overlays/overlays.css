@@ -1,0 +1,308 @@
+/* ============================================================
+ * BIOS Component — Overlays
+ * Modal/dialog, bottom sheet (mobile), popover, tooltip,
+ * dropdown menu. All use z-index from foundation.
+ * ============================================================ */
+
+/* --- Overlay backdrop (shared) --- */
+.overlay-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-overlay);
+  background-color: rgba(10, 11, 13, var(--opacity-overlay-dark));
+  backdrop-filter: blur(var(--blur-overlay));
+  -webkit-backdrop-filter: blur(var(--blur-overlay));
+  animation: fade-in var(--duration-normal) var(--ease-default) both;
+}
+
+[data-theme='dark'] .overlay-backdrop {
+  background-color: rgba(0, 0, 0, var(--opacity-overlay-dark));
+}
+
+/* --- Modal / Dialog --- */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: calc(var(--z-overlay) + 1);
+  background-color: var(--color-canvas);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  width: calc(100% - var(--space-xl) * 2);
+  max-width: 480px;
+  max-height: calc(100vh - var(--space-xxl) * 2);
+  overflow-y: auto;
+  animation: zoom-in var(--duration-normal) var(--ease-default) both;
+}
+
+[data-theme='dark'] .modal {
+  background-color: var(--color-surface-dark-elevated);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: var(--text-title-lg-size);
+  font-weight: var(--text-display-sm-weight);
+  color: var(--color-ink);
+}
+
+.modal-close {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-base);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+/* --- Bottom sheet (mobile detail view) --- */
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: calc(var(--z-overlay) + 1);
+  background-color: var(--color-canvas);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: var(--space-lg);
+  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0));
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slide-up var(--duration-normal) var(--ease-out) both;
+}
+
+[data-theme='dark'] .bottom-sheet {
+  background-color: var(--color-surface-dark-elevated);
+}
+
+.bottom-sheet-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-hairline);
+  margin: 0 auto var(--space-lg);
+  cursor: grab;
+}
+
+.bottom-sheet-title {
+  font-family: var(--font-display);
+  font-size: var(--text-title-md-size);
+  font-weight: var(--text-display-sm-weight);
+  color: var(--color-ink);
+  margin-bottom: var(--space-base);
+}
+
+/* Desktop: bottom sheet becomes centered modal */
+@media (min-width: 768px) {
+  .bottom-sheet {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    border-radius: var(--radius-xl);
+    width: calc(100% - var(--space-xl) * 2);
+    max-width: 480px;
+    max-height: calc(100vh - var(--space-xxl) * 2);
+    animation: zoom-in var(--duration-normal) var(--ease-default) both;
+  }
+
+  .bottom-sheet-handle {
+    display: none;
+  }
+}
+
+/* --- Popover --- */
+.popover {
+  position: absolute;
+  z-index: var(--z-dropdown);
+  background-color: var(--color-canvas);
+  border-radius: var(--radius-lg);
+  padding: var(--space-base);
+  border: 1px solid var(--color-hairline);
+  box-shadow: var(--shadow-soft);
+  min-width: 200px;
+  max-width: 320px;
+  animation: zoom-in var(--duration-fast) var(--ease-default) both;
+}
+
+[data-theme='dark'] .popover {
+  background-color: var(--color-surface-dark-elevated);
+  border-color: var(--color-hairline);
+}
+
+.popover-header {
+  font-family: var(--font-body);
+  font-size: var(--text-caption-strong-size);
+  font-weight: var(--text-caption-strong-weight);
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--space-sm);
+}
+
+/* --- Tooltip --- */
+.tooltip {
+  position: absolute;
+  z-index: var(--z-tooltip);
+  background-color: var(--color-ink);
+  color: var(--color-canvas);
+  font-family: var(--font-body);
+  font-size: var(--text-caption-size);
+  line-height: var(--text-caption-line-height);
+  padding: var(--space-xxs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fade-in var(--duration-fast) var(--ease-default) both;
+}
+
+[data-theme='dark'] .tooltip {
+  background-color: var(--color-surface-strong);
+  color: var(--color-ink);
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: inherit;
+  transform: rotate(45deg);
+}
+
+.tooltip-top::after {
+  bottom: -4px;
+  left: 50%;
+  margin-left: -4px;
+}
+
+.tooltip-bottom::after {
+  top: -4px;
+  left: 50%;
+  margin-left: -4px;
+}
+
+.tooltip-left::after {
+  right: -4px;
+  top: 50%;
+  margin-top: -4px;
+}
+
+.tooltip-right::after {
+  left: -4px;
+  top: 50%;
+  margin-top: -4px;
+}
+
+/* --- Dropdown menu --- */
+.dropdown-menu {
+  position: absolute;
+  z-index: var(--z-dropdown);
+  background-color: var(--color-canvas);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xs);
+  border: 1px solid var(--color-hairline);
+  box-shadow: var(--shadow-soft);
+  min-width: 180px;
+  animation: zoom-in var(--duration-fast) var(--ease-default) both;
+}
+
+[data-theme='dark'] .dropdown-menu {
+  background-color: var(--color-surface-dark-elevated);
+  border-color: var(--color-hairline);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-base);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  font-weight: var(--text-body-md-weight);
+  color: var(--color-ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-default);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dropdown-item:active {
+  background-color: var(--color-surface-strong);
+}
+
+[data-theme='dark'] .dropdown-item:active {
+  background-color: var(--color-surface-strong);
+}
+
+.dropdown-item-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.dropdown-item-danger {
+  color: var(--color-down);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--color-hairline);
+  margin: var(--space-xxs) 0;
+}
+
+.dropdown-label {
+  padding: var(--space-sm) var(--space-base) var(--space-xxs);
+  font-family: var(--font-body);
+  font-size: var(--text-caption-strong-size);
+  font-weight: var(--text-caption-strong-weight);
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- Mobile: dropdown becomes full-width bottom sheet --- */
+@media (max-width: 767px) {
+  .dropdown-menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: var(--space-base);
+    padding-bottom: calc(var(--space-base) + env(safe-area-inset-bottom, 0));
+    min-width: 100%;
+    animation: slide-up var(--duration-normal) var(--ease-out) both;
+  }
+
+  .dropdown-item {
+    padding: var(--space-base);
+    font-size: var(--text-body-md-size);
+    border-radius: var(--radius-md);
+  }
+}

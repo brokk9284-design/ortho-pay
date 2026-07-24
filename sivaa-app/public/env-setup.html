@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ORTHO-PAY — Environment Variables Setup Guide</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --yellow: #d29922;
+      --red: #f85149;
+      --purple: #bc8cff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 0;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 24px 32px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+    .summary-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .summary-box h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .summary-table th,
+    .summary-table td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-table th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .summary-table td code {
+      color: var(--accent);
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+    }
+    .summary-table .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-supabase { background: rgba(62, 207, 142, 0.15); color: var(--green); }
+    .badge-github { background: rgba(188, 140, 255, 0.15); color: var(--purple); }
+    .badge-resend { background: rgba(88, 166, 255, 0.15); color: var(--accent); }
+    .badge-required { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+    .badge-optional { background: rgba(210, 153, 34, 0.15); color: var(--yellow); }
+
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .section-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .num-supabase { background: rgba(62, 207, 142, 0.2); color: var(--green); border: 1px solid rgba(62, 207, 142, 0.3); }
+    .num-github { background: rgba(188, 140, 255, 0.2); color: var(--purple); border: 1px solid rgba(188, 140, 255, 0.3); }
+    .num-resend { background: rgba(88, 166, 255, 0.2); color: var(--accent); border: 1px solid rgba(88, 166, 255, 0.3); }
+
+    .integration-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .integration-section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .integration-section h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 24px 0 12px;
+      color: var(--text);
+    }
+    .integration-section p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+    .integration-section .steps {
+      margin-top: 8px;
+    }
+    .flow-diagram {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 16px 0;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--muted);
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .flow-diagram .arrow { color: var(--accent); }
+    .flow-diagram .label { color: var(--green); }
+    .section-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .section-header .platform-tag {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+    .section-header .platform-tag a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .section-header .platform-tag a:hover {
+      text-decoration: underline;
+    }
+
+    .var-card {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .var-card:last-child { margin-bottom: 0; }
+    .var-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .var-name {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(88, 166, 255, 0.1);
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+    .var-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+    .var-desc {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+    .steps {
+      list-style: none;
+      counter-reset: step;
+    }
+    .steps li {
+      counter-increment: step;
+      position: relative;
+      padding-left: 32px;
+      padding-bottom: 14px;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .steps li:last-child { padding-bottom: 0; }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .steps li a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .steps li a:hover { text-decoration: underline; }
+    .steps li code {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+      color: var(--green);
+      background: rgba(63, 185, 80, 0.1);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .steps li strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .callout {
+      background: rgba(88, 166, 255, 0.08);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .callout strong { color: var(--text); }
+    .callout.warning {
+      background: rgba(248, 81, 73, 0.08);
+      border-color: rgba(248, 81, 73, 0.2);
+    }
+    .callout.warning strong { color: var(--red); }
+
+    .env-preview {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+    .env-preview h3 {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .env-preview pre {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .env-preview .key { color: var(--accent); }
+    .env-preview .val { color: var(--muted); }
+    .env-preview .comment { color: #6e7681; }
+
+    .footer {
+      text-align: center;
+      padding: 32px 24px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>ORTHO-PAY — Environment Variables Setup Guide</h1>
+  <p>Complete walkthrough for obtaining every variable needed in your <code>.env.local</code> file. Follow each section in order.</p>
+</div>
+
+<div class="container">
+
+  <!-- Summary Table -->
+  <div class="summary-box">
+    <h2>Variables Overview</h2>
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Platform</th>
+          <th>Required</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>NEXT_PUBLIC_SUPABASE_URL</code></td>
+          <td><span class="badge badge-supabase">Supabase</span></td>
+          <td><span class="badge badge-required">Required</span></td>
+          <td>Project API URL (base endpoint for auth + database)</td>
+        </tr>
+        <tr>
+          <td><code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code></td>
+          <td><span class="badge badge-supabase">Supabase</span></td>
+          <td><span class="badge badge-required">Required</span></td>
+          <td>Public-safe key for client-side requests (guarded by RLS)</td>
+        </tr>
+        <tr>
+          <td><code>SUPABASE_SERVICE_ROLE_KEY</code></td>
+          <td><span class="badge badge-supabase">Supabase</span></td>
+          <td><span class="badge badge-required">Required</span></td>
+          <td>Server-only key — bypasses RLS for admin operations</td>
+        </tr>
+        <tr>
+          <td><code>GITHUB_STORAGE_TOKEN</code></td>
+          <td><span class="badge badge-github">GitHub</span></td>
+          <td><span class="badge badge-required">Required</span></td>
+          <td>Personal Access Token for GitHub Contents API (file uploads)</td>
+        </tr>
+        <tr>
+          <td><code>GITHUB_STORAGE_OWNER</code></td>
+          <td><span class="badge badge-github">GitHub</span></td>
+          <td><span class="badge badge-required">Required</span></td>
+          <td>GitHub username or organization that owns the storage repo</td>
+        </tr>
+        <tr>
+          <td><code>GITHUB_STORAGE_REPO</code></td>
+          <td><span class="badge badge-github">GitHub</span></td>
+          <td><span class="badge badge-optional">Optional</span></td>
+          <td>Repository name (defaults to <code>ORTHO-PAY-storage</code>)</td>
+        </tr>
+        <tr>
+          <td><code>GITHUB_STORAGE_BRANCH</code></td>
+          <td><span class="badge badge-github">GitHub</span></td>
+          <td><span class="badge badge-optional">Optional</span></td>
+          <td>Branch to push files to (defaults to <code>main</code>)</td>
+        </tr>
+        <tr>
+          <td><code>RESEND_API_KEY</code></td>
+          <td><span class="badge badge-resend">Resend</span></td>
+          <td><span class="badge badge-required">Required</span></td>
+          <td>API key for sending transactional emails (welcome, 2FA, escrow notifications)</td>
+        </tr>
+        <tr>
+          <td><code>RESEND_FROM_ADDRESS</code></td>
+          <td><span class="badge badge-resend">Resend</span></td>
+          <td><span class="badge badge-optional">Optional</span></td>
+          <td>Sender email address (defaults to <code>ORTHO-PAY &lt;onboarding@resend.dev&gt;</code>)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================= SUPABASE ========================= -->
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number num-supabase">1</div>
+      <h2>Supabase — Project URL &amp; API Keys</h2>
+      <span class="platform-tag">Docs: <a href="https://supabase.com/docs/guides/getting-started/api-keys" target="_blank" rel="noopener">supabase.com/docs/api-keys</a></span>
+    </div>
+
+    <p style="color: var(--muted); font-size: 14px; margin-bottom: 20px;">
+      ORTHO-PAY uses Supabase for authentication, database, and Row Level Security. You need three values from a single Supabase project. If you don't have a project yet, create one first at <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" style="color: var(--accent);">supabase.com/dashboard</a>.
+    </p>
+
+    <!-- Step 0: Create Project -->
+    <div class="callout" style="margin-bottom: 20px;">
+      <strong>Prerequisite — Create a Supabase Project (if you haven't):</strong>
+      <ol style="margin: 8px 0 0 20px; color: var(--muted); font-size: 13px;">
+        <li>Go to <a href="https://supabase.com/dashboard" target="_blank" rel="noopener" style="color: var(--accent);">supabase.com/dashboard</a> and sign in.</li>
+        <li>Click <strong>New Project</strong> inside any organization.</li>
+        <li>Enter a project name (e.g. <code>ORTHO-PAY</code>), set a strong database password, and pick a region close to your users.</li>
+        <li>Click <strong>Create project</strong> and wait ~2 minutes for provisioning to finish.</li>
+      </ol>
+    </div>
+
+    <!-- Var 1: URL -->
+    <div class="var-card">
+      <div class="var-header">
+        <span class="var-name">NEXT_PUBLIC_SUPABASE_URL</span>
+        <span class="var-badge badge-required">Required</span>
+      </div>
+      <p class="var-desc">Your project's unique API URL. Used by both client and server to connect to Supabase.</p>
+      <ol class="steps">
+        <li>Go to the Supabase Dashboard: <a href="https://supabase.com/dashboard/project/_/settings/api-keys" target="_blank" rel="noopener">Settings &rarr; API Keys</a></li>
+        <li>If you don't see the URL at the top, click the <strong>Connect</strong> button in the dashboard header.</li>
+        <li>Look for the field labeled <strong>Project URL</strong>. It looks like <code>https://&lt;project_ref&gt;.supabase.co</code></li>
+        <li>Copy this URL — this is your <code>NEXT_PUBLIC_SUPABASE_URL</code> value.</li>
+      </ol>
+    </div>
+
+    <!-- Var 2: Anon Key -->
+    <div class="var-card">
+      <div class="var-header">
+        <span class="var-name">NEXT_PUBLIC_SUPABASE_ANON_KEY</span>
+        <span class="var-badge badge-required">Required</span>
+      </div>
+      <p class="var-desc">Public-safe key (JWT format) used by the client-side Supabase client. Access is guarded by RLS policies.</p>
+      <ol class="steps">
+        <li>In the same <a href="https://supabase.com/dashboard/project/_/settings/api-keys" target="_blank" rel="noopener">Settings &rarr; API Keys</a> page, scroll to the keys section.</li>
+        <li>Find the row labeled <strong>anon</strong> (or <strong>publishable</strong> on newer projects).</li>
+        <li>Click the <strong>Copy</strong> button next to it. The key starts with <code>eyJ...</code> (JWT) or <code>sb_publishable_...</code> (new format).</li>
+        <li>This is your <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> value.</li>
+      </ol>
+      <div class="callout">
+        <strong>Note:</strong> Both the legacy <code>anon</code> key and the new <code>sb_publishable_</code> key work. Either is safe to expose in client-side code — RLS policies protect your data.
+      </div>
+    </div>
+
+    <!-- Var 3: Service Role Key -->
+    <div class="var-card">
+      <div class="var-header">
+        <span class="var-name">SUPABASE_SERVICE_ROLE_KEY</span>
+        <span class="var-badge badge-required">Required</span>
+      </div>
+      <p class="var-desc">Server-only secret key that bypasses Row Level Security. Used in API routes for admin operations. <strong>Never expose this in client-side code.</strong></p>
+      <ol class="steps">
+        <li>Stay on the <a href="https://supabase.com/dashboard/project/_/settings/api-keys" target="_blank" rel="noopener">Settings &rarr; API Keys</a> page.</li>
+        <li>Find the row labeled <strong>service_role</strong> (or <strong>secret</strong> on newer projects).</li>
+        <li>Click <strong>Reveal</strong> to show the full key, then click <strong>Copy</strong>. It starts with <code>eyJ...</code> (JWT) or <code>sb_secret_...</code> (new format).</li>
+        <li>This is your <code>SUPABASE_SERVICE_ROLE_KEY</code> value.</li>
+      </ol>
+      <div class="callout warning">
+        <strong>Security Warning:</strong> The service role key bypasses all RLS policies. Only use it in server-side API routes. Never commit it to git or expose it in the browser. If compromised, rotate it immediately in the same dashboard page.
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================= GITHUB ========================= -->
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number num-github">2</div>
+      <h2>GitHub — Storage Repository &amp; Access Token</h2>
+      <span class="platform-tag">Docs: <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" rel="noopener">docs.github.com &rarr; PAT</a></span>
+    </div>
+
+    <p style="color: var(--muted); font-size: 14px; margin-bottom: 20px;">
+      ORTHO-PAY uses a private GitHub repository as object storage for KYC documents and payment receipts. You need to create the repo and generate a Personal Access Token (PAT) with write access to it.
+    </p>
+
+    <!-- Step 0: Create Repo -->
+    <div class="callout" style="margin-bottom: 20px;">
+      <strong>Prerequisite — Create the Storage Repository:</strong>
+      <ol style="margin: 8px 0 0 20px; color: var(--muted); font-size: 13px;">
+        <li>Go to <a href="https://github.com/new" target="_blank" rel="noopener" style="color: var(--accent);">github.com/new</a></li>
+        <li>Set <strong>Repository name</strong> to <code>ORTHO-PAY-storage</code></li>
+        <li>Set visibility to <strong>Private</strong> — this is critical. User documents must not be public.</li>
+        <li>Check <strong>Add a README file</strong> to initialize the repo.</li>
+        <li>Click <strong>Create repository</strong>.</li>
+      </ol>
+    </div>
+
+    <!-- Var 4: Token -->
+    <div class="var-card">
+      <div class="var-header">
+        <span class="var-name">GITHUB_STORAGE_TOKEN</span>
+        <span class="var-badge badge-required">Required</span>
+      </div>
+      <p class="var-desc">A Personal Access Token with read/write access to the <code>ORTHO-PAY-storage</code> repository. Used by the server to upload, list, and delete files via the GitHub Contents API.</p>
+
+      <p style="font-size: 13px; color: var(--text); margin: 12px 0 8px; font-weight: 600;">Option A — Fine-grained PAT (recommended by GitHub):</p>
+      <ol class="steps">
+        <li>Go to <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub &rarr; Settings &rarr; Developer settings &rarr; Fine-grained personal access tokens &rarr; Generate new token</a></li>
+        <li>Under <strong>Token name</strong>, enter <code>ORTHO-PAY Storage</code></li>
+        <li>Under <strong>Expiration</strong>, select <strong>1 year</strong> (or longer if your org allows it).</li>
+        <li>Under <strong>Resource owner</strong>, select your personal account (or the org that owns the repo).</li>
+        <li>Under <strong>Repository access</strong>, select <strong>Only select repositories</strong>, then choose <code>ORTHO-PAY-storage</code> from the dropdown.</li>
+        <li>Under <strong>Permissions &rarr; Repository permissions</strong>, find <strong>Contents</strong> and set it to <strong>Read and write</strong>.</li>
+        <li>Click <strong>Generate token</strong>.</li>
+        <li>Copy the token immediately — it starts with <code>github_pat_</code> and <strong>will not be shown again</strong>.</li>
+        <li>This is your <code>GITHUB_STORAGE_TOKEN</code> value.</li>
+      </ol>
+
+      <p style="font-size: 13px; color: var(--text); margin: 16px 0 8px; font-weight: 600;">Option B — Classic PAT (simpler, less granular):</p>
+      <ol class="steps">
+        <li>Go to <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener">GitHub &rarr; Settings &rarr; Developer settings &rarr; Personal access tokens (classic) &rarr; Generate new token</a></li>
+        <li>Under <strong>Note</strong>, enter <code>ORTHO-PAY Storage</code></li>
+        <li>Under <strong>Expiration</strong>, select <strong>No expiration</strong> or a date at least 1 year out.</li>
+        <li>Under <strong>Scopes</strong>, check <strong>repo</strong> (Full control of private repositories). This automatically checks all sub-scopes including <code>repo:contents</code>.</li>
+        <li>Click <strong>Generate token</strong>.</li>
+        <li>Copy the token immediately — it starts with <code>ghp_</code> and <strong>will not be shown again</strong>.</li>
+        <li>This is your <code>GITHUB_STORAGE_TOKEN</code> value.</li>
+      </ol>
+
+      <div class="callout warning">
+        <strong>Security Warning:</strong> This token grants write access to your storage repo. Only use it in server-side environment variables. Never commit it to git or expose it in client-side code. If compromised, revoke it immediately at <a href="https://github.com/settings/tokens" target="_blank" rel="noopener" style="color: var(--accent);">github.com/settings/tokens</a>.
+      </div>
+    </div>
+
+    <!-- Var 5: Owner -->
+    <div class="var-card">
+      <div class="var-header">
+        <span class="var-name">GITHUB_STORAGE_OWNER</span>
+        <span class="var-badge badge-required">Required</span>
+      </div>
+      <p class="var-desc">The GitHub username or organization name that owns the <code>ORTHO-PAY-storage</code> repository.</p>
+      <ol class="steps">
+        <li>Go to your repository on GitHub: <a href="https://github.com" target="_blank" rel="noopener">github.com</a></li>
+        <li>Navigate to the <code>ORTHO-PAY-storage</code> repository.</li>
+        <li>Look at the URL in your browser: <code>github.com/<strong>&lt;owner&gt;</strong>/ORTHO-PAY-storage</code></li>
+        <li>The <strong>&lt;owner&gt;</strong> part is your <code>GITHUB_STORAGE_OWNER</code> value. For example, if the URL is <code>github.com/Sav-Dev/ORTHO-PAY-storage</code>, the value is <code>Sav-Dev</code>.</li>
+      </ol>
+    </div>
+
+    <!-- Var 6: Repo -->
+    <div class="var-card">
+      <div class="var-header">
+        <span class="var-name">GITHUB_STORAGE_REPO</span>
+        <span class="var-badge badge-optional">Optional</span>
+      </div>
+      <p class="var-desc">The name of the storage repository. Defaults to <code>ORTHO-PAY-storage</code> if not set.</p>
+      <ol class="steps">
+        <li>If you named your repo <code>ORTHO-PAY-storage</code> as instructed above, you can omit this variable entirely — the app defaults to it.</li>
+        <li>If you used a different name, set this to that exact name (case-sensitive).</li>
+      </ol>
+    </div>
+
+    <!-- Var 7: Branch -->
+    <div class="var-card">
+      <div class="var-header">
+        <span class="var-name">GITHUB_STORAGE_BRANCH</span>
+        <span class="var-badge badge-optional">Optional</span>
+      </div>
+      <p class="var-desc">The branch to upload files to. Defaults to <code>main</code> if not set.</p>
+      <ol class="steps">
+        <li>If your repo's default branch is <code>main</code> (the GitHub default), you can omit this variable.</li>
+        <li>If you renamed the default branch (e.g. to <code>master</code> or <code>storage</code>), set this to that branch name.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ========================= RESEND ========================= -->
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number num-resend">3</div>
+      <h2>Resend — Transactional Email API</h2>
+      <span class="platform-tag">Docs: <a href="https://resend.com/docs/api-reference/emails/send-email" target="_blank" rel="noopener">resend.com/docs</a></span>
+    </div>
+
+    <p style="color: var(--muted); font-size: 14px; margin-bottom: 20px;">
+      ORTHO-PAY uses Resend to send transactional emails: welcome emails on registration, 2FA codes for payment authorization, password reset links, payment confirmation receipts, payment request notifications, and escrow status updates (approved/rejected).
+    </p>
+
+    <!-- Var: RESEND_API_KEY -->
+    <div class="var-card">
+      <div class="var-header">
+        <span class="var-name">RESEND_API_KEY</span>
+        <span class="var-badge badge-required">Required</span>
+      </div>
+      <p class="var-desc">API key for the Resend email API. Used server-side to send all transactional emails.</p>
+      <ol class="steps">
+        <li>Go to <a href="https://resend.com/api-keys" target="_blank" rel="noopener">resend.com/api-keys</a> and sign in (or create a free account at <a href="https://resend.com" target="_blank" rel="noopener">resend.com</a>).</li>
+        <li>Click <strong>Create API Key</strong>.</li>
+        <li>Enter a name like <code>ORTHO-PAY Production</code>.</li>
+        <li>Select the permission level — <strong>Sending access</strong> is sufficient (full access also works).</li>
+        <li>Click <strong>Create</strong>.</li>
+        <li>Copy the key immediately — it starts with <code>re_</code> and <strong>will not be shown again</strong>.</li>
+        <li>This is your <code>RESEND_API_KEY</code> value.</li>
+      </ol>
+      <div class="callout">
+        <strong>Testing mode:</strong> With a free Resend account, you can only send emails to your own verified email address (the one you signed up with). To send to any recipient, you must <a href="https://resend.com/domains" target="_blank" rel="noopener" style="color: var(--accent);">verify a custom domain</a> on Resend.
+      </div>
+    </div>
+
+    <!-- Var: RESEND_FROM_ADDRESS -->
+    <div class="var-card">
+      <div class="var-header">
+        <span class="var-name">RESEND_FROM_ADDRESS</span>
+        <span class="var-badge badge-optional">Optional</span>
+      </div>
+      <p class="var-desc">The sender email address that appears in the "From" field of all ORTHO-PAY emails. Defaults to <code>ORTHO-PAY &lt;onboarding@resend.dev&gt;</code> for testing.</p>
+      <ol class="steps">
+        <li>If you're using the free Resend tier (no custom domain), leave this unset — the app defaults to <code>ORTHO-PAY &lt;onboarding@resend.dev&gt;</code>.</li>
+        <li>If you've <a href="https://resend.com/domains" target="_blank" rel="noopener">verified a custom domain</a> on Resend, set this to your branded address, e.g. <code>ORTHO-PAY &lt;noreply@ORTHO-PAY.com&gt;</code>.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ========================= INTEGRATION GUIDES ========================= -->
+
+  <div class="integration-section">
+    <h2>Integration Guides</h2>
+    <p>How to connect the three services together so ORTHO-PAY can authenticate users, store files, and send emails.</p>
+
+    <!-- Supabase + Resend -->
+    <h3>A. Link Supabase Auth with Resend (Custom SMTP)</h3>
+    <p>By default, Supabase sends auth emails (password reset, email confirmation) from <code>noreply@mail.app.supabase.io</code>. To send these through Resend with your own domain, configure custom SMTP in Supabase.</p>
+    <div class="flow-diagram"><span class="label">Supabase Auth</span> <span class="arrow">──SMTP──▶</span> <span class="label">Resend SMTP</span> <span class="arrow">──sends──▶</span> <span class="label">User Inbox</span></div>
+    <ol class="steps">
+      <li>Log into your <a href="https://supabase.com/dashboard" target="_blank" rel="noopener">Supabase Dashboard</a>.</li>
+      <li>Go to <strong>Authentication</strong> in the left sidebar.</li>
+      <li>Scroll to the <strong>SMTP Settings</strong> section under <strong>Notifications</strong> or <strong>Email</strong>.</li>
+      <li>Toggle <strong>Enable Custom SMTP</strong> to ON.</li>
+      <li>Enter the following Resend SMTP credentials:
+        <ul style="margin: 8px 0 0 20px; color: var(--muted); font-size: 13px;">
+          <li><strong>Host:</strong> <code>smtp.resend.com</code></li>
+          <li><strong>Port:</strong> <code>465</code></li>
+          <li><strong>Username:</strong> <code>resend</code></li>
+          <li><strong>Password:</strong> Your Resend API key (starts with <code>re_</code>)</li>
+          <li><strong>Sender email:</strong> <code>onboarding@resend.dev</code> (or your custom domain email)</li>
+          <li><strong>Sender name:</strong> <code>ORTHO-PAY</code></li>
+        </ul>
+      </li>
+      <li>Click <strong>Save</strong>. All Supabase auth emails (password reset, email confirmation, magic links) will now be sent through Resend.</li>
+    </ol>
+    <div class="callout">
+      <strong>Alternative — Resend's native Supabase integration:</strong> You can also connect Supabase directly from Resend. Go to <a href="https://resend.com/integrations" target="_blank" rel="noopener" style="color: var(--accent);">resend.com/integrations</a>, click <strong>Connect to Supabase</strong>, select your project, and Resend will auto-configure the SMTP settings for you.
+    </div>
+
+    <!-- Vercel + Resend -->
+    <h3>B. Link Vercel with Resend (Environment Variables)</h3>
+    <p>When deploying ORTHO-PAY to Vercel, you need to add the Resend API key as an environment variable so the Next.js API routes can send emails.</p>
+    <div class="flow-diagram"><span class="label">Vercel Project</span> <span class="arrow">──env: RESEND_API_KEY──▶</span> <span class="label">Next.js API Route</span> <span class="arrow">──calls──▶</span> <span class="label">Resend API</span> <span class="arrow">──sends──▶</span> <span class="label">User Inbox</span></div>
+    <ol class="steps">
+      <li>Go to your <a href="https://vercel.com/dashboard" target="_blank" rel="noopener">Vercel Dashboard</a> and open your ORTHO-PAY project.</li>
+      <li>Go to <strong>Settings</strong> &rarr; <strong>Environment Variables</strong>.</li>
+      <li>Add the following variables:
+        <ul style="margin: 8px 0 0 20px; color: var(--muted); font-size: 13px;">
+          <li><code>RESEND_API_KEY</code> = your Resend API key (<code>re_...</code>)</li>
+          <li><code>RESEND_FROM_ADDRESS</code> = <code>ORTHO-PAY &lt;onboarding@resend.dev&gt;</code> (or your custom domain)</li>
+          <li><code>NEXT_PUBLIC_SUPABASE_URL</code> = your Supabase project URL</li>
+          <li><code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> = your Supabase anon key</li>
+          <li><code>SUPABASE_SERVICE_ROLE_KEY</code> = your Supabase service role key</li>
+          <li><code>GITHUB_STORAGE_TOKEN</code> = your GitHub PAT</li>
+          <li><code>GITHUB_STORAGE_OWNER</code> = your GitHub username</li>
+        </ul>
+      </li>
+      <li>Click <strong>Save</strong> for each variable.</li>
+      <li>Redeploy your project for the variables to take effect.</li>
+    </ol>
+    <div class="callout">
+      <strong>Alternative — Vercel Marketplace:</strong> You can install Resend directly from the <a href="https://vercel.com/marketplace/resend" target="_blank" rel="noopener" style="color: var(--accent);">Vercel Marketplace</a>. This auto-creates a Resend API key and adds it as <code>RESEND_API_KEY</code> to your Vercel project's environment variables in one step. Run: <code>vc i resend -m domain=yourdomain.com</code>
+    </div>
+
+    <!-- Supabase + Vercel -->
+    <h3>C. Link Supabase with Vercel (Database Connection)</h3>
+    <p>Vercel needs to connect to your Supabase PostgreSQL database. The connection string is already in your <code>NEXT_PUBLIC_SUPABASE_URL</code> (HTTP API URL), but for direct database access (e.g., from Vercel functions), use the connection string.</p>
+    <div class="flow-diagram"><span class="label">Vercel Function</span> <span class="arrow">──@supabase/ssr──▶</span> <span class="label">Supabase API</span> <span class="arrow">──queries──▶</span> <span class="label">PostgreSQL</span></div>
+    <ol class="steps">
+      <li>In your <a href="https://supabase.com/dashboard" target="_blank" rel="noopener">Supabase Dashboard</a>, go to <strong>Project Settings</strong> &rarr; <strong>Database</strong>.</li>
+      <li>Find the <strong>Connection String</strong> section and copy the <strong>URI</strong> (pooler connection, port 6543).</li>
+      <li>In your <a href="https://vercel.com/dashboard" target="_blank" rel="noopener">Vercel project</a>, go to <strong>Settings</strong> &rarr; <strong>Environment Variables</strong>.</li>
+      <li>Add <code>NEXT_PUBLIC_SUPABASE_URL</code> with the HTTP API URL (<code>https://&lt;ref&gt;.supabase.co</code>).</li>
+      <li>Add <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> and <code>SUPABASE_SERVICE_ROLE_KEY</code> from <strong>Settings</strong> &rarr; <strong>API Keys</strong>.</li>
+      <li>Redeploy for the variables to take effect.</li>
+    </ol>
+    <div class="callout">
+      <strong>Important:</strong> The <code>NEXT_PUBLIC_SUPABASE_URL</code> must be the HTTP API URL (<code>https://&lt;ref&gt;.supabase.co</code>), NOT the PostgreSQL connection string. The <code>@supabase/ssr</code> client uses the HTTP API, not direct database connections.
+    </div>
+  </div>
+
+  <!-- ========================= ENV PREVIEW ========================= -->
+
+  <div class="env-preview">
+    <h3>Your .env.local file should look like this:</h3>
+<pre><span class="comment"># ─── Supabase (from Settings → API Keys) ───</span>
+<span class="key">NEXT_PUBLIC_SUPABASE_URL</span>=<span class="val">https://yourprojectref.supabase.co</span>
+<span class="key">NEXT_PUBLIC_SUPABASE_ANON_KEY</span>=<span class="val">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</span>
+<span class="key">SUPABASE_SERVICE_ROLE_KEY</span>=<span class="val">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</span>
+
+<span class="comment"># ─── GitHub Storage (from Settings → Developer settings → Tokens) ───</span>
+<span class="key">GITHUB_STORAGE_TOKEN</span>=<span class="val">github_pat_xxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+<span class="key">GITHUB_STORAGE_OWNER</span>=<span class="val">your-github-username</span>
+<span class="key">GITHUB_STORAGE_REPO</span>=<span class="val">ORTHO-PAY-storage</span>
+<span class="key">GITHUB_STORAGE_BRANCH</span>=<span class="val">main</span>
+
+<span class="comment"># ─── Resend (from resend.com/api-keys) ───</span>
+<span class="key">RESEND_API_KEY</span>=<span class="val">re_xxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+<span class="key">RESEND_FROM_ADDRESS</span>=<span class="val">ORTHO-PAY &lt;onboarding@resend.dev&gt;</span></pre>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>ORTHO-PAY Environment Setup Guide &middot; Generated from <a href="https://supabase.com/docs/guides/getting-started/api-keys" target="_blank" rel="noopener">Supabase API Keys Docs</a> and <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" rel="noopener">GitHub PAT Docs</a></p>
+</div>
+
+</body>
+</html>

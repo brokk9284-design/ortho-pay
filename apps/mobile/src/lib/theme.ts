@@ -1,0 +1,50 @@
+export const theme = {
+  colors: {
+    canvas: "#FAFAFA",
+    surface: "#FFFFFF",
+    surfaceSoft: "#F5F5F5",
+    ink: "#0A0A0A",
+    body: "#404040",
+    charcoal: "#737373",
+    mute: "#A3A3A3",
+    hairline: "#E5E5E5",
+    terminalGreen: "#22C55E",
+    terminalYellow: "#EAB308",
+    terminalRed: "#EF4444",
+    primary: "#0A0A0A",
+    primaryText: "#FFFFFF",
+  },
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+    xxl: 48,
+  },
+  radius: {
+    sm: 8,
+    md: 12,
+    lg: 16,
+    xl: 20,
+    full: 9999,
+  },
+  fontSize: {
+    xs: 10,
+    sm: 12,
+    base: 14,
+    md: 16,
+    lg: 18,
+    xl: 20,
+    xxl: 24,
+    xxxl: 32,
+  },
+  fontWeight: {
+    regular: "400" as const,
+    medium: "500" as const,
+    semibold: "600" as const,
+    bold: "700" as const,
+  },
+};
+
+export type Theme = typeof theme;

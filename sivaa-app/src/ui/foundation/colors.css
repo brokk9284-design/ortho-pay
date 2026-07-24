@@ -1,0 +1,46 @@
+/* ============================================================
+ * ORTHO-PAY Foundation — Colors
+ * Source: DESIGN.md → colors:
+ * Design: Ollama-inspired. Pure black primary on paper-white
+ * canvas. No brand color other than black. Every color is a
+ * CSS custom property. No hardcoded hex anywhere else.
+ * ============================================================ */
+
+:root {
+  /* --- Brand & Primary --- */
+  --color-primary: #000000;        /* Every primary CTA, black pill, nav link */
+  --color-ink-deep: #090909;       /* Pressed / active state for primary pill */
+
+  /* --- Text --- */
+  --color-ink: #000000;            /* Headlines, nav links, button text on light */
+  --color-charcoal: #525252;       /* List-item text, disabled secondary copy */
+  --color-body: #737373;           /* Default paragraph, FAQ answers, footer links */
+  --color-mute: #a3a3a3;           /* Captions, code comments, lowest-emphasis text */
+
+  /* --- Surfaces --- */
+  --color-canvas: #ffffff;         /* Page itself. Nearly every surface in the system */
+  --color-surface-soft: #fafafa;   /* Install-snippet pill, search pill, alt row fill */
+  --color-surface-card: #ffffff;   /* Pricing card background (light tier) */
+  --color-surface-dark: #171717;   /* Dark "Max" pricing card and dark CTA strips */
+
+  /* --- Hairlines --- */
+  --color-hairline: #e5e5e5;       /* 1px card border, FAQ row divider, footer divider */
+  --color-hairline-strong: #d4d4d4; /* Stronger divider between unrelated groups */
+
+  /* --- On-color (text on colored surfaces) --- */
+  --color-on-primary: #ffffff;     /* Text on black pill buttons */
+  --color-on-dark: #ffffff;        /* Primary text on surface-dark */
+  --color-on-dark-mute: rgba(255, 255, 255, 0.7); /* Secondary copy on dark Max card */
+
+  /* --- Focus --- */
+  --color-focus-ring: rgba(59, 130, 246, 0.5); /* Only blue in the system — a11y only */
+
+  /* --- Links --- */
+  --color-link: #000000;           /* Inline prose link — same as ink */
+  --color-link-mute: #737373;      /* Muted inline link in FAQ / footer */
+
+  /* --- Terminal semantics (terminal-card dots only, no other use) --- */
+  --color-terminal-red: #ff5f56;
+  --color-terminal-yellow: #ffbd2e;
+  --color-terminal-green: #27c93f;
+}

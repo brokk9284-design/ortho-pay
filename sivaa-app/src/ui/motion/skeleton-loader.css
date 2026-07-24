@@ -1,0 +1,66 @@
+/* ============================================================
+ * BIOS Motion — Skeleton Loader
+ * Loading placeholder animation.
+ * ============================================================ */
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-strong) 0%,
+    var(--color-hairline-soft) 50%,
+    var(--color-surface-strong) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s var(--ease-default) infinite;
+  border-radius: var(--radius-sm);
+}
+
+[data-theme='dark'] .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-strong) 0%,
+    var(--color-hairline) 50%,
+    var(--color-surface-strong) 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* Skeleton shapes */
+.skeleton-line {
+  height: 16px;
+  width: 100%;
+  border-radius: var(--radius-xs);
+}
+
+.skeleton-line-short {
+  height: 16px;
+  width: 60%;
+  border-radius: var(--radius-xs);
+}
+
+.skeleton-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+}
+
+.skeleton-card {
+  height: 120px;
+  width: 100%;
+  border-radius: var(--radius-xl);
+}
+
+.skeleton-pill {
+  height: 44px;
+  width: 120px;
+  border-radius: var(--radius-pill);
+}

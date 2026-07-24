@@ -1,0 +1,17 @@
+/* ============================================================
+ * ORTHO-PAY Themes — Light (default)
+ * Source: DESIGN.md — paper-white canvas end-to-end.
+ *
+ * Light mode is the default :root state. The foundation tokens
+ * in colors.css ARE the light theme — no overrides needed.
+ * This selector exists only for explicit [data-theme='light']
+ * switching in the theme provider.
+ *
+ * Per DESIGN.md: the whole page is one continuous sheet.
+ * No surface alternation. Canvas is #ffffff throughout.
+ * ============================================================ */
+
+[data-theme='light'] {
+  color-scheme: light;
+  /* No overrides needed — foundation defaults are the light theme. */
+}

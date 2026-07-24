@@ -1,0 +1,21 @@
+/* ============================================================
+ * BIOS Responsiveness — Desktop (1024-1439px)
+ * Sidebar appears at 1024px. Full token scale restored.
+ * ============================================================ */
+
+@media (min-width: 1024px) {
+  :root {
+    /* Full display scale restored */
+    --text-display-mega-size: 80px;
+    --text-display-mega-letter-spacing: -2px;
+
+    --text-display-xl-size: 64px;
+    --text-display-xl-letter-spacing: -1.6px;
+
+    /* Full section padding restored */
+    --space-section: 96px;
+
+    /* Full card padding restored */
+    --space-card-padding: var(--space-xl);
+  }
+}

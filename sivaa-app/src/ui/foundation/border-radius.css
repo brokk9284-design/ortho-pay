@@ -1,0 +1,21 @@
+/* ============================================================
+ * ORTHO-PAY Foundation — Border Radius
+ * Source: DESIGN.md → rounded:
+ *
+ * Dominant shape vocabulary: two values only.
+ *   --radius-full  (9999px) → every interactive element (buttons,
+ *                              pill inputs, install-snippet, search pill,
+ *                              traffic-light dots)
+ *   --radius-lg    (12px)   → the few cards in the system
+ *
+ * Nothing is sharp-cornered except section dividers (none).
+ * No medium-radius "soft cards" — surfaces are either pills or cards.
+ * ============================================================ */
+
+:root {
+  --radius-none: 0px;    /* Nav, footer, FAQ row dividers — flat structural lines */
+  --radius-sm: 6px;      /* Inline code chips, command tags */
+  --radius-md: 8px;      /* Rare medium-radius surfaces (e.g. dropdown panels) */
+  --radius-lg: 12px;     /* Pricing cards, terminal mockup card */
+  --radius-full: 9999px; /* Every button, pill input, install-snippet, search pill, dots */
+}

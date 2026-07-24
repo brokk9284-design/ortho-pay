@@ -1,0 +1,20 @@
+/* ============================================================
+ * BIOS Foundation — Opacity
+ * Controlled opacity scale for overlays, disabled states,
+ * and visual hierarchy.
+ * ============================================================ */
+
+:root {
+  --opacity-full: 1;
+  --opacity-high: 0.85;
+  --opacity-medium: 0.6;
+  --opacity-low: 0.4;
+  --opacity-faint: 0.2;
+  --opacity-transparent: 0;
+
+  /* Semantic opacity aliases */
+  --opacity-disabled: 0.5;
+  --opacity-overlay-dark: 0.6;
+  --opacity-overlay-light: 0.4;
+  --opacity-hairline: 0.08;
+}

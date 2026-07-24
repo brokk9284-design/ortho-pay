@@ -1,0 +1,12 @@
+/* ============================================================
+ * BIOS Responsiveness — Ultrawide (1440px+)
+ * Content caps at 1200px. No token changes needed.
+ * ============================================================ */
+
+@media (min-width: 1440px) {
+  /* Content max-width enforced via layout, not tokens.
+     No additional overrides needed at this breakpoint. */
+  html {
+    scroll-padding-top: var(--space-nav-height);
+  }
+}

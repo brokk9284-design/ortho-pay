@@ -1,0 +1,51 @@
+/* ============================================================
+ * ORTHO-PAY Accessibility — Focus States
+ * Source: DESIGN.md → Focus Ring
+ *
+ * --color-focus-ring = rgba(59,130,246,0.5) — the ONLY blue
+ * in the entire system. Used exclusively for accessibility.
+ *
+ * Rule: Never use outline: none without a replacement ring.
+ * All focus rings use --color-focus-ring, not --color-primary.
+ * ============================================================ */
+
+/* Buttons — pill-shaped focus ring matches button shape */
+button:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-full);
+}
+
+/* Links — standard rectangular focus with slight rounding */
+a:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+  text-decoration: underline;
+}
+
+/* Inputs — inset ring on pill inputs */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -1px;
+  border-radius: var(--radius-full);
+}
+
+/* Cards — ring matches card radius (radius-lg = 12px) */
+[role='link']:focus-visible,
+.card-focusable:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-lg);
+}
+
+/* Sidebar/nav items */
+.sidebar-nav-item:focus-visible,
+.primary-nav-link:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}

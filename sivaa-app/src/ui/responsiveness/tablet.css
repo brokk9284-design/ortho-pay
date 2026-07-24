@@ -1,0 +1,21 @@
+/* ============================================================
+ * BIOS Responsiveness — Tablet (768-1023px)
+ * ============================================================ */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    /* Hero h1: 80 → 52px on tablet */
+    --text-display-mega-size: 52px;
+    --text-display-mega-letter-spacing: -1.3px;
+
+    /* Display xl: 64 → 44px */
+    --text-display-xl-size: 44px;
+    --text-display-xl-letter-spacing: -1px;
+
+    /* Section padding: 96 → 64px on tablet */
+    --space-section: 64px;
+
+    /* Card padding: 32 → 24px on tablet */
+    --space-card-padding: var(--space-lg);
+  }
+}

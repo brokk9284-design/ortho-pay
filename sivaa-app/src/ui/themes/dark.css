@@ -1,0 +1,64 @@
+/* ============================================================
+ * ORTHO-PAY Themes — Dark (admin dashboard surfaces)
+ * Source: DESIGN.md — surface-dark (#171717) is the only
+ * inverted surface in the marketing system.
+ *
+ * For the admin dashboard (app surfaces), dark mode is the
+ * default. This file provides a full dark-mode override set
+ * derived by inverting the DESIGN.md surface/text hierarchy.
+ *
+ * NOTE: The marketing site (home, /pricing) does NOT use
+ * this theme. It is paper-white only. Dark mode applies
+ * to authenticated admin/app screens.
+ * ============================================================ */
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* --- Surface overrides --- */
+  --color-canvas: #0a0a0a;
+  --color-surface-soft: #171717;
+  --color-surface-card: #1a1a1a;
+  --color-surface-dark: #000000;    /* Deepest dark in dark mode */
+
+  /* --- Hairline overrides --- */
+  --color-hairline: #262626;
+  --color-hairline-strong: #333333;
+
+  /* --- Text overrides --- */
+  --color-ink: #ffffff;
+  --color-charcoal: #a3a3a3;
+  --color-body: #737373;
+  --color-mute: #525252;
+
+  /* --- Link overrides --- */
+  --color-link: #ffffff;
+  --color-link-mute: #737373;
+
+  /* --- Component overrides --- */
+  --component-text-input-bg: var(--color-surface-soft);
+  --component-text-input-border: 1px solid var(--color-hairline);
+  --component-terminal-card-bg: var(--color-surface-card);
+  --component-terminal-card-border: 1px solid var(--color-hairline);
+  --component-faq-row-bg: var(--color-canvas);
+  --component-faq-row-border-bottom: 1px solid var(--color-hairline);
+  --component-footer-bg: var(--color-canvas);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: var(--color-hairline);
+  border-radius: var(--radius-full);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-charcoal);
+}

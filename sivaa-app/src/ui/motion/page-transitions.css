@@ -1,0 +1,53 @@
+/* ============================================================
+ * BIOS Motion — Page Transitions
+ * Route enter/exit animations for Next.js App Router.
+ * ============================================================ */
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes page-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.page-enter {
+  animation: page-enter var(--duration-normal) var(--ease-out) both;
+}
+
+.page-exit {
+  animation: page-exit var(--duration-fast) var(--ease-in) both;
+}
+
+/* Route transition for App Router — applied to main content */
+.route-transition {
+  animation: page-enter var(--duration-normal) var(--ease-out) both;
+}
+
+/* Stagger children inside a route */
+.route-stagger > * {
+  animation: page-enter var(--duration-normal) var(--ease-out) both;
+}
+
+.route-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.route-stagger > *:nth-child(2) { animation-delay: 40ms; }
+.route-stagger > *:nth-child(3) { animation-delay: 80ms; }
+.route-stagger > *:nth-child(4) { animation-delay: 120ms; }
+.route-stagger > *:nth-child(5) { animation-delay: 160ms; }
+.route-stagger > *:nth-child(6) { animation-delay: 200ms; }
+.route-stagger > *:nth-child(7) { animation-delay: 240ms; }
+.route-stagger > *:nth-child(8) { animation-delay: 280ms; }
