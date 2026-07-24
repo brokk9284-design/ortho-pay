@@ -12,6 +12,17 @@
   --color-surface-dark: var(--color-surface-dark);
   --color-hairline: var(--color-hairline);
   --color-hairline-strong: var(--color-hairline-strong);
+  --color-gain: var(--color-gain);
+  --color-loss: var(--color-loss);
+  --color-neutral: var(--color-neutral);
+  --color-success: var(--color-success);
+  --color-error: var(--color-error);
+  --color-warning: var(--color-warning);
+  --color-info: var(--color-info);
+  --color-primary-deep: var(--color-primary-deep);
+  --color-primary-soft: var(--color-primary-soft);
+  --color-brand-dark: var(--color-brand-dark);
+  --color-canvas-soft: var(--color-canvas-soft);
 }
 
 body {

@@ -18,7 +18,7 @@
   /* Replace shimmer with static color */
   .skeleton {
     animation: none;
-    background: var(--color-surface-strong);
+    background: var(--color-surface-soft);
   }
 
   /* Replace live pulse with static dot */
@@ -45,5 +45,48 @@
   .number-flash-up,
   .number-flash-down {
     animation: none;
+  }
+
+  /* Replace fintech animations with static states */
+  .animate-spin,
+  .animate-pulse-soft,
+  .animate-shake,
+  .animate-check-burst,
+  .animate-otp-bounce,
+  .animate-toast-in,
+  .animate-toast-out,
+  .animate-gradient-drift {
+    animation: none;
+  }
+
+  .typing-indicator span {
+    animation: none;
+    opacity: 0.6;
+  }
+
+  .btn-lift:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .card-hover:hover {
+    transform: none;
+  }
+
+  .tx-row-hover:hover {
+    transform: none;
+  }
+
+  .progress-bar-fill {
+    animation: none;
+    transition: none;
+  }
+
+  .theme-toggle svg {
+    transition: none;
+  }
+
+  .theme-toggle.is-animating svg {
+    transform: none;
   }
 }

@@ -49,3 +49,49 @@ select:focus-visible {
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
+
+/* Fintech: amount input focus */
+.amount-input:focus-visible,
+.amount-input-wrapper:focus-within {
+  outline: none;
+}
+
+/* Fintech: OTP digit focus */
+.otp-digit:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 1px;
+}
+
+/* Fintech: admin sidebar link */
+.admin-sidebar-link:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+/* Fintech: country selector trigger */
+.country-selector-trigger:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Fintech: chat input */
+.chat-input:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -1px;
+}
+
+/* Fintech: transaction row focusable */
+.transaction-row:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Fintech: stepper step focusable */
+.stepper-step:focus-visible .stepper-step-circle {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Fintech: status badge is decorative — no focus needed */

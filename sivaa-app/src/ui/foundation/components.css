@@ -143,4 +143,81 @@
   --component-footer-text: var(--color-body);
   --component-footer-padding: 32px 24px;
   --component-footer-border-top: 1px solid var(--color-hairline);
+
+  /* --------------------------------------------------------
+   * Fintech Component Tokens
+   * -------------------------------------------------------- */
+
+  /* amount-input — currency entry field */
+  --component-amount-input-bg: var(--color-canvas);
+  --component-amount-input-text: var(--color-ink);
+  --component-amount-input-radius: var(--radius-lg);
+  --component-amount-input-padding: 16px 20px;
+  --component-amount-input-border: 1px solid var(--color-hairline);
+  --component-amount-input-focus-border: 1px solid var(--color-primary);
+  --component-amount-input-font-size: var(--text-money-lg-size);
+  --component-amount-input-font-weight: var(--text-money-lg-weight);
+
+  /* otp-input — one-time password digit boxes */
+  --component-otp-input-bg: var(--color-canvas);
+  --component-otp-input-text: var(--color-ink);
+  --component-otp-input-radius: var(--radius-md);
+  --component-otp-input-size: 48px;
+  --component-otp-input-border: 1px solid var(--color-hairline);
+  --component-otp-input-focus-border: 1px solid var(--color-primary);
+  --component-otp-input-filled-border: 1px solid var(--color-primary);
+  --component-otp-input-active-border: 2px solid var(--color-primary);
+
+  /* balance-card — portfolio dashboard balance display */
+  --component-balance-card-bg: var(--color-canvas);
+  --component-balance-card-text: var(--color-ink);
+  --component-balance-card-radius: var(--radius-lg);
+  --component-balance-card-padding: var(--space-xl);
+  --component-balance-card-border: 1px solid var(--color-hairline);
+  --component-balance-card-shadow: var(--shadow-card);
+
+  /* stat-card — small metric card (gain/loss/volume) */
+  --component-stat-card-bg: var(--color-canvas);
+  --component-stat-card-text: var(--color-ink);
+  --component-stat-card-radius: var(--radius-lg);
+  --component-stat-card-padding: var(--space-lg);
+  --component-stat-card-border: 1px solid var(--color-hairline);
+
+  /* transaction-row — ledger / history list item */
+  --component-transaction-row-bg: var(--color-canvas);
+  --component-transaction-row-hover-bg: var(--color-canvas-soft);
+  --component-transaction-row-padding: var(--space-md) var(--space-lg);
+  --component-transaction-row-border-bottom: 1px solid var(--color-hairline);
+
+  /* status-badge — KYC / payment / wallet status pill */
+  --component-status-badge-radius: var(--radius-full);
+  --component-status-badge-padding: 4px 12px;
+  --component-status-badge-font-size: 11px;
+  --component-status-badge-font-weight: 600;
+
+  /* fee-preview — fee breakdown card */
+  --component-fee-preview-bg: var(--color-canvas-soft);
+  --component-fee-preview-radius: var(--radius-md);
+  --component-fee-preview-padding: var(--space-md) var(--space-lg);
+
+  /* stepper — deposit/withdrawal flow progress */
+  --component-stepper-step-size: 32px;
+  --component-stepper-step-gap: var(--space-lg);
+  --component-stepper-line-color: var(--color-hairline);
+  --component-stepper-line-active-color: var(--color-primary);
+
+  /* kyc-gate — full-screen KYC verification overlay */
+  --component-kyc-gate-bg: var(--color-canvas);
+  --component-kyc-gate-z: var(--z-kyc-modal);
+
+  /* paytag — user tag display ($username) */
+  --component-paytag-color: var(--color-primary);
+  --component-paytag-font-weight: 600;
+  --component-paytag-font-size: 14px;
+
+  /* admin-panel — admin management interface */
+  --component-admin-panel-bg: var(--color-canvas);
+  --component-admin-panel-sidebar-bg: var(--color-surface-dark);
+  --component-admin-panel-sidebar-width: 260px;
+  --component-admin-panel-z: var(--z-admin-panel);
 }

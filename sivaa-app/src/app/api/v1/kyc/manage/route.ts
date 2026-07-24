@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
+import { sendKycApprovedEmail, sendKycRejectedEmail } from "@/lib/email/service";
 
 export async function GET(request: NextRequest) {
   try {
@@ -113,6 +114,25 @@ export async function PATCH(request: NextRequest) {
       record_id: document_id,
       new_value: { status, rejection_reason },
     });
+
+    // Send email notification to user
+    const { data: userProfile } = await supabase
+      .from("profiles")
+      .select("name, email")
+      .eq("id", doc.user_id)
+      .single();
+
+    if (userProfile?.email) {
+      if (status === "approved") {
+        await sendKycApprovedEmail(userProfile.email, userProfile.name || "User");
+      } else {
+        await sendKycRejectedEmail(
+          userProfile.email,
+          userProfile.name || "User",
+          rejection_reason || "The document was unclear, expired, or did not match your account details."
+        );
+      }
+    }
 
     return NextResponse.json({ document: doc });
   } catch (err) {

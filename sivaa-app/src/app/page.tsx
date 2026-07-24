@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Check } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -190,9 +191,9 @@ export default function LandingPage() {
                 <div className="pricing-card-divider"></div>
                 <div className="pricing-card-features-label">Includes:</div>
                 <ul className="pricing-card-features">
-                  <li className="feature-bullet"><span className="feature-bullet-check">✓</span> Free $ORTHO tag</li>
-                  <li className="feature-bullet"><span className="feature-bullet-check">✓</span> Escrow-protected payments</li>
-                  <li className="feature-bullet"><span className="feature-bullet-check">✓</span> 3% fee per transaction</li>
+                  <li className="feature-bullet"><span className="feature-bullet-check"><Check size={12} /></span> Free $ORTHO tag</li>
+                  <li className="feature-bullet"><span className="feature-bullet-check"><Check size={12} /></span> Escrow-protected payments</li>
+                  <li className="feature-bullet"><span className="feature-bullet-check"><Check size={12} /></span> 3% fee per transaction</li>
                 </ul>
               </div>
 
@@ -206,9 +207,9 @@ export default function LandingPage() {
                 <div className="pricing-card-divider"></div>
                 <div className="pricing-card-features-label">Includes:</div>
                 <ul className="pricing-card-features">
-                  <li className="feature-bullet"><span className="feature-bullet-check">✓</span> Everything in Personal</li>
-                  <li className="feature-bullet"><span className="feature-bullet-check">✓</span> Reduced 2% fee per transaction</li>
-                  <li className="feature-bullet"><span className="feature-bullet-check">✓</span> Priority escrow review</li>
+                  <li className="feature-bullet"><span className="feature-bullet-check"><Check size={12} /></span> Everything in Personal</li>
+                  <li className="feature-bullet"><span className="feature-bullet-check"><Check size={12} /></span> Reduced 2% fee per transaction</li>
+                  <li className="feature-bullet"><span className="feature-bullet-check"><Check size={12} /></span> Priority escrow review</li>
                 </ul>
               </div>
 
@@ -222,9 +223,9 @@ export default function LandingPage() {
                 <div className="pricing-card-divider"></div>
                 <div className="pricing-card-features-label">Includes:</div>
                 <ul className="pricing-card-features">
-                  <li className="feature-bullet"><span className="feature-bullet-check">✓</span> Everything in Business</li>
-                  <li className="feature-bullet"><span className="feature-bullet-check">✓</span> Lowest 1% fee per transaction</li>
-                  <li className="feature-bullet"><span className="feature-bullet-check">✓</span> Dedicated account manager</li>
+                  <li className="feature-bullet"><span className="feature-bullet-check"><Check size={12} /></span> Everything in Business</li>
+                  <li className="feature-bullet"><span className="feature-bullet-check"><Check size={12} /></span> Lowest 1% fee per transaction</li>
+                  <li className="feature-bullet"><span className="feature-bullet-check"><Check size={12} /></span> Dedicated account manager</li>
                 </ul>
               </div>
             </div>

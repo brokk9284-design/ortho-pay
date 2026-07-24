@@ -31,4 +31,10 @@
 
   /* Full-screen loading, maintenance */
   --z-fullscreen: 700;
+
+  /* --- Fintech-specific layers --- */
+  --z-kyc-modal: 450;
+  --z-country-selector: 350;
+  --z-admin-panel: 420;
+  --z-amount-input: 310;
 }

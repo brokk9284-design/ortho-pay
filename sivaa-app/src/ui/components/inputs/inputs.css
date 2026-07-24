@@ -99,11 +99,11 @@
 }
 
 .input-error {
-  border-color: #ef4444;
+  border-color: var(--color-error);
 }
 
 .input-error:focus {
-  border-color: #ef4444;
+  border-color: var(--color-error);
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
 }
 
@@ -132,7 +132,7 @@
 .input-error-text {
   font-family: var(--font-body);
   font-size: var(--text-caption-sm-size);
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 /* --------------------------------------------------------
@@ -344,4 +344,195 @@
   .search-pill {
     max-width: 240px;
   }
+}
+
+/* --------------------------------------------------------
+ * Fintech: Amount input — currency entry field
+ * Large tabular-nums display, card radius (not pill)
+ * -------------------------------------------------------- */
+.amount-input {
+  display: block;
+  width: 100%;
+  background-color: var(--component-amount-input-bg);
+  color: var(--component-amount-input-text);
+  font-family: var(--font-body);
+  font-size: var(--component-amount-input-font-size);
+  font-weight: var(--component-amount-input-font-weight);
+  font-variant-numeric: var(--font-numeric-variant);
+  font-feature-settings: var(--font-numeric-feature);
+  letter-spacing: var(--text-money-lg-letter-spacing);
+  border-radius: var(--component-amount-input-radius);
+  padding: var(--component-amount-input-padding);
+  border: var(--component-amount-input-border);
+  transition: border-color var(--duration-fast) var(--ease-default),
+              box-shadow var(--duration-fast) var(--ease-default);
+  -webkit-appearance: none;
+  appearance: none;
+  -moz-appearance: textfield;
+}
+
+.amount-input::-webkit-outer-spin-button,
+.amount-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.amount-input:focus {
+  border: var(--component-amount-input-focus-border);
+  box-shadow: 0 0 0 3px rgba(83, 58, 253, 0.2);
+  outline: none;
+}
+
+.amount-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Amount input with currency prefix */
+.amount-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background-color: var(--component-amount-input-bg);
+  border-radius: var(--component-amount-input-radius);
+  border: var(--component-amount-input-border);
+  padding: var(--component-amount-input-padding);
+  transition: border-color var(--duration-fast) var(--ease-default),
+              box-shadow var(--duration-fast) var(--ease-default);
+}
+
+.amount-input-wrapper:focus-within {
+  border: var(--component-amount-input-focus-border);
+  box-shadow: 0 0 0 3px rgba(83, 58, 253, 0.2);
+}
+
+.amount-input-prefix {
+  font-family: var(--font-body);
+  font-size: var(--component-amount-input-font-size);
+  font-weight: var(--component-amount-input-font-weight);
+  color: var(--color-mute);
+  flex-shrink: 0;
+}
+
+.amount-input-wrapper .amount-input {
+  border: none;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  flex: 1;
+}
+
+.amount-input-wrapper .amount-input:focus {
+  border: none;
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------
+ * Fintech: OTP input — one-time password digit boxes
+ * -------------------------------------------------------- */
+.otp-group {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+}
+
+.otp-digit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--component-otp-input-size);
+  height: var(--component-otp-input-size);
+  background-color: var(--component-otp-input-bg);
+  color: var(--component-otp-input-text);
+  font-family: var(--font-body);
+  font-size: var(--text-heading-md-size);
+  font-weight: var(--text-heading-md-weight);
+  border-radius: var(--component-otp-input-radius);
+  border: var(--component-otp-input-border);
+  text-align: center;
+  transition: border-color var(--duration-fast) var(--ease-default),
+              box-shadow var(--duration-fast) var(--ease-default);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.otp-digit:focus {
+  border: var(--component-otp-input-active-border);
+  box-shadow: 0 0 0 3px rgba(83, 58, 253, 0.2);
+  outline: none;
+}
+
+.otp-digit.is-filled {
+  border: var(--component-otp-input-filled-border);
+}
+
+.otp-digit.is-active {
+  border: var(--component-otp-input-active-border);
+}
+
+.otp-digit.is-just-filled {
+  animation: otp-bounce var(--duration-fast) var(--ease-spring) both;
+}
+
+/* --------------------------------------------------------
+ * Fintech: Paytag display ($username)
+ * -------------------------------------------------------- */
+.paytag {
+  color: var(--component-paytag-color);
+  font-weight: var(--component-paytag-font-weight);
+  font-size: var(--component-paytag-font-size);
+  font-family: var(--font-body);
+  text-decoration: none;
+}
+
+.paytag:hover {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------
+ * Fintech: Status badge — KYC / payment / wallet status
+ * -------------------------------------------------------- */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: var(--component-status-badge-radius);
+  padding: var(--component-status-badge-padding);
+  font-size: var(--component-status-badge-font-size);
+  font-weight: var(--component-status-badge-font-weight);
+  font-family: var(--font-body);
+  line-height: 1;
+}
+
+.status-badge-pending {
+  background: var(--color-status-pending-soft);
+  color: var(--color-status-pending);
+}
+
+.status-badge-verified,
+.status-badge-success {
+  background: var(--color-status-verified-soft);
+  color: var(--color-status-verified);
+}
+
+.status-badge-rejected,
+.status-badge-error {
+  background: var(--color-status-rejected-soft);
+  color: var(--color-status-rejected);
+}
+
+.status-badge-frozen {
+  background: var(--color-status-frozen-soft);
+  color: var(--color-status-frozen);
+}
+
+/* --------------------------------------------------------
+ * Fintech: Toggle switch — spring easing
+ * -------------------------------------------------------- */
+.toggle-track {
+  transition: background-color var(--duration-fast) var(--ease-default);
+}
+
+.toggle-track::after {
+  transition: transform var(--duration-fast) var(--ease-spring);
 }

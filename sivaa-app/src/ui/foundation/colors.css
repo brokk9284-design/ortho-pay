@@ -43,4 +43,41 @@
   --color-terminal-red: #ff5f56;
   --color-terminal-yellow: #ffbd2e;
   --color-terminal-green: #27c93f;
+
+  /* --- Fintech Semantic Colors --- */
+  --color-success: #16a34a;
+  --color-error: #dc2626;
+  --color-warning: #d97706;
+  --color-info: #2563eb;
+
+  /* --- Fintech Gain / Loss / Neutral (portfolio, balances, charts) --- */
+  --color-gain: #16a34a;
+  --color-gain-soft: #dcfce7;
+  --color-loss: #dc2626;
+  --color-loss-soft: #fee2e2;
+  --color-neutral: #64748b;
+  --color-neutral-soft: #f1f5f9;
+
+  /* --- Brand Primary (fintech accent) --- */
+  --color-primary: #533afd;
+  --color-primary-deep: #4434d4;
+  --color-primary-press: #2e2b8c;
+  --color-primary-soft: #665efd;
+  --color-primary-subdued: #b9b9f9;
+  --color-brand-dark: #1c1e54;
+
+  /* --- Fintech Ink & Surfaces --- */
+  --color-ink: #0d253d;
+  --color-canvas-soft: #f6f9fc;
+  --color-canvas-cream: #f5e9d4;
+
+  /* --- Fintech Status Badges --- */
+  --color-status-pending: #d97706;
+  --color-status-pending-soft: #fef3c7;
+  --color-status-verified: #16a34a;
+  --color-status-verified-soft: #dcfce7;
+  --color-status-rejected: #dc2626;
+  --color-status-rejected-soft: #fee2e2;
+  --color-status-frozen: #64748b;
+  --color-status-frozen-soft: #f1f5f9;
 }

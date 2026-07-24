@@ -6,34 +6,52 @@
 [data-theme='high-contrast'] {
   /* Brand */
   --color-primary: #0040cc;
-  --color-primary-active: #003399;
-  --color-primary-disabled: #666666;
+  --color-primary-deep: #003399;
+  --color-primary-press: #002666;
 
   /* Surfaces — pure white/black for max contrast */
   --color-canvas: #ffffff;
   --color-surface-soft: #f0f0f0;
-  --color-surface-strong: #e0e0e0;
   --color-surface-card: #ffffff;
   --color-surface-dark: #000000;
-  --color-surface-dark-elevated: #1a1a1a;
+  --color-canvas-soft: #f0f0f0;
+  --color-canvas-cream: #f0f0f0;
 
   /* Hairlines — darker for visibility */
   --color-hairline: #999999;
-  --color-hairline-soft: #cccccc;
+  --color-hairline-strong: #666666;
 
   /* Text — pure black for max contrast */
   --color-ink: #000000;
+  --color-charcoal: #333333;
   --color-body: #333333;
-  --color-body-strong: #000000;
-  --color-muted: #555555;
-  --color-muted-soft: #777777;
+  --color-mute: #555555;
 
-  /* Trading semantics — darker for contrast */
-  --color-up: #007a3e;
-  --color-down: #a01010;
+  /* Fintech semantics — darker for contrast */
+  --color-gain: #007a3e;
+  --color-gain-soft: #ccffd9;
+  --color-loss: #a01010;
+  --color-loss-soft: #ffd0d0;
+  --color-neutral: #555555;
+  --color-neutral-soft: #e0e0e0;
+
+  --color-success: #007a3e;
+  --color-error: #a01010;
+  --color-warning: #8a5a00;
+  --color-info: #0040cc;
+
+  /* Status badges — high contrast */
+  --color-status-pending: #8a5a00;
+  --color-status-pending-soft: #fff3cc;
+  --color-status-verified: #007a3e;
+  --color-status-verified-soft: #ccffd9;
+  --color-status-rejected: #a01010;
+  --color-status-rejected-soft: #ffd0d0;
+  --color-status-frozen: #555555;
+  --color-status-frozen-soft: #e0e0e0;
 
   /* Focus ring — thicker */
-  --focus-ring-width: 3px;
+  --color-focus-ring: rgba(0, 64, 204, 0.7);
 }
 
 [data-theme='high-contrast'] :focus-visible {

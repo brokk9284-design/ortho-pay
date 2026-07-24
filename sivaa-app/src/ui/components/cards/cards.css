@@ -332,3 +332,291 @@
     align-items: flex-start;
   }
 }
+
+/* --------------------------------------------------------
+ * Fintech: Balance card — portfolio dashboard
+ * -------------------------------------------------------- */
+.balance-card {
+  background-color: var(--component-balance-card-bg);
+  color: var(--component-balance-card-text);
+  border-radius: var(--component-balance-card-radius);
+  padding: var(--component-balance-card-padding);
+  border: var(--component-balance-card-border);
+  box-shadow: var(--component-balance-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.balance-card-label {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  color: var(--color-mute);
+}
+
+.balance-card-value {
+  font-family: var(--font-body);
+  font-size: var(--text-money-xl-size);
+  font-weight: var(--text-money-xl-weight);
+  line-height: var(--text-money-xl-line-height);
+  letter-spacing: var(--text-money-xl-letter-spacing);
+  font-variant-numeric: var(--font-numeric-variant);
+  font-feature-settings: var(--font-numeric-feature);
+  color: var(--color-ink);
+}
+
+.balance-card-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  font-variant-numeric: var(--font-numeric-variant);
+  font-feature-settings: var(--font-numeric-feature);
+}
+
+.balance-card-change.is-gain {
+  color: var(--color-gain);
+}
+
+.balance-card-change.is-loss {
+  color: var(--color-loss);
+}
+
+/* --------------------------------------------------------
+ * Fintech: Stat card — small metric card
+ * -------------------------------------------------------- */
+.stat-card {
+  background-color: var(--component-stat-card-bg);
+  color: var(--component-stat-card-text);
+  border-radius: var(--component-stat-card-radius);
+  padding: var(--component-stat-card-padding);
+  border: var(--component-stat-card-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.stat-card-label {
+  font-family: var(--font-body);
+  font-size: var(--text-caption-sm-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  color: var(--color-mute);
+}
+
+.stat-card-value {
+  font-family: var(--font-body);
+  font-size: var(--text-money-md-size);
+  font-weight: var(--text-money-md-weight);
+  line-height: var(--text-money-md-line-height);
+  letter-spacing: var(--text-money-md-letter-spacing);
+  font-variant-numeric: var(--font-numeric-variant);
+  font-feature-settings: var(--font-numeric-feature);
+  color: var(--color-ink);
+}
+
+.stat-card-trend {
+  font-family: var(--font-body);
+  font-size: var(--text-caption-sm-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  font-variant-numeric: var(--font-numeric-variant);
+  font-feature-settings: var(--font-numeric-feature);
+}
+
+.stat-card-trend.is-gain {
+  color: var(--color-gain);
+}
+
+.stat-card-trend.is-loss {
+  color: var(--color-loss);
+}
+
+/* --------------------------------------------------------
+ * Fintech: Transaction row — ledger / history
+ * -------------------------------------------------------- */
+.transaction-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  background-color: var(--component-transaction-row-bg);
+  padding: var(--component-transaction-row-padding);
+  border-bottom: var(--component-transaction-row-border-bottom);
+  transition: transform var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-default);
+}
+
+.transaction-row:hover {
+  transform: translateX(2px);
+  background-color: var(--component-transaction-row-hover-bg);
+}
+
+.transaction-row-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-width: 0;
+}
+
+.transaction-row-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-ink);
+}
+
+.transaction-row-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.transaction-row-title {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transaction-row-subtitle {
+  font-family: var(--font-body);
+  font-size: var(--text-caption-sm-size);
+  color: var(--color-mute);
+}
+
+.transaction-row-amount {
+  font-family: var(--font-body);
+  font-size: var(--text-money-sm-size);
+  font-weight: var(--text-money-sm-weight);
+  font-variant-numeric: var(--font-numeric-variant);
+  font-feature-settings: var(--font-numeric-feature);
+  flex-shrink: 0;
+}
+
+.transaction-row-amount.is-gain {
+  color: var(--color-gain);
+}
+
+.transaction-row-amount.is-loss {
+  color: var(--color-loss);
+}
+
+/* --------------------------------------------------------
+ * Fintech: Fee preview — fee breakdown card
+ * -------------------------------------------------------- */
+.fee-preview {
+  background-color: var(--component-fee-preview-bg);
+  border-radius: var(--component-fee-preview-radius);
+  padding: var(--component-fee-preview-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.fee-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  color: var(--color-body);
+}
+
+.fee-preview-row-total {
+  border-top: 1px solid var(--color-hairline);
+  padding-top: var(--space-xs);
+  margin-top: var(--space-xs);
+  font-weight: var(--text-body-sm-strong-weight);
+  color: var(--color-ink);
+}
+
+.fee-preview-amount {
+  font-variant-numeric: var(--font-numeric-variant);
+  font-feature-settings: var(--font-numeric-feature);
+  font-weight: var(--text-body-sm-strong-weight);
+}
+
+/* --------------------------------------------------------
+ * Fintech: Stepper — deposit/withdrawal flow progress
+ * -------------------------------------------------------- */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--component-stepper-step-gap);
+}
+
+.stepper-step {
+  display: flex;
+  align-items: center;
+  gap: var(--component-stepper-step-gap);
+  flex: 1;
+}
+
+.stepper-step:last-child {
+  flex: 0;
+}
+
+.stepper-step-circle {
+  width: var(--component-stepper-step-size);
+  height: var(--component-stepper-step-size);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: var(--text-caption-sm-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  border: 2px solid var(--component-stepper-line-color);
+  color: var(--color-mute);
+  background: var(--color-canvas);
+  flex-shrink: 0;
+  transition: border-color var(--duration-fast) var(--ease-default),
+              color var(--duration-fast) var(--ease-default),
+              background-color var(--duration-fast) var(--ease-default);
+}
+
+.stepper-step.is-active .stepper-step-circle {
+  border-color: var(--component-stepper-line-active-color);
+  color: var(--color-primary);
+}
+
+.stepper-step.is-complete .stepper-step-circle {
+  border-color: var(--component-stepper-line-active-color);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.stepper-step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--component-stepper-line-color);
+  transition: background-color var(--duration-fast) var(--ease-default);
+}
+
+.stepper-step.is-complete .stepper-step-line {
+  background: var(--component-stepper-line-active-color);
+}
+
+.stepper-step-label {
+  font-family: var(--font-body);
+  font-size: var(--text-caption-sm-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  color: var(--color-mute);
+  white-space: nowrap;
+}
+
+.stepper-step.is-active .stepper-step-label,
+.stepper-step.is-complete .stepper-step-label {
+  color: var(--color-ink);
+}

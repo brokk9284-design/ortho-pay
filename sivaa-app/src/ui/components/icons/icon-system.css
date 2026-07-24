@@ -1,0 +1,152 @@
+/* ============================================================
+ * ORTHO-PAY Component — Icon System
+ * Flat icons at rest, animated on interaction.
+ * Uses Lucide React icons — no emojis anywhere in the system.
+ *
+ * Icon states:
+ *   .icon — base flat state
+ *   .icon-interactive — hover/active animation
+ *   .icon-spin — continuous rotation (loading)
+ *   .icon-pulse — soft pulse (live indicator)
+ * ============================================================ */
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform var(--duration-fast) var(--ease-default),
+              opacity var(--duration-fast) var(--ease-default),
+              color var(--duration-fast) var(--ease-default);
+}
+
+/* Size variants */
+.icon-xs { width: 14px; height: 14px; }
+.icon-sm { width: 16px; height: 16px; }
+.icon-md { width: 20px; height: 20px; }
+.icon-lg { width: 24px; height: 24px; }
+.icon-xl { width: 32px; height: 32px; }
+
+/* Interactive icons — animate on hover/active */
+.icon-interactive {
+  cursor: pointer;
+}
+
+.icon-interactive:hover {
+  transform: scale(1.1);
+}
+
+.icon-interactive:active {
+  transform: scale(0.95);
+}
+
+/* Spinning icon (loading states) */
+.icon-spin {
+  animation: spin 0.8s linear infinite;
+}
+
+/* Pulsing icon (live indicators) */
+.icon-pulse {
+  animation: pulse-soft 2s var(--ease-default) infinite;
+}
+
+/* Bounce on mount (success states) */
+.icon-bounce {
+  animation: check-burst var(--duration-normal) var(--ease-spring) both;
+}
+
+/* Shake on error */
+.icon-shake {
+  animation: shake var(--duration-fast) var(--ease-default) both;
+}
+
+/* Icon container — circle background */
+.icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.icon-circle-sm {
+  width: 32px;
+  height: 32px;
+}
+
+.icon-circle-md {
+  width: 40px;
+  height: 40px;
+}
+
+.icon-circle-lg {
+  width: 56px;
+  height: 56px;
+}
+
+.icon-circle-soft {
+  background-color: var(--color-surface-soft);
+  color: var(--color-ink);
+}
+
+.icon-circle-primary {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.icon-circle-success {
+  background-color: var(--color-gain-soft);
+  color: var(--color-gain);
+}
+
+.icon-circle-error {
+  background-color: var(--color-loss-soft);
+  color: var(--color-loss);
+}
+
+.icon-circle-warning {
+  background-color: var(--color-status-pending-soft);
+  color: var(--color-status-pending);
+}
+
+/* Dark theme adjustments */
+[data-theme='dark'] .icon-circle-soft {
+  background-color: var(--color-surface-soft);
+}
+
+[data-theme='dark'] .icon-circle-primary {
+  background-color: rgba(102, 94, 253, 0.15);
+}
+
+[data-theme='dark'] .icon-circle-success {
+  background-color: var(--color-gain-soft);
+}
+
+[data-theme='dark'] .icon-circle-error {
+  background-color: var(--color-loss-soft);
+}
+
+[data-theme='dark'] .icon-circle-warning {
+  background-color: var(--color-status-pending-soft);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .icon,
+  .icon-interactive,
+  .icon-spin,
+  .icon-pulse,
+  .icon-bounce,
+  .icon-shake {
+    animation: none;
+    transition: none;
+  }
+
+  .icon-interactive:hover {
+    transform: none;
+  }
+
+  .icon-interactive:active {
+    transform: none;
+  }
+}

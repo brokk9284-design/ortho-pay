@@ -3,12 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff, Check, X } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [country, setCountry] = useState("US");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,6 +20,12 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -33,13 +43,15 @@ export default function RegisterPage() {
         return;
       }
 
-      router.push("/dashboard");
+      // Redirect to OTP verification page with email
+      sessionStorage.setItem("reg_password", password);
+      const params = new URLSearchParams({ email, name });
+      router.push(`/verify-otp?${params.toString()}`);
     } catch {
       setError("Network error. Please try again.");
       setLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8" style={{ backgroundColor: "var(--color-canvas)", fontFamily: "var(--font-body)" }}>
       <div className="w-full" style={{ maxWidth: "400px" }}>
@@ -86,16 +98,68 @@ export default function RegisterPage() {
 
           <div className="input-group">
             <label className="input-label" htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              className="input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 8 characters"
-              minLength={8}
-              required
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                className="input pr-10"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 8 characters"
+                minLength={8}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-mute)" }}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {password.length > 0 && (
+              <div className="mt-2 flex flex-col gap-1">
+                {[
+                  { label: "8+ characters", check: password.length >= 8 },
+                  { label: "Uppercase letter", check: /[A-Z]/.test(password) },
+                  { label: "Number", check: /\d/.test(password) },
+                  { label: "Special character", check: /[^A-Za-z0-9]/.test(password) },
+                ].map((req) => (
+                  <div key={req.label} className="flex items-center gap-1 text-[10px]" style={{ color: req.check ? "var(--color-terminal-green)" : "var(--color-mute)" }}>
+                    {req.check ? <Check size={10} /> : <X size={10} />}
+                    {req.label}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="input-group">
+            <label className="input-label" htmlFor="confirmPassword">Confirm Password</label>
+            <div className="relative">
+              <input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                className="input pr-10"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Re-enter your password"
+                minLength={8}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-mute)" }}
+              >
+                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {confirmPassword.length > 0 && password !== confirmPassword && (
+              <span className="text-[10px] mt-1" style={{ color: "#ef4444" }}>Passwords do not match</span>
+            )}
           </div>
 
           <div className="input-group">

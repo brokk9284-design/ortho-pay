@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, requireAdmin } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { uploadFile, buildReceiptFilename, isStorageConfigured } from "@/lib/github-storage";
+import { sendReceiptUploadedEmail } from "@/lib/email/service";
 
 export async function POST(request: NextRequest) {
   try {
@@ -95,6 +96,33 @@ export async function POST(request: NextRequest) {
       "receipt_uploaded",
       { paymentId: paymentId }
     );
+
+    // Send email to the other party
+    const { data: otherProfile } = await supabase
+      .from("profiles")
+      .select("name, email, siva_tag")
+      .eq("id", otherUserId)
+      .single();
+    const { data: senderProfile } = await supabase
+      .from("profiles")
+      .select("siva_tag")
+      .eq("id", payment.sender_id)
+      .single();
+    const { data: paymentFull } = await supabase
+      .from("payments")
+      .select("gross_amount")
+      .eq("payment_id", paymentId)
+      .single();
+
+    if (otherProfile?.email) {
+      await sendReceiptUploadedEmail(
+        otherProfile.email,
+        otherProfile.name || "User",
+        paymentFull?.gross_amount?.toFixed(2) || "0.00",
+        senderProfile?.siva_tag || "unknown",
+        payment.reference
+      );
+    }
 
     return NextResponse.json({
       verification,

@@ -1,0 +1,153 @@
+/* ============================================================
+ * ORTHO-PAY Component — Country Selector
+ * Dropdown for USA / England selection with flag icons.
+ * Uses Lucide icon components, not emoji flags.
+ * ============================================================ */
+
+.country-selector {
+  position: relative;
+  z-index: var(--z-country-selector);
+}
+
+.country-selector-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background-color: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-full);
+  padding: 8px 16px;
+  height: 40px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  font-weight: var(--text-body-sm-strong-weight);
+  color: var(--color-ink);
+  transition: border-color var(--duration-fast) var(--ease-default),
+              box-shadow var(--duration-fast) var(--ease-default);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.country-selector-trigger:hover {
+  border-color: var(--color-hairline-strong);
+}
+
+.country-selector-trigger:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.country-selector-trigger.is-open {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(83, 58, 253, 0.2);
+}
+
+.country-selector-flag {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.country-selector-code {
+  color: var(--color-mute);
+  font-size: var(--text-caption-sm-size);
+  font-weight: var(--text-body-sm-weight);
+}
+
+.country-selector-chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--color-mute);
+  transition: transform var(--duration-fast) var(--ease-default);
+  flex-shrink: 0;
+}
+
+.country-selector-trigger.is-open .country-selector-chevron {
+  transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.country-selector-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 240px;
+  background-color: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-floating);
+  padding: var(--space-xs);
+  animation: zoom-in var(--duration-fast) var(--ease-default) both;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+[data-theme='dark'] .country-selector-panel {
+  background-color: var(--color-surface-card);
+}
+
+.country-selector-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-base);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm-size);
+  font-weight: var(--text-body-md-weight);
+  color: var(--color-ink);
+  transition: background-color var(--duration-fast) var(--ease-default);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.country-selector-option:hover {
+  background-color: var(--color-surface-soft);
+}
+
+.country-selector-option.is-selected {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.country-selector-option-flag {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+}
+
+.country-selector-option-name {
+  flex: 1;
+}
+
+.country-selector-option-code {
+  color: var(--color-mute);
+  font-size: var(--text-caption-sm-size);
+}
+
+.country-selector-option-check {
+  width: 16px;
+  height: 16px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* Mobile: full-width bottom sheet */
+@media (max-width: 639px) {
+  .country-selector-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: var(--space-base);
+    padding-bottom: calc(var(--space-base) + env(safe-area-inset-bottom, 0));
+    min-width: 100%;
+    max-height: 60vh;
+    animation: slide-up var(--duration-normal) var(--ease-out) both;
+  }
+}

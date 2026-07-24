@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Paperclip, ArrowLeft } from "lucide-react";
 
 interface Message {
   message_id: string;
@@ -148,7 +149,7 @@ export default function ChatConversationPage() {
       <header className="w-full" style={{ borderBottom: "1px solid var(--color-hairline)", backgroundColor: "var(--color-surface-soft)" }}>
         <div className="mx-auto px-4 flex items-center justify-between" style={{ maxWidth: "480px", height: "56px" }}>
           <Link href="/dashboard/chat" className="text-sm transition" style={{ color: "var(--color-charcoal)" }}>
-            ← Back
+            <ArrowLeft size={16} />
           </Link>
           <div className="text-center">
             <div className="text-sm font-semibold" style={{ color: "var(--color-ink)" }}>{otherUserName}</div>
@@ -218,7 +219,7 @@ export default function ChatConversationPage() {
                     >
                       {isFile(msg) ? (
                         <div className="flex items-center gap-2">
-                          <span className="text-lg">📎</span>
+                          <Paperclip size={16} />
                           <div>
                             <div className="text-sm font-medium">{msg.file_name || "File"}</div>
                             {msg.file_size && (
@@ -249,7 +250,7 @@ export default function ChatConversationPage() {
         <div className="px-4 py-3" style={{ borderTop: "1px solid var(--color-hairline)", backgroundColor: "var(--color-surface-soft)" }}>
           <div className="flex items-center gap-2">
             <label className="cursor-pointer rounded-full p-2 transition" style={{ backgroundColor: "var(--color-canvas)", border: "1px solid var(--color-hairline)" }}>
-              <span className="text-sm">📎</span>
+              <Paperclip size={16} style={{ color: "var(--color-charcoal)" }} />
               <input type="file" className="hidden" onChange={handleFileUpload} />
             </label>
             <input

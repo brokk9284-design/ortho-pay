@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, createSupabaseAdminClient } from "@/lib/supabase/server";
 import { generateSivaTag } from "@/lib/utils";
-import { sendWelcomeEmail } from "@/lib/email/service";
+import { sendWelcomeEmail, send2FACodeEmail } from "@/lib/email/service";
+import { createHash, randomInt } from "crypto";
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,15 +23,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createSupabaseServerClient();
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: "Password must be at least 8 characters" },
+        { status: 400 }
+      );
+    }
 
-    const { data, error } = await supabase.auth.signUp({
+    const admin = await createSupabaseAdminClient();
+
+    // Check if user already exists
+    const { data: existingUsers } = await admin.auth.admin.listUsers();
+    const existing = existingUsers?.users?.find((u) => u.email === email);
+    if (existing) {
+      return NextResponse.json(
+        { error: "An account with this email already exists. Try logging in instead." },
+        { status: 400 }
+      );
+    }
+
+    // Create auth user but don't auto-confirm — require OTP
+    const { data, error } = await admin.auth.admin.createUser({
       email,
       password,
+      email_confirm: false,
     });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      const errMsg = error.message || error.name || "Registration failed";
+      console.error("Supabase createUser error:", errMsg, error);
+      return NextResponse.json({ error: errMsg }, { status: 400 });
     }
 
     if (!data.user) {
@@ -42,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     const sivaTag = await generateSivaTag(name);
 
-    const { error: profileError } = await supabase.from("profiles").insert({
+    const { error: profileError } = await admin.from("profiles").insert({
       id: data.user.id,
       siva_tag: sivaTag,
       name,
@@ -51,31 +73,54 @@ export async function POST(request: NextRequest) {
     });
 
     if (profileError) {
+      console.error("Profile creation error:", profileError.message);
       return NextResponse.json(
         { error: "Failed to create profile: " + profileError.message },
         { status: 500 }
       );
     }
 
+    // Create wallet
+    await admin.from("wallets").insert({
+      user_id: data.user.id,
+      total_sent: 0,
+      total_received: 0,
+      locked_balance: 0,
+      status: "active",
+    });
+
     // Send welcome email
     await sendWelcomeEmail(email, name, sivaTag);
 
+    // Generate and store OTP code for registration verification
+    const code = randomInt(100000, 999999).toString();
+    const codeHash = createHash("sha256").update(code).digest("hex");
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+    await admin.from("payment_2fa_codes").insert({
+      user_id: data.user.id,
+      code_hash: codeHash,
+      purpose: "registration",
+      expires_at: expiresAt,
+      used: false,
+    });
+
+    // Send OTP code email
+    await send2FACodeEmail(email, name, code, "verify your email and activate your account");
+
     return NextResponse.json({
-      message: "Registration successful",
+      message: "Account created. Check your email for a verification code.",
       user: {
         id: data.user.id,
         email: data.user.email,
         siva_tag: sivaTag,
       },
-      session: {
-        access_token: data.session?.access_token,
-        refresh_token: data.session?.refresh_token,
-        expires_at: data.session?.expires_at,
-      },
+      session: null,
     });
-  } catch {
+  } catch (err) {
+    console.error("Register error:", err);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error: " + (err instanceof Error ? err.message : String(err)) },
       { status: 500 }
     );
   }

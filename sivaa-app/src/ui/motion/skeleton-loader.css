@@ -15,9 +15,9 @@
 .skeleton {
   background: linear-gradient(
     90deg,
-    var(--color-surface-strong) 0%,
-    var(--color-hairline-soft) 50%,
-    var(--color-surface-strong) 100%
+    var(--color-surface-soft) 0%,
+    var(--color-hairline) 50%,
+    var(--color-surface-soft) 100%
   );
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s var(--ease-default) infinite;
@@ -27,9 +27,9 @@
 [data-theme='dark'] .skeleton {
   background: linear-gradient(
     90deg,
-    var(--color-surface-strong) 0%,
+    var(--color-surface-soft) 0%,
     var(--color-hairline) 50%,
-    var(--color-surface-strong) 100%
+    var(--color-surface-soft) 100%
   );
   background-size: 200% 100%;
 }
@@ -38,13 +38,13 @@
 .skeleton-line {
   height: 16px;
   width: 100%;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
 }
 
 .skeleton-line-short {
   height: 16px;
   width: 60%;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
 }
 
 .skeleton-circle {
@@ -56,11 +56,42 @@
 .skeleton-card {
   height: 120px;
   width: 100%;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
 }
 
 .skeleton-pill {
-  height: 44px;
+  height: 36px;
   width: 120px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
+}
+
+/* Fintech skeleton shapes */
+.skeleton-balance {
+  height: 36px;
+  width: 180px;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-chart {
+  height: 200px;
+  width: 100%;
+  border-radius: var(--radius-lg);
+}
+
+.skeleton-table-row {
+  height: 48px;
+  width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+}
+
+.skeleton-stat {
+  height: 80px;
+  width: 100%;
+  border-radius: var(--radius-lg);
 }

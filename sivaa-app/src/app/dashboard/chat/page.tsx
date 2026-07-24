@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { MessageSquare, Plus, LogOut, ArrowLeft } from "lucide-react";
 
 interface ChatItem {
   chat_id: string;
@@ -26,6 +27,20 @@ export default function ChatListPage() {
   const [showNewChat, setShowNewChat] = useState(false);
   const [sivaTagInput, setSivaTagInput] = useState("");
   const [resolving, setResolving] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState("");
+  const logout = async () => {
+    try { await fetch("/api/v1/auth/logout", { method: "POST", credentials: "include" }); } catch {}
+    router.push("/login");
+  };
+
+  useEffect(() => {
+    fetch("/api/v1/auth/me", { credentials: "include" })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (data?.user?.id) setCurrentUserId(data.user.id);
+      })
+      .catch(() => {});
+  }, []);
 
   const fetchChats = useCallback(async () => {
     try {
@@ -70,11 +85,7 @@ export default function ChatListPage() {
   };
 
   const getOtherUser = (chat: ChatItem) => {
-    return chat.user_a?.[0]?.id === getCurrentUserId() ? chat.user_b?.[0] : chat.user_a?.[0];
-  };
-
-  const getCurrentUserId = () => {
-    return "";
+    return chat.user_a?.[0]?.id === currentUserId ? chat.user_b?.[0] : chat.user_a?.[0];
   };
 
   const formatTime = (iso: string) => {
@@ -96,17 +107,19 @@ export default function ChatListPage() {
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--color-canvas)", color: "var(--color-ink)", fontFamily: "var(--font-body)" }}>
       <header className="w-full" style={{ borderBottom: "1px solid var(--color-hairline)", backgroundColor: "var(--color-surface-soft)" }}>
         <div className="mx-auto px-4 flex items-center justify-between" style={{ maxWidth: "480px", height: "56px" }}>
-          <Link href="/dashboard" className="text-sm transition" style={{ color: "var(--color-charcoal)" }}>
-            ← Back
+          <Link href="/dashboard" className="text-sm transition flex items-center gap-1" style={{ color: "var(--color-charcoal)" }}>
+            <ArrowLeft size={16} />
+            Back
           </Link>
           <span className="text-lg font-bold font-display tracking-tight" style={{ color: "var(--color-ink)" }}>
             Chats
           </span>
           <button
             onClick={() => setShowNewChat(!showNewChat)}
-            className="text-xs px-3 py-1 rounded-full transition"
+            className="flex items-center gap-1 text-xs px-3 py-1 rounded-full transition"
             style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
           >
+            <Plus size={12} />
             New
           </button>
         </div>
@@ -147,8 +160,8 @@ export default function ChatListPage() {
           </div>
         ) : chats.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <div className="mb-4 rounded-full flex items-center justify-center" style={{ width: 64, height: 64, backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
-              <span className="text-2xl">💬</span>
+            <div className="mb-4 rounded-full flex items-center justify-center" style={{ width: 56, height: 56, backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
+              <MessageSquare size={24} style={{ color: "var(--color-mute)" }} />
             </div>
             <p className="text-sm mb-1" style={{ color: "var(--color-ink)" }}>No chats yet</p>
             <p className="text-xs" style={{ color: "var(--color-charcoal)" }}>Enter a ORTHO tag to start a conversation</p>

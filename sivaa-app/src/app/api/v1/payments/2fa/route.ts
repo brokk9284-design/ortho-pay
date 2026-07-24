@@ -46,7 +46,20 @@ export async function POST(request: NextRequest) {
 
     if (profile?.email) {
       const purposeText = purpose === "payment_send" ? "confirm your payment" : "fulfill the payment request";
-      await send2FACodeEmail(profile.email, profile.name || "User", code, purposeText);
+      const emailResult = await send2FACodeEmail(profile.email, profile.name || "User", code, purposeText);
+      if (!emailResult?.success) {
+        console.error("[2fa] Failed to send email:", emailResult?.error);
+        return NextResponse.json(
+          { error: "Failed to send verification code email. Please try again or contact support." },
+          { status: 500 }
+        );
+      }
+    } else {
+      console.error("[2fa] No email found for user:", user.id);
+      return NextResponse.json(
+        { error: "No email address found for your account." },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json({ message: "Verification code sent to your email" });
@@ -54,7 +67,11 @@ export async function POST(request: NextRequest) {
     if (err instanceof Response) {
       return NextResponse.json({ error: "Unauthorized" }, { status: err.status });
     }
-    return NextResponse.json({ error: "Failed to send verification code" }, { status: 500 });
+    console.error("[2fa] POST error:", err);
+    return NextResponse.json(
+      { error: "Failed to send verification code: " + (err instanceof Error ? err.message : String(err)) },
+      { status: 500 }
+    );
   }
 }
 

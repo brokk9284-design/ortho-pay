@@ -17,9 +17,9 @@
 
 .number-count {
   animation: count-up var(--duration-normal) var(--ease-out) both;
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum';
+  font-family: var(--font-body);
+  font-variant-numeric: var(--font-numeric-variant);
+  font-feature-settings: var(--font-numeric-feature);
 }
 
 /* Number change flash — subtle highlight when value updates */
@@ -32,16 +32,32 @@
   }
 }
 
+@keyframes number-flash-gain {
+  0% {
+    color: var(--color-gain);
+  }
+  100% {
+    color: inherit;
+  }
+}
+
+@keyframes number-flash-loss {
+  0% {
+    color: var(--color-loss);
+  }
+  100% {
+    color: inherit;
+  }
+}
+
 .number-flash {
   animation: number-flash var(--duration-slow) var(--ease-default) both;
 }
 
 .number-flash-up {
-  animation: number-flash var(--duration-slow) var(--ease-default) both;
-  --flash-color: var(--color-up);
+  animation: number-flash-gain var(--duration-slow) var(--ease-default) both;
 }
 
 .number-flash-down {
-  animation: number-flash var(--duration-slow) var(--ease-default) both;
-  --flash-color: var(--color-down);
+  animation: number-flash-loss var(--duration-slow) var(--ease-default) both;
 }

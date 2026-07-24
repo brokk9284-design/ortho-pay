@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
+import { sendWalletStatusEmail } from "@/lib/email/service";
 
 export async function POST(request: NextRequest) {
   try {
@@ -43,6 +44,34 @@ export async function POST(request: NextRequest) {
       table_name: "wallets",
       record_id: wallet_id,
       new_value: { status },
+    });
+
+    // Send email notification to user
+    const { data: userProfile } = await supabase
+      .from("profiles")
+      .select("name, email")
+      .eq("id", wallet.user_id)
+      .single();
+
+    if (userProfile?.email) {
+      await sendWalletStatusEmail(
+        userProfile.email,
+        userProfile.name || "User",
+        status as "frozen" | "suspended" | "active"
+      );
+    }
+
+    // Create in-app notification
+    await supabase.from("notifications").insert({
+      user_id: wallet.user_id,
+      title: status === "active" ? "Wallet reactivated" : status === "frozen" ? "Wallet frozen" : "Account suspended",
+      message:
+        status === "active"
+          ? "Your wallet has been reactivated. You can now send and receive payments."
+          : status === "frozen"
+            ? "Your wallet has been frozen. Please contact support if you believe this is an error."
+            : "Your account has been suspended. Please contact support to resolve this issue.",
+      type: "system",
     });
 
     return NextResponse.json({

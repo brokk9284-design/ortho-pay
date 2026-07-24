@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 type View = "overview" | "escrow" | "users" | "fees" | "payment-methods" | "kyc" | "receipts" | "audit";
 
@@ -115,6 +117,14 @@ export default function AdminDashboard() {
   const [revenue, setRevenue] = useState<RevenueReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [kycRejectDoc, setKycRejectDoc] = useState<string | null>(null);
+  const [kycRejectReason, setKycRejectReason] = useState("");
+
+  const router = useRouter();
+  const handleLogout = async () => {
+    try { await fetch("/api/v1/auth/logout", { method: "POST", credentials: "include" }); } catch {}
+    router.push("/login");
+  };
 
   const fetchPayments = useCallback(async () => {
     setLoading(true);
@@ -182,7 +192,7 @@ export default function AdminDashboard() {
       const res = await fetch("/api/v1/reports/fraud");
       if (!res.ok) throw new Error("Failed to fetch audit data");
       const data = await res.json();
-      setAuditLogs([]);
+      setAuditLogs(data.audit_logs || data.logs || []);
     } catch {
       setError("Failed to load audit logs");
     }
@@ -287,12 +297,12 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleKycAction = async (documentId: string, status: string) => {
+  const handleKycAction = async (documentId: string, status: string, reason?: string) => {
     try {
       const res = await fetch("/api/v1/kyc/manage", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ document_id: documentId, status }),
+        body: JSON.stringify({ document_id: documentId, status, ...(reason ? { reason } : {}) }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -300,6 +310,8 @@ export default function AdminDashboard() {
         return;
       }
       fetchKycDocuments();
+      setKycRejectDoc(null);
+      setKycRejectReason("");
     } catch {
       setError("Network error updating KYC status");
     }
@@ -341,6 +353,7 @@ export default function AdminDashboard() {
   }, [view, paymentFilter, userSearch, kycFilter, fetchPayments, fetchUsers, fetchFees, fetchPaymentMethods, fetchKycDocuments, fetchReceipts, fetchRevenue, fetchAuditLogs]);
 
   const handleApprove = async (paymentId: string) => {
+    if (!confirm("Are you sure you want to approve this payment? Funds will be released from escrow.")) return;
     try {
       const res = await fetch("/api/v1/payments/approve", {
         method: "POST",
@@ -360,6 +373,7 @@ export default function AdminDashboard() {
   };
 
   const handleReject = async (paymentId: string) => {
+    if (!confirm("Are you sure you want to reject this payment? Funds will be reversed back to the sender.")) return;
     try {
       const res = await fetch("/api/v1/payments/reject", {
         method: "POST",
@@ -558,9 +572,14 @@ export default function AdminDashboard() {
             <Link href="/dashboard" className="text-xs transition" style={{ color: "var(--color-charcoal)" }}>
               User View
             </Link>
-            <Link href="/" className="text-xs transition" style={{ color: "var(--color-charcoal)" }}>
-              Exit
-            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1 text-xs transition"
+              style={{ color: "var(--color-charcoal)", background: "none", border: "none", cursor: "pointer" }}
+            >
+              <LogOut size={14} />
+              Sign out
+            </button>
           </div>
         </header>
 
@@ -979,20 +998,48 @@ export default function AdminDashboard() {
                           {doc.status}
                         </span>
                         {doc.status === "pending" && (
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleKycAction(doc.document_id, "approved")}
-                              className="btn btn-sm"
-                              style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => handleKycAction(doc.document_id, "rejected")}
-                              className="btn btn-secondary btn-sm"
-                            >
-                              Reject
-                            </button>
+                          <div className="flex flex-col gap-2">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleKycAction(doc.document_id, "approved")}
+                                className="btn btn-sm"
+                                style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => setKycRejectDoc(doc.document_id)}
+                                className="btn btn-secondary btn-sm"
+                              >
+                                Reject
+                              </button>
+                            </div>
+                            {kycRejectDoc === doc.document_id && (
+                              <div className="flex flex-col gap-2 p-3 rounded-lg" style={{ backgroundColor: "var(--color-surface-dark)" }}>
+                                <textarea
+                                  value={kycRejectReason}
+                                  onChange={(e) => setKycRejectReason(e.target.value)}
+                                  placeholder="Reason for rejection (sent to user via email)..."
+                                  className="w-full text-xs p-2 rounded outline-none resize-none"
+                                  style={{ backgroundColor: "var(--color-canvas)", border: "1px solid var(--color-hairline)", color: "var(--color-ink)", minHeight: 60 }}
+                                />
+                                <div className="flex gap-2 justify-end">
+                                  <button
+                                    onClick={() => { setKycRejectDoc(null); setKycRejectReason(""); }}
+                                    className="btn btn-secondary btn-sm"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    onClick={() => handleKycAction(doc.document_id, "rejected", kycRejectReason || undefined)}
+                                    className="btn btn-sm"
+                                    style={{ backgroundColor: "rgba(239,68,68,0.1)", color: "var(--color-terminal-red)", border: "1px solid rgba(239,68,68,0.3)" }}
+                                  >
+                                    Confirm Reject
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>

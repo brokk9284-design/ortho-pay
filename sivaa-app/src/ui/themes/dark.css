@@ -19,7 +19,9 @@
   --color-canvas: #0a0a0a;
   --color-surface-soft: #171717;
   --color-surface-card: #1a1a1a;
-  --color-surface-dark: #000000;    /* Deepest dark in dark mode */
+  --color-surface-dark: #000000;
+  --color-canvas-soft: #111111;
+  --color-canvas-cream: #1a1a1a;
 
   /* --- Hairline overrides --- */
   --color-hairline: #262626;
@@ -35,14 +37,66 @@
   --color-link: #ffffff;
   --color-link-mute: #737373;
 
+  /* --- Fintech semantic color overrides --- */
+  --color-gain: #22c55e;
+  --color-gain-soft: rgba(34, 197, 94, 0.15);
+  --color-loss: #ef4444;
+  --color-loss-soft: rgba(239, 68, 68, 0.15);
+  --color-neutral: #94a3b8;
+  --color-neutral-soft: rgba(148, 163, 184, 0.15);
+
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+
+  /* --- Brand primary in dark --- */
+  --color-primary: #665efd;
+  --color-primary-deep: #533afd;
+  --color-primary-soft: #7a70fe;
+  --color-primary-subdued: rgba(102, 94, 253, 0.3);
+  --color-brand-dark: #0a0a0a;
+
+  /* --- Status badges in dark --- */
+  --color-status-pending: #f59e0b;
+  --color-status-pending-soft: rgba(245, 158, 11, 0.15);
+  --color-status-verified: #22c55e;
+  --color-status-verified-soft: rgba(34, 197, 94, 0.15);
+  --color-status-rejected: #ef4444;
+  --color-status-rejected-soft: rgba(239, 68, 68, 0.15);
+  --color-status-frozen: #94a3b8;
+  --color-status-frozen-soft: rgba(148, 163, 184, 0.15);
+
+  /* --- Shadow overrides for dark --- */
+  --shadow-card: var(--shadow-1-dark);
+  --shadow-floating: var(--shadow-2-dark);
+  --shadow-modal: var(--shadow-3-dark);
+
   /* --- Component overrides --- */
   --component-text-input-bg: var(--color-surface-soft);
   --component-text-input-border: 1px solid var(--color-hairline);
+  --component-text-input-focus-border: 1px solid var(--color-primary);
   --component-terminal-card-bg: var(--color-surface-card);
   --component-terminal-card-border: 1px solid var(--color-hairline);
   --component-faq-row-bg: var(--color-canvas);
   --component-faq-row-border-bottom: 1px solid var(--color-hairline);
   --component-footer-bg: var(--color-canvas);
+
+  /* --- Fintech component overrides --- */
+  --component-amount-input-bg: var(--color-surface-soft);
+  --component-amount-input-border: 1px solid var(--color-hairline);
+  --component-amount-input-focus-border: 1px solid var(--color-primary);
+  --component-otp-input-bg: var(--color-surface-soft);
+  --component-otp-input-border: 1px solid var(--color-hairline);
+  --component-balance-card-bg: var(--color-surface-card);
+  --component-balance-card-border: 1px solid var(--color-hairline);
+  --component-stat-card-bg: var(--color-surface-card);
+  --component-stat-card-border: 1px solid var(--color-hairline);
+  --component-transaction-row-bg: var(--color-canvas);
+  --component-transaction-row-hover-bg: var(--color-surface-soft);
+  --component-fee-preview-bg: var(--color-surface-soft);
+  --component-admin-panel-bg: var(--color-canvas);
+  --component-admin-panel-sidebar-bg: #000000;
 }
 
 [data-theme='dark'] ::-webkit-scrollbar {

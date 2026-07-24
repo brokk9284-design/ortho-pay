@@ -53,9 +53,10 @@ export async function POST(request: NextRequest) {
         expires_at: data.session?.expires_at,
       },
     });
-  } catch {
+  } catch (err) {
+    console.error("Login error:", err);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error: " + (err instanceof Error ? err.message : String(err)) },
       { status: 500 }
     );
   }

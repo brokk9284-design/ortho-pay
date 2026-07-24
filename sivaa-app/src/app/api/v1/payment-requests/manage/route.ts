@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/auth";
 import { getOrCreateChat, addSystemMessage } from "@/lib/chat";
+import { sendPaymentRequestUpdateEmail } from "@/lib/email/service";
 
 export async function PATCH(request: NextRequest) {
   try {
@@ -59,6 +60,29 @@ export async function PATCH(request: NextRequest) {
         { paymentRequestId: request_id }
       );
 
+      // Send email to requested user
+      const { data: requesterProfile } = await supabase
+        .from("profiles")
+        .select("name, siva_tag")
+        .eq("id", paymentRequest.requester_id)
+        .single();
+      const { data: requestedProfile } = await supabase
+        .from("profiles")
+        .select("name, email")
+        .eq("id", paymentRequest.requested_from_id)
+        .single();
+
+      if (requestedProfile?.email) {
+        await sendPaymentRequestUpdateEmail(
+          requestedProfile.email,
+          requestedProfile.name || "User",
+          "cancelled",
+          requesterProfile?.name || "User",
+          requesterProfile?.siva_tag || "unknown",
+          paymentRequest.amount.toFixed(2)
+        );
+      }
+
       return NextResponse.json({ message: "Payment request cancelled" });
     }
 
@@ -87,6 +111,29 @@ export async function PATCH(request: NextRequest) {
         "request_declined",
         { paymentRequestId: request_id }
       );
+
+      // Send email to requester
+      const { data: requesterProfile } = await supabase
+        .from("profiles")
+        .select("name, email")
+        .eq("id", paymentRequest.requester_id)
+        .single();
+      const { data: requestedProfile } = await supabase
+        .from("profiles")
+        .select("name, siva_tag")
+        .eq("id", paymentRequest.requested_from_id)
+        .single();
+
+      if (requesterProfile?.email) {
+        await sendPaymentRequestUpdateEmail(
+          requesterProfile.email,
+          requesterProfile.name || "User",
+          "declined",
+          requestedProfile?.name || "User",
+          requestedProfile?.siva_tag || "unknown",
+          paymentRequest.amount.toFixed(2)
+        );
+      }
 
       return NextResponse.json({ message: "Payment request declined" });
     }
@@ -124,6 +171,29 @@ export async function PATCH(request: NextRequest) {
         "request_fulfilled",
         { paymentRequestId: request_id, paymentId: fulfilled_payment_id }
       );
+
+      // Send email to requester
+      const { data: requesterProfile } = await supabase
+        .from("profiles")
+        .select("name, email")
+        .eq("id", paymentRequest.requester_id)
+        .single();
+      const { data: requestedProfile } = await supabase
+        .from("profiles")
+        .select("name, siva_tag")
+        .eq("id", paymentRequest.requested_from_id)
+        .single();
+
+      if (requesterProfile?.email) {
+        await sendPaymentRequestUpdateEmail(
+          requesterProfile.email,
+          requesterProfile.name || "User",
+          "fulfilled",
+          requestedProfile?.name || "User",
+          requestedProfile?.siva_tag || "unknown",
+          paymentRequest.amount.toFixed(2)
+        );
+      }
 
       return NextResponse.json({ message: "Payment request fulfilled" });
     }

@@ -17,5 +17,14 @@
 
     /* Card padding: 32 → 24px on tablet */
     --space-card-padding: var(--space-lg);
+
+    /* Fintech: medium money sizes on tablet */
+    --text-money-xl-size: 28px;
+    --text-money-xl-letter-spacing: -0.56px;
+  }
+
+  /* Fintech: stat cards 2-up on tablet */
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

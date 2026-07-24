@@ -1,118 +1,144 @@
 ---
 version: alpha
-name: Ollama-design-analysis
-description: |
-  An almost defiantly minimal documentation-first system that treats the home page like a Markdown README — paper-white canvas, 36px center-aligned heading, a single black pill CTA, an inline terminal install snippet, and a hand-drawn llama mascot as the only ornamental element. No gradient, no hero photography, no marketing pyrotechnics. The chrome is a tiny utility palette of pure black, pure white, and three neutral grays; every interactive element is fully rounded into a pill (`{rounded.full}`); typography is SF Pro Rounded for headings paired with system sans for body and ui-monospace for code. Pricing tiers, FAQs, and "your data stays yours" guarantees all sit on the same flat canvas inside thin-border cards — the system is the documentation, and the documentation is the system.
+name: Stripi-Inspired-design-analysis
+description: An inspired interpretation of Stripi's design language — a financial-infrastructure brand built on a deep navy ink, an electric indigo primary, and a recurring atmospheric gradient mesh that occupies the upper third of nearly every marketing page. The system pairs the proprietary Sohne family at thin (300) weights with negative letter-spacing for editorial-density display headlines, and uses tabular-figure body type where money and numerics matter. Buttons are tight-radius pills, cards live on near-white surfaces, and the dashboard track flips polarity to a familiar dark-app shell.
 
 colors:
-  primary: "#000000"
+  primary: "#533afd"
+  primary-deep: "#4434d4"
+  primary-press: "#2e2b8c"
+  primary-soft: "#665efd"
+  primary-bg-subdued-hover: "#b9b9f9"
+  brand-dark-900: "#1c1e54"
+  ink: "#0d253d"
+  ink-secondary: "#273951"
+  ink-mute: "#64748d"
+  ink-mute-2: "#61718a"
   on-primary: "#ffffff"
-  ink: "#000000"
-  ink-deep: "#090909"
-  charcoal: "#525252"
-  body: "#737373"
-  mute: "#a3a3a3"
   canvas: "#ffffff"
-  surface-soft: "#fafafa"
-  surface-card: "#ffffff"
-  hairline: "#e5e5e5"
-  hairline-strong: "#d4d4d4"
-  on-dark: "#ffffff"
-  on-dark-mute: "rgba(255,255,255,0.7)"
-  surface-dark: "#171717"
-  focus-ring: "rgba(59,130,246,0.5)"
-  link: "#000000"
-  link-mute: "#737373"
-  terminal-red: "#ff5f56"
-  terminal-yellow: "#ffbd2e"
-  terminal-green: "#27c93f"
+  canvas-soft: "#f6f9fc"
+  canvas-cream: "#f5e9d4"
+  hairline: "#e3e8ee"
+  hairline-input: "#a8c3de"
+  ruby: "#ea2261"
+  magenta: "#f96bee"
+  lemon: "#9b6829"
+  shadow-blue: "#003770"
 
 typography:
+  display-xxl:
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 56px
+    fontWeight: 300
+    lineHeight: 1.03
+    letterSpacing: -1.4px
+    fontFeature: ss01
   display-xl:
-    fontFamily: SF Pro Rounded
-    fontSize: 36px
-    fontWeight: 500
-    lineHeight: 1.11
-    letterSpacing: 0
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 48px
+    fontWeight: 300
+    lineHeight: 1.15
+    letterSpacing: -0.96px
+    fontFeature: ss01
   display-lg:
-    fontFamily: SF Pro Rounded
-    fontSize: 30px
-    fontWeight: 500
-    lineHeight: 1.2
-    letterSpacing: 0
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 32px
+    fontWeight: 300
+    lineHeight: 1.1
+    letterSpacing: -0.64px
+    fontFeature: ss01
+  display-md:
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 26px
+    fontWeight: 300
+    lineHeight: 1.12
+    letterSpacing: -0.26px
+    fontFeature: ss01
   heading-lg:
-    fontFamily: SF Pro Rounded
-    fontSize: 24px
-    fontWeight: 600
-    lineHeight: 1.33
-    letterSpacing: 0
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 22px
+    fontWeight: 300
+    lineHeight: 1.1
+    letterSpacing: -0.22px
+    fontFeature: ss01
   heading-md:
-    fontFamily: ui-sans-serif
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
     fontSize: 20px
-    fontWeight: 500
+    fontWeight: 300
+    lineHeight: 1.4
+    letterSpacing: -0.2px
+    fontFeature: ss01
+  heading-sm:
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 18px
+    fontWeight: 300
     lineHeight: 1.4
     letterSpacing: 0
-  heading-sm:
-    fontFamily: ui-sans-serif
-    fontSize: 18px
-    fontWeight: 500
-    lineHeight: 1.56
+    fontFeature: ss01
+  body-lg:
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 16px
+    fontWeight: 300
+    lineHeight: 1.4
     letterSpacing: 0
+    fontFeature: ss01
   body-md:
-    fontFamily: ui-sans-serif
-    fontSize: 16px
-    fontWeight: 400
-    lineHeight: 1.5
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 15px
+    fontWeight: 300
+    lineHeight: 1.4
     letterSpacing: 0
-  body-strong:
-    fontFamily: ui-sans-serif
-    fontSize: 16px
-    fontWeight: 500
-    lineHeight: 1.5
-    letterSpacing: 0
-  body-sm:
-    fontFamily: ui-sans-serif
+    fontFeature: ss01
+  body-tabular:
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
     fontSize: 14px
-    fontWeight: 400
-    lineHeight: 1.43
-    letterSpacing: 0
-  body-sm-strong:
-    fontFamily: ui-sans-serif
-    fontSize: 14px
-    fontWeight: 500
-    lineHeight: 1.43
-    letterSpacing: 0
-  caption-sm:
-    fontFamily: ui-sans-serif
-    fontSize: 12px
-    fontWeight: 400
-    lineHeight: 1.33
-    letterSpacing: 0
-  code-md:
-    fontFamily: ui-monospace
-    fontSize: 16px
-    fontWeight: 400
-    lineHeight: 1.5
-    letterSpacing: 0
-  code-sm:
-    fontFamily: ui-monospace
-    fontSize: 14px
-    fontWeight: 400
-    lineHeight: 1.43
-    letterSpacing: 0
+    fontWeight: 300
+    lineHeight: 1.4
+    letterSpacing: -0.42px
+    fontFeature: tnum
   button-md:
-    fontFamily: ui-sans-serif
-    fontSize: 14px
-    fontWeight: 500
-    lineHeight: 1
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.0
     letterSpacing: 0
+    fontFeature: ss01
+  button-sm:
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 1.0
+    letterSpacing: 0
+    fontFeature: ss01
+  caption:
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 13px
+    fontWeight: 400
+    lineHeight: 1.4
+    letterSpacing: -0.39px
+    fontFeature: tnum
+  micro:
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 11px
+    fontWeight: 300
+    lineHeight: 1.4
+    letterSpacing: 0
+    fontFeature: ss01
+  micro-cap:
+    fontFamily: "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif"
+    fontSize: 10px
+    fontWeight: 400
+    lineHeight: 1.15
+    letterSpacing: 0.1px
+    fontFeature: ss01
 
 rounded:
-  none: 0px
+  xs: 4px
   sm: 6px
   md: 8px
   lg: 12px
-  full: 9999px
+  xl: 16px
+  pill: 9999px
 
 spacing:
   xxs: 2px
@@ -122,246 +148,214 @@ spacing:
   lg: 16px
   xl: 24px
   xxl: 32px
-  section: 88px
+  huge: 64px
 
 components:
-  button-primary:
+  button-primary-pill:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
     typography: "{typography.button-md}"
-    rounded: "{rounded.full}"
-    padding: 8px 20px
-    height: 36px
-  button-primary-active:
-    backgroundColor: "{colors.ink-deep}"
+    rounded: "{rounded.pill}"
+    padding: 8px 16px
+  button-primary-pill-pressed:
+    backgroundColor: "{colors.primary-press}"
     textColor: "{colors.on-primary}"
     typography: "{typography.button-md}"
-    rounded: "{rounded.full}"
+    rounded: "{rounded.pill}"
+    padding: 8px 16px
   button-secondary:
     backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
+    textColor: "{colors.primary}"
     typography: "{typography.button-md}"
-    rounded: "{rounded.full}"
-    padding: 8px 20px
-    height: 36px
-  button-pill-on-dark:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    typography: "{typography.button-md}"
-    rounded: "{rounded.full}"
-    padding: 8px 20px
-  button-disabled:
-    backgroundColor: "{colors.surface-soft}"
-    textColor: "{colors.mute}"
-    rounded: "{rounded.full}"
-  search-pill:
-    backgroundColor: "{colors.surface-soft}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.full}"
+    rounded: "{rounded.pill}"
     padding: 8px 16px
-    height: 36px
-  search-pill-focused:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.full}"
+  button-on-dark:
+    backgroundColor: "{colors.brand-dark-900}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.button-md}"
+    rounded: "{rounded.pill}"
+    padding: 8px 16px
   text-input:
     backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
     typography: "{typography.body-md}"
-    rounded: "{rounded.full}"
-    padding: 8px 16px
-    height: 40px
+    rounded: "{rounded.sm}"
+    padding: 8px 12px
   text-input-focused:
     backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.full}"
-  install-snippet:
-    backgroundColor: "{colors.surface-soft}"
-    textColor: "{colors.ink}"
-    typography: "{typography.code-md}"
-    rounded: "{rounded.full}"
-    padding: 12px 20px
-    height: 48px
-  command-tag:
-    backgroundColor: "{colors.surface-soft}"
-    textColor: "{colors.ink}"
-    typography: "{typography.code-sm}"
-    rounded: "{rounded.full}"
-    padding: 6px 12px
-  terminal-card:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    typography: "{typography.code-sm}"
-    rounded: "{rounded.lg}"
-    padding: 16px
-  terminal-traffic-lights:
-    rounded: "{rounded.full}"
-    size: 12px
-  pricing-card:
+    typography: "{typography.body-md}"
+    rounded: "{rounded.sm}"
+    padding: 8px 12px
+  card-feature-light:
     backgroundColor: "{colors.canvas}"
     textColor: "{colors.ink}"
     typography: "{typography.body-md}"
     rounded: "{rounded.lg}"
     padding: 32px
-  pricing-card-dark:
-    backgroundColor: "{colors.surface-dark}"
-    textColor: "{colors.on-dark}"
+  card-pricing:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink}"
     typography: "{typography.body-md}"
     rounded: "{rounded.lg}"
     padding: 32px
-  feature-bullet:
-    textColor: "{colors.charcoal}"
-    typography: "{typography.body-sm}"
-  faq-row:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
+  card-pricing-featured:
+    backgroundColor: "{colors.brand-dark-900}"
+    textColor: "{colors.on-primary}"
     typography: "{typography.body-md}"
-    rounded: "{rounded.none}"
-    padding: 16px 0px
-  link-inline:
-    textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
-  link-mute:
-    textColor: "{colors.body}"
-    typography: "{typography.body-sm}"
-  primary-nav:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-sm-strong}"
-    rounded: "{rounded.none}"
-    height: 56px
-  footer-section:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.body}"
-    typography: "{typography.caption-sm}"
-    rounded: "{rounded.none}"
-    padding: 32px 24px
-  cta-strip-dark:
-    backgroundColor: "{colors.surface-dark}"
-    textColor: "{colors.on-dark}"
-    typography: "{typography.heading-lg}"
     rounded: "{rounded.lg}"
-    padding: 24px 32px
+    padding: 32px
+  card-cream-band:
+    backgroundColor: "{colors.canvas-cream}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.lg}"
+    padding: 32px
+  card-dashboard-mockup:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-tabular}"
+    rounded: "{rounded.lg}"
+    padding: 24px
+  pill-tag-soft:
+    backgroundColor: "{colors.primary-bg-subdued-hover}"
+    textColor: "{colors.primary-deep}"
+    typography: "{typography.micro-cap}"
+    rounded: "{rounded.pill}"
+    padding: 4px 8px
+  nav-bar-on-mesh:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.xs}"
+    padding: 16px 24px
+  link-on-light:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.primary}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.xs}"
+    padding: 0px
+  footer-light:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink-mute}"
+    typography: "{typography.caption}"
+    rounded: "{rounded.xs}"
+    padding: 64px 24px
 ---
 
 ## Overview
 
-Ollama's site is the most aggressively under-designed marketing surface in the AI tooling space, and that is the entire point. The home page reads like a Markdown README rendered with care: a 36px center-aligned heading sits above an inline `curl` install snippet inside a soft-gray pill, a single black "Download" CTA, and a hand-drawn llama mascot as the only ornament. Everything else — automate-your-work block, "Start local. Scale cloud." pricing pair, "Your data stays yours" guarantee strip, FAQ wall on `/pricing` — sits on the same paper-white canvas (`{colors.canvas}`) with quiet `{colors.body}` neutrals carrying the prose. The system is the documentation, and the documentation is the system.
+Stripi's design language opens with the gradient mesh. A wide horizontal band of pastel cream, sherbet orange, lavender, electric indigo, and ruby pink occupies the upper third of nearly every marketing page — the brand's instantly-recognizable atmospheric backdrop. Type and product UI mockups float above it on `{colors.canvas}` (white), with the gradient acting as both decoration and visual anchor. The lower portion of the page returns to white, with feature explanations on `{colors.canvas-soft}` (a barely-tinted cool off-white) and dashboard product mockups composited as faux IDE/console panels in deep navy.
 
-The design philosophy is geometric: every interactive element collapses to `{rounded.full}` (9999px) — buttons, search pills, install-snippet pills, text inputs, and the terminal-traffic-light dots. There are no decorative drop shadows, no gradients, no hero illustrations beyond the llama. Cards (the rare ones, on `/pricing`) use a soft `{rounded.lg}` (12px) and a 1px hairline. The single inverted moment in the entire system is the dark "Max" pricing tier — `{colors.surface-dark}` with white text — which acts as the only attention-grabbing surface in an otherwise studiously flat layout.
+The color system has two primary roles. **Indigo** (`{colors.primary}` — `#533afd`) is the brand's signature CTA color, used sparingly: one filled pill per band. **Deep navy** (`{colors.ink}` — `#0d253d`) is the universal body text color and the fill of dashboard mockups, the featured pricing tier, and the dark-app surfaces on the dashboard track. Ruby (`{colors.ruby}`) and magenta (`{colors.magenta}`) appear inside the gradient mesh and as accent dots in product UI mockups; they are not used as button colors.
 
-Typography pairs SF Pro Rounded (display headings, weight 500–600) with the operating system's default sans (`ui-sans-serif`) for body and `ui-monospace` for code. The roundness of the heading face is the only "personality" the chrome carries — it gently echoes the `{rounded.full}` button geometry without being decorative about it.
+Typography is built around **Sohne** at weight 300 with negative letter-spacing — the brand's editorial-density display signature. Display sizes (32–56px) use -1.4px to -0.64px tracking; body sizes use 0; tabular caption sizes (where money and numerics matter) use the OpenType `tnum` feature plus a tightening -0.36 to -0.42px tracking. The `ss01` stylistic set is enabled across all roles.
 
 **Key Characteristics:**
-- Paper-white `{colors.canvas}` end-to-end with no surface alternation — the whole page is one continuous sheet
-- Center-aligned hero with `{typography.display-xl}` SF Pro Rounded headline, no eyebrow, no subhead beyond a small "Power OpenClaw with Ollama" line under the llama
-- Pill geometry everywhere: every button and pill input is `{rounded.full}`; cards use `{rounded.lg}`; nothing is sharp-cornered except section dividers
-- Single-color CTA system: pure black `{colors.primary}` pills carry every action; "Get Pro" / "Get Max" inside pricing cards are the only variations
-- Inline `curl` install snippet rendered as a pill with `{typography.code-md}` — the most signature element, sitting directly under the hero headline
-- Terminal-mockup card with macOS traffic-light dots and inline `ollama launch openclaw` example — the home page's only "product preview"
-- Inverted dark `{component.pricing-card-dark}` for the highest-tier "Max" plan, breaking the flat-white rhythm exactly once per page
+- Gradient-mesh backdrop on every marketing hero — cream/orange/lavender/indigo/ruby horizontally washed across the upper third of the page.
+- Single-indigo CTA hierarchy: filled `{colors.primary}` pill is the only filled button on marketing surfaces.
+- Sohne thin (weight 300) display tier with negative tracking from -1.4px to -0.2px depending on size.
+- Tabular-figure body type (`tnum`) for any cell containing money or numerics — the brand's quiet financial-data signal.
+- Dark-app dashboard track: deep navy product UI mockups sit composited above the white canvas, frequently with rendered code or dashboard tables inside.
+- Pill-shaped buttons (`{rounded.pill}` 9999px) with tight `8px 16px` padding — short, decisive, transactional.
+- Cream-band feature cards (`{colors.canvas-cream}`) introduce a warm interlude between blue/white sections without breaking the brand's chromatic logic.
 
 ## Colors
 
-> **Source pages:** `/` (home) and `/pricing`. The chrome palette is identical across both — only content changes.
+> **Source pages:** home (`/`), `/payments`, `/pricing`, `dashboard.stripe.com/register/payments`.
 
 ### Brand & Accent
-- **Pure Black** (`{colors.primary}` — `#000000`): the brand. Every primary CTA, every black pill, every link in the nav, and every solid icon. There is no other "brand color."
-- **Ink Deep** (`{colors.ink-deep}` — `#090909`): pressed-state black for the primary pill — a single notch below pure.
+- **Indigo** (`{colors.primary}` — `#533afd`): The brand's signature CTA color. Filled-pill button, link emphasis, gradient anchor.
+- **Indigo Deep** (`{colors.primary-deep}` — `#4434d4`): A deeper indigo used in gradient mid-stops and as the press-state warmer alternative.
+- **Indigo Press** (`{colors.primary-press}` — `#2e2b8c`): Pressed-state lift of the primary.
+- **Indigo Soft** (`{colors.primary-soft}` — `#665efd`): A lighter indigo used in product-UI accents and chart highlights.
+- **Indigo Subdued** (`{colors.primary-bg-subdued-hover}` — `#b9b9f9`): Pale indigo fill used as soft tag background.
+- **Brand Dark 900** (`{colors.brand-dark-900}` — `#1c1e54`): The deep navy used on the featured pricing tier and dashboard chrome.
+- **Ruby** (`{colors.ruby}` — `#ea2261`): Gradient accent and chart highlight; never a button.
+- **Magenta** (`{colors.magenta}` — `#f96bee`): Brighter pink stop in gradient meshes.
+- **Lemon** (`{colors.lemon}` — `#9b6829`): Warm sherbet stop in gradient backdrops.
 
 ### Surface
-- **Canvas** (`{colors.canvas}` — `#ffffff`): the page itself. Nearly every surface in the system.
-- **Soft Surface** (`{colors.surface-soft}` — `#fafafa`): install-snippet pill background, search pill, secondary chip backgrounds, alternating row fill where one is needed.
-- **Surface Dark** (`{colors.surface-dark}` — `#171717`): the dark "Max" pricing card and dark CTA strips. The single inverted surface in the system.
-- **Hairline** (`{colors.hairline}` — `#e5e5e5`): 1px card border, divider line above footer, divider between FAQ rows.
-- **Hairline Strong** (`{colors.hairline-strong}` — `#d4d4d4`): rare slightly stronger divider where extra separation is needed (e.g., between unrelated FAQ groups).
+- **Canvas** (`{colors.canvas}` — `#ffffff`): Default page background.
+- **Canvas Soft** (`{colors.canvas-soft}` — `#f6f9fc`): Cool-tinted off-white used on feature bands beneath the gradient hero.
+- **Canvas Cream** (`{colors.canvas-cream}` — `#f5e9d4`): Warm cream used as a feature-band fill — the brand's chromatic interlude.
+- **Hairline** (`{colors.hairline}` — `#e3e8ee`): 1px borders on cards and tables.
+- **Hairline Input** (`{colors.hairline-input}` — `#a8c3de`): Slightly cooler hairline used on form inputs.
 
 ### Text
-- **Ink** (`{colors.ink}` — `#000000`): all headlines, primary nav links, button text on light surfaces, prices on pricing cards.
-- **Charcoal** (`{colors.charcoal}` — `#525252`): list-item text and disabled-state secondary copy.
-- **Body** (`{colors.body}` — `#737373`): default body color for paragraph copy, FAQ answers, footer link text — the system's most-used text color after pure black.
-- **Mute** (`{colors.mute}` — `#a3a3a3`): caption text, command-line "comment" gray inside terminal mockups, lowest-emphasis utility text.
-- **On Dark** (`{colors.on-dark}` — `#ffffff`): primary text on `{colors.surface-dark}`.
-- **On Dark Mute** (`{colors.on-dark-mute}` — `rgba(255,255,255,0.7)`): secondary copy inside the dark "Max" pricing card.
+- **Ink** (`{colors.ink}` — `#0d253d`): Default body text color across the brand. Deep navy, never pure black.
+- **Ink Secondary** (`{colors.ink-secondary}` — `#273951`): Secondary text on white.
+- **Ink Mute** (`{colors.ink-mute}` — `#64748d`): Helper text, captions, table labels.
+- **Ink Mute 2** (`{colors.ink-mute-2}` — `#61718a`): Near-equivalent to ink-mute used in nav.
+- **On Primary** (`{colors.on-primary}` — `#ffffff`): Text on indigo / dark-navy surfaces.
 
 ### Semantic
-The system has effectively no error/success/warning palette in its public marketing surfaces — there are no validation states, no destructive flows, no banners. The only "semantic" colors are the macOS terminal traffic lights inside the terminal mockup:
-
-- **Terminal Red** (`{colors.terminal-red}` — `#ff5f56`): close-window dot.
-- **Terminal Yellow** (`{colors.terminal-yellow}` — `#ffbd2e`): minimize dot.
-- **Terminal Green** (`{colors.terminal-green}` — `#27c93f`): zoom dot.
-
-These appear only inside `{component.terminal-card}` and have no other use.
-
-### Focus
-- **Focus Ring** (`{colors.focus-ring}` — `rgba(59,130,246,0.5)`): translucent blue browser-default focus ring around interactive elements. The only blue in the system.
+The brand does not use a separate semantic color palette in the marketing system — error / success states live in dashboard-product UI specifically.
 
 ## Typography
 
 ### Font Family
-- **SF Pro Rounded** (display headings) — Apple's rounded geometric sans, used at weights 500 and 600 for headlines from `{typography.display-xl}` (36px) down to `{typography.heading-lg}` (24px). Falls back to `system-ui` → `-apple-system`.
-- **ui-sans-serif** (body, links, buttons, captions) — the operating system's default sans-serif. Carries every non-display text role at 12–20px. Falls back through `system-ui` and platform emoji families.
-- **ui-monospace** (code, install snippet, command tags) — the OS default monospace. Used inside the terminal mockup, the inline `curl` install pill, and any inline `<code>` formatting. Falls back to SFMono-Regular → Menlo → Monaco → Consolas.
 
-The pairing of SF Pro Rounded display + system sans body + system mono code is intentionally "stock Apple" — the design decision is to not have a typography decision. Branded display faces would compete with the system's documentation feel.
+The display and UI tier is **Sohne** (proprietary, licensed from Klim Type Foundry) at weights 300 (thin) and 400 (regular). The variable font (`sohne-var`) is loaded with `font-feature-settings: "ss01"` enabled globally — the stylistic set substitutes a single-story `a` and other character variants that are part of the brand's typographic signature.
+
+When Sohne is unavailable, fall back to **SF Pro Display** at thin weights, then system-ui. For maximum brand fidelity, **Inter** (open-source) at weight 300 with `font-feature-settings: "ss01"` and `letter-spacing: -1.4px` on display sizes approximates the rhythm closely.
 
 ### Hierarchy
 
 | Token | Size | Weight | Line Height | Letter Spacing | Use |
 |---|---|---|---|---|---|
-| `{typography.display-xl}` | 36px | 500 | 1.11 | 0 | Hero headline ("The easiest way to build with open models") |
-| `{typography.display-lg}` | 30px | 500 | 1.2 | 0 | Major section headlines ("Pricing", "Frequently asked questions") |
-| `{typography.heading-lg}` | 24px | 600 | 1.33 | 0 | Section subheading inside body ("Automate your work", "Start local. Scale cloud.") |
-| `{typography.heading-md}` | 20px | 500 | 1.4 | 0 | Pricing tier name ("Free", "Pro", "Max"), card title |
-| `{typography.heading-sm}` | 18px | 500 | 1.56 | 0 | FAQ question label, in-card subtitle |
-| `{typography.body-md}` | 16px | 400 | 1.5 | 0 | Default body, FAQ answers, paragraph copy |
-| `{typography.body-strong}` | 16px | 500 | 1.5 | 0 | Inline emphasis, primary-nav link |
-| `{typography.body-sm}` | 14px | 400 | 1.43 | 0 | Feature bullet ("Access larger models on data-center-grade hardware"), footer link |
-| `{typography.body-sm-strong}` | 14px | 500 | 1.43 | 0 | Button label, pricing-card eyebrow ("Solve harder tasks, faster") |
-| `{typography.caption-sm}` | 12px | 400 | 1.33 | 0 | Footer copyright row, smallest meta text |
-| `{typography.code-md}` | 16px | 400 | 1.5 | 0 | Install-snippet `curl` line, in-terminal command |
-| `{typography.code-sm}` | 14px | 400 | 1.43 | 0 | Terminal output line, inline `<code>` chips |
-| `{typography.button-md}` | 14px | 500 | 1 | 0 | Every button label across the system |
+| `{typography.display-xxl}` | 56px | 300 | 1.03 | -1.4px | Hero headline |
+| `{typography.display-xl}` | 48px | 300 | 1.15 | -0.96px | Section opener |
+| `{typography.display-lg}` | 32px | 300 | 1.1 | -0.64px | Card title / sub-section |
+| `{typography.display-md}` | 26px | 300 | 1.12 | -0.26px | Compact card title |
+| `{typography.heading-lg}` | 22px | 300 | 1.1 | -0.22px | Pricing tier name |
+| `{typography.heading-md}` | 20px | 300 | 1.4 | -0.2px | Section sub-heading |
+| `{typography.heading-sm}` | 18px | 300 | 1.4 | 0 | Mini-section label |
+| `{typography.body-lg}` | 16px | 300 | 1.4 | 0 | Marketing body lead |
+| `{typography.body-md}` | 15px | 300 | 1.4 | 0 | Default UI body |
+| `{typography.body-tabular}` | 14px | 300 | 1.4 | -0.42px | Money / numeric tables (uses `tnum`) |
+| `{typography.button-md}` | 16px | 400 | 1.0 | 0 | Pill button label |
+| `{typography.button-sm}` | 14px | 400 | 1.0 | 0 | Compact pill label |
+| `{typography.caption}` | 13px | 400 | 1.4 | -0.39px | Helper, table labels |
+| `{typography.micro}` | 11px | 300 | 1.4 | 0 | Fine print |
+| `{typography.micro-cap}` | 10px | 400 | 1.15 | 0.1px | All-caps eyebrow |
 
 ### Principles
-The typography is built for legibility at small sizes on a flat-white canvas. SF Pro Rounded's softened terminals on the heading face do almost all of the brand expression; everything below 20px collapses into the operating system's default sans, which renders identically to the way docs.ollama.com and the Ollama CLI's own help text would appear in a terminal. There is almost no letter-spacing variation, no display-only weights, no italic, and the heading-to-body ratio compresses tightly (36 → 30 → 24 → 20 → 16) so the page reads as a single readable column rather than a marketing pyramid.
+- **Thin weight is the brand.** Display tiers always render at weight 300. Bumping to 400+ removes the brand's editorial air.
+- **Negative tracking on display.** -1.4px at 56px, scaling proportionally down to -0.2px at 20px. The negative tracking is the brand's typographic signature.
+- **Tabular figures for money.** Any cell rendering currency, transaction amounts, or numeric counts uses `font-feature-settings: "tnum"` plus a tightening tracking. The brand quietly signals its financial DNA through this micro-detail.
+- **`ss01` globally.** Apply `font-feature-settings: "ss01"` to the body element so the stylistic-set substitution is on for every text role.
 
 ### Note on Font Substitutes
-SF Pro Rounded is Apple-licensed and ships only on macOS/iOS. On other systems it falls back to `system-ui` (Segoe UI / Roboto / DejaVu Sans depending on platform) — Ollama explicitly accepts that the heading face will look slightly different on Windows/Linux. The closest open-source substitute is **Nunito** (rounded geometric sans, weights 500/600). For the body face, **Inter** is a near-perfect match for `system-ui` rendered metrics. For code, **JetBrains Mono** or **Fira Code** are the canonical open-source substitutes for `ui-monospace`.
+Sohne is proprietary. Use **Inter** (open-source via Google Fonts) at weight 300 with `letter-spacing: -1.4px` and `font-feature-settings: "ss01"` for display tiers — Inter is the closest open-source analogue. For body sizes, Inter at 300 weight with `font-feature-settings: "tnum"` (where applicable) is the canonical substitute. Avoid Helvetica or system-ui defaults — they're heavier than the brand needs.
 
 ## Layout
 
 ### Spacing System
-- **Base unit:** 8px (with finer 2/4/6px steps available for tight inline gaps)
-- **Tokens (front matter):** `{spacing.xxs}` (2px) · `{spacing.xs}` (4px) · `{spacing.sm}` (8px) · `{spacing.md}` (12px) · `{spacing.lg}` (16px) · `{spacing.xl}` (24px) · `{spacing.xxl}` (32px) · `{spacing.section}` (88px)
-- **Universal section rhythm:** every page uses `{spacing.section}` (88px) as the vertical gap between major content blocks (hero → automate → start local/scale cloud → your data stays yours → get-started footer call). This is the single largest spacing token in the system and it is used liberally.
-- **Card internal padding:** pricing cards sit at `{spacing.xxl}` (32px) all around; FAQ rows use `{spacing.lg}` (16px) vertical with no horizontal padding.
+- **Base unit**: 8px (with 2 / 4 / 12 sub-tokens for fine work).
+- **Tokens**: `{spacing.xxs}` 2px · `{spacing.xs}` 4px · `{spacing.sm}` 8px · `{spacing.md}` 12px · `{spacing.lg}` 16px · `{spacing.xl}` 24px · `{spacing.xxl}` 32px · `{spacing.huge}` 64px.
+- **Section padding**: 64–96px on marketing surfaces; 32–48px on dashboard / product surfaces.
+- **Card internal padding**: 32px on feature cards; 24px on dashboard mockups.
 
 ### Grid & Container
-- **Max width:** ~720px content column on the home page (the whole page is laid out as a single narrow reading column with optional 2-column splits inside specific sections).
-- **Pricing grid:** 3-up cards at desktop with a max content width of ~960px; collapses to 1-up below 768px.
-- **Automate-your-work split:** desktop 50/50 left-text/right-terminal-mockup; mobile stacks vertical with the terminal below the text.
-- **FAQ:** single-column stacked rows, full-width within the 720px content column.
-- **Footer:** single-row of small body-sm links, center-aligned at desktop, wrapping to two rows on narrow screens.
+- Marketing pages center in a ~1200px container with the gradient mesh extending edge-to-edge above.
+- Pricing collapses 4-up → 2-up → 1-up at 1024 / 768 breakpoints.
+- Dashboard product mockups use their own internal grids (12-col tables, 3-col card grids) rendered as static composites.
 
 ### Whitespace Philosophy
-Whitespace is the entire layout. Sections are separated by 88px of plain white air, never by decorative dividers, never by colored bands. Inside a section, content sits in a tight reading column with no decorative columns, callout boxes, or lifted cards. The site treats the page as a long-form Markdown document, and the air between sections is the equivalent of a blank line in Markdown source.
+The gradient mesh occupies the upper third of the page; the white canvas below is generously padded. Section gaps tend toward 96px, with content tightening to 32px on dashboard / pricing pages where users compare and act.
 
 ## Elevation & Depth
 
 | Level | Treatment | Use |
 |---|---|---|
-| 0 — Flat | No border, no shadow | Hero, automate-your-work, your-data-stays-yours, footer — the dominant treatment across the page |
-| 1 — Hairline border | 1px solid `{colors.hairline}` | Pricing cards, FAQ row dividers, terminal mockup card |
-| 2 — Inverted dark | `{colors.surface-dark}` fill | Dark "Max" pricing card and dark CTA strip — the system's only "elevated" surfaces use color, not shadow |
-
-The system has no drop-shadow elevation at all. Nothing lifts, nothing floats, nothing layers. The only depth cue beyond hairline borders is the single dark surface used on the highest-tier pricing card to draw attention to it.
+| 0 | Flat | Default surface |
+| 1 | `box-shadow: rgba(0,55,112,0.08) 0 1px 3px` | Card lift on white |
+| 2 | `box-shadow: rgba(0,55,112,0.08) 0 8px 24px, rgba(0,55,112,0.04) 0 2px 6px` | Floating panels, dashboard mockup chrome |
+| 3 | Gradient mesh backdrop | The brand's primary depth medium — atmospheric color rather than literal shadow |
 
 ### Decorative Depth
-The site has effectively zero decorative depth in the traditional sense. The "depth" comes entirely from two recurring devices:
-- **The hand-drawn llama mascot** — appearing once at the top of the hero, once at the top of each pricing card, and once next to the lock icon in the "Your data stays yours" section. It is the only illustration in the system.
-- **A single line-drawn lock icon** — used in the data-privacy section. Stroke-only, no fill, drawn in `{colors.ink}`.
+The gradient mesh IS the depth system. Implemented as a layered SVG or large background image rather than CSS gradients (the actual mesh has organic blob shapes that aren't CSS-renderable). The mesh provides the brand's signature lift; literal shadows are reserved for product-UI mockups and stay subtle.
 
 ## Shapes
 
@@ -369,129 +363,94 @@ The site has effectively zero decorative depth in the traditional sense. The "de
 
 | Token | Value | Use |
 |---|---|---|
-| `{rounded.none}` | 0px | Nav, footer, FAQ row dividers — flat structural lines |
-| `{rounded.sm}` | 6px | Inline code chips, command tags |
-| `{rounded.md}` | 8px | Rare medium-radius surfaces (e.g., dropdown panels) |
-| `{rounded.lg}` | 12px | Pricing cards, terminal mockup card |
-| `{rounded.full}` | 9999px | Every button, every pill input, install-snippet pill, search pill, traffic-light dots |
-
-The dominant shape vocabulary is just two values: pills (`{rounded.full}`) for everything interactive and 12px (`{rounded.lg}`) for the few cards in the system. There are no medium-radius "soft cards" — surfaces are either pills or rectangles with corners large enough to read as deliberately soft.
+| `{rounded.xs}` | 4px | Hairline tags, table chrome |
+| `{rounded.sm}` | 6px | Form inputs |
+| `{rounded.md}` | 8px | Compact cards, alerts |
+| `{rounded.lg}` | 12px | Pricing cards, feature cards |
+| `{rounded.xl}` | 16px | Dashboard product mockup chrome |
+| `{rounded.pill}` | 9999px | All buttons, tag pills |
 
 ### Photography Geometry
-There is no photography. The only image-like elements are:
-- **The llama mascot** — a hand-drawn line illustration, ~80–120px on the hero, ~32–48px when it appears as a pricing-card eyebrow icon.
-- **The lock icon** — single stroke line drawing in the privacy section.
-- **macOS traffic-light dots** — three filled circles at 12px (`{rounded.full}`) inside the terminal mockup card.
+The brand uses **product UI mockups** more than photography. Dashboard composites render as faux IDE/terminal/dashboard chrome inside `{rounded.lg}` 12px containers with a subtle `box-shadow`. Real photography appears in customer logo strips and the rare case-study card; treated as inset 4:3 with no shadow.
 
 ## Components
 
-> **No hover states documented** per system policy. Each spec covers Default and Active/Pressed only.
-
 ### Buttons
 
-**`button-primary`** — the universal Ollama CTA
-- Background `{colors.primary}`, text `{colors.on-primary}`, type `{typography.button-md}`, padding `8px 20px`, height `36px`, rounded `{rounded.full}`.
-- Used for "Download" (top nav), "Sign in" (top nav, paired with Download), "Create account", "Get Pro", "Get Max" — every primary action in the system.
-- Pressed state lives in `button-primary-active` — background drops to `{colors.ink-deep}`.
+**`button-primary-pill`** — the dominant CTA system-wide.
+- Background `{colors.primary}`, text `{colors.on-primary}`, type `{typography.button-md}`, padding `{spacing.sm} {spacing.lg}` (8px 16px), rounded `{rounded.pill}` 9999px.
+- Pressed state `button-primary-pill-pressed` shifts background to `{colors.primary-press}`.
 
-**`button-secondary`** — outline alternative on light canvas
-- Background `{colors.canvas}`, text `{colors.ink}`, 1px solid `{colors.hairline-strong}`, type `{typography.button-md}`, padding `8px 20px`, height `36px`, rounded `{rounded.full}`.
-- Used as a secondary affordance — e.g., the "Sign in" pill in the top nav when paired with the black "Download" pill, "See more apps →" arrow link in compact form.
+**`button-secondary`** — outline-style alternative.
+- Background `{colors.canvas}`, text `{colors.primary}`, 1px solid `{colors.primary}` border, same pill geometry.
 
-**`button-pill-on-dark`** — white pill on dark surface
-- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.button-md}`, rounded `{rounded.full}`.
-- Sits inside the dark "Max" pricing card as the "Get Max" CTA — inverts the standard primary so the dark card itself becomes the visual anchor and the white pill reads as the CTA.
-
-**`button-disabled`**
-- Background `{colors.surface-soft}`, text `{colors.mute}`, rounded `{rounded.full}` — flat soft gray.
-
-### Inputs & Forms
-
-**`search-pill`** + **`search-pill-focused`**
-- Default: background `{colors.surface-soft}`, text `{colors.ink}`, type `{typography.body-sm}`, padding `8px 16px`, height `36px`, rounded `{rounded.full}`. Anchored in the center of the primary nav with a small magnifier icon prefix and "Search models" placeholder.
-- Focused: background flips to `{colors.canvas}` and the browser-default `{colors.focus-ring}` translucent blue ring appears.
-
-**`text-input`** + **`text-input-focused`**
-- Default: background `{colors.canvas}`, 1px solid `{colors.hairline}`, type `{typography.body-md}`, padding `8px 16px`, height `40px`, rounded `{rounded.full}`.
-- Focused: 1px ink border + browser-default focus ring.
-
-**`install-snippet`** — the signature install pill
-- Background `{colors.surface-soft}`, text `{colors.ink}` rendered in `{typography.code-md}`, padding `12px 20px`, height `48px`, rounded `{rounded.full}`.
-- Contains the literal `curl -fsSL https://ollama.com/install.sh | sh` install command with a small copy-icon at the right edge. Sits directly below the hero headline as the page's most prominent "CTA."
-
-**`command-tag`** — small inline command chip
-- Background `{colors.surface-soft}`, text `{colors.ink}` in `{typography.code-sm}`, padding `6px 12px`, rounded `{rounded.full}`.
-- Used inside the "Automate your work" section for the `ollama launch openclaw` example chip and similar inline-command demos.
+**`button-on-dark`** — used on dashboard / dark surfaces.
+- Background `{colors.brand-dark-900}`, text `{colors.on-primary}`, same pill geometry.
 
 ### Cards & Containers
 
-**`terminal-card`** — the home page's only "product preview"
-- Container: background `{colors.canvas}`, 1px solid `{colors.hairline}`, padding `{spacing.lg}` (16px), rounded `{rounded.lg}`.
-- Header: three `{component.terminal-traffic-lights}` dots (red/yellow/green at 12px) anchored to the top-left of the card.
-- Body: terminal output rendered in `{typography.code-sm}` with comments in `{colors.mute}` and active commands in `{colors.ink}`.
+**`card-feature-light`** — feature explanation card on white.
+- Background `{colors.canvas}`, padding `{spacing.xxl}`, rounded `{rounded.lg}` 12px, 1px `{colors.hairline}` border, optional Level 1 shadow.
 
-**`terminal-traffic-lights`**
-- Three 12px filled circles at `{rounded.full}`: `{colors.terminal-red}`, `{colors.terminal-yellow}`, `{colors.terminal-green}`. Sits as a row of three with `{spacing.xs}` gaps between dots inside the terminal card header.
+**`card-pricing`** — standard pricing tier.
+- Background `{colors.canvas}`, padding `{spacing.xxl}`, rounded `{rounded.lg}`, 1px `{colors.hairline}` border. Title `{typography.heading-lg}`, price `{typography.display-md}`, body `{typography.body-md}`, CTA pinned bottom as `button-primary-pill`.
 
-**`pricing-card`** — Free / Pro tiers
-- Container: background `{colors.canvas}`, 1px solid `{colors.hairline}`, padding `{spacing.xxl}` (32px), rounded `{rounded.lg}`.
-- Layout: small llama mascot icon (~32px) at top, tier name in `{typography.heading-md}`, one-line tier description, large price in `{typography.display-lg}` (`$0` / `$20`), single `{component.button-primary}` CTA, divider, `{typography.body-sm-strong}` "Everything in Free, plus:" header, list of `{component.feature-bullet}` rows.
+**`card-pricing-featured`** — the inverted dark featured tier.
+- Background `{colors.brand-dark-900}`, text `{colors.on-primary}`, otherwise identical structure to `card-pricing`. The deep-navy fill is the brand's distinctive featured-tier choice.
 
-**`pricing-card-dark`** — Max tier (inverted)
-- Identical layout to `pricing-card` but with `{colors.surface-dark}` background, `{colors.on-dark}` text, `{colors.on-dark-mute}` secondary text, and `{component.button-pill-on-dark}` CTA. The inversion is the system's single "look here" cue.
+**`card-cream-band`** — warm interlude card.
+- Background `{colors.canvas-cream}`, text `{colors.ink}`, padding `{spacing.xxl}`, rounded `{rounded.lg}`. Used to break up the indigo / white rhythm with warmth.
 
-**`feature-bullet`** — pricing card list item
-- Inline `✓` checkmark at `{colors.ink}` followed by `{typography.body-sm}` text in `{colors.charcoal}`. No background, no border, just stacked rows with `{spacing.sm}` between them.
+**`card-dashboard-mockup`** — composited dashboard / product UI screenshot.
+- Background `{colors.canvas}`, type `{typography.body-tabular}` (with `tnum`), padding `{spacing.xl}` 24px, rounded `{rounded.lg}` 12px, Level 2 shadow. Often contains nested mini-mockups: code preview + dashboard table + chart card.
 
-**`faq-row`** — `/pricing` FAQ entry
-- Container: background `{colors.canvas}`, padding `16px 0`, 1px bottom border `{colors.hairline}`.
-- Question: `{typography.heading-sm}` (18px / 500) in `{colors.ink}`.
-- Answer: `{typography.body-md}` (16px / 400) in `{colors.body}`, sitting directly below the question with `{spacing.xs}` gap. Always expanded — no accordion collapse.
+### Inputs & Forms
 
-**`cta-strip-dark`** — rare dark CTA band
-- Background `{colors.surface-dark}`, text `{colors.on-dark}` in `{typography.heading-lg}`, padding `24px 32px`, rounded `{rounded.lg}`. Used sparingly between sections.
-
-### Inline
-
-**`link-inline`** — body-prose anchor link
-- `{colors.ink}` text with underline. Default decoration is `text-decoration: underline`.
-
-**`link-mute`** — secondary anchor in long-form prose
-- `{colors.body}` text with underline appearing on default — used in FAQ answers ("see [hello@ollama.com](mailto:)") and footer.
+**`text-input`** — standard form field.
+- Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.body-md}`, padding `{spacing.sm} {spacing.md}` (8px 12px), rounded `{rounded.sm}` 6px, 1px `{colors.hairline-input}` border.
+- Focus state `text-input-focused`: border swaps to `{colors.primary}`.
 
 ### Navigation
 
-**`primary-nav`**
-- Background `{colors.canvas}`, text `{colors.ink}`, height 56px, type `{typography.body-sm-strong}`, rounded `{rounded.none}`.
-- Layout (desktop): llama icon (left) followed by "Models · Docs · Pricing" text links, centered `{component.search-pill}`, and a right cluster of "Sign in" + black `{component.button-primary}` "Download".
+**`nav-bar-on-mesh`** — top nav floating over the gradient hero.
+- Background `{colors.canvas}` (or transparent depending on scroll), text `{colors.ink}`, padding `{spacing.lg} {spacing.xl}`. Logo wordmark on the left, primary nav center, sign-in + filled `button-primary-pill` on the right.
 
-**Top Nav (Mobile)**
-- Llama icon at left, hamburger drawer trigger at right. Search pill expands to full-width when triggered. The drawer lists "Models · Docs · Pricing · Sign in · Download" stacked vertically with `{spacing.lg}` row gaps.
+### Pills, Tags, and Chips
 
-### Footer
+**`pill-tag-soft`** — subdued indigo tag.
+- Background `{colors.primary-bg-subdued-hover}`, text `{colors.primary-deep}`, type `{typography.micro-cap}`, padding `4px 8px`, rounded `{rounded.pill}`.
 
-**`footer-section`**
-- Background `{colors.canvas}`, 1px top border `{colors.hairline}`, padding `32px 24px`, type `{typography.caption-sm}` `{colors.body}`.
-- Single horizontal row of small links: "Download · Blog · Docs · GitHub · Discord · X · Contact · Privacy · Terms" + a "© 2026 Ollama" copyright at the right edge. Wraps to two rows on narrow screens.
+### Signature Components
+
+**Gradient Mesh Backdrop** — pastel cream → sherbet orange → lavender → indigo → ruby pink stops blurred horizontally across the upper third of the page. Implemented as SVG or a large background image — not a flat CSS gradient (the real mesh has organic blob shapes).
+
+**Composited Dashboard Mockup** — multi-layer faux-product-UI compositions: an IDE panel on the left, a dashboard table center, a chart card on the right, all rendered at small scale inside `{rounded.lg}` containers with subtle Level 2 shadows. The composite is the brand's most-photographed feature.
+
+**Tabular-Figure Money Type** — every number rendering money, count, or transaction value uses `font-feature-settings: "tnum"`. The brand's quiet signal that it's a financial-infrastructure platform.
+
+**`link-on-light`** — inline links on light surfaces.
+- Text `{colors.primary}` rendered in `{typography.body-md}`, no underline by default.
+
+**`footer-light`** — site-wide footer.
+- Background `{colors.canvas}`, text `{colors.ink-mute}`, type `{typography.caption}`, padding `{spacing.huge} {spacing.xl}` (64px 24px). Holds 4–6 columns of link groups, social icons, and a small legal row.
 
 ## Do's and Don'ts
 
 ### Do
-- Treat the page like a Markdown document: single reading column, plenty of `{spacing.section}` air between sections, no decorative dividers.
-- Use `{component.button-primary}` (black pill) for every primary action. There is no green, no blue, no brand-tinted CTA.
-- Default to `{rounded.full}` for any interactive element. Cards get `{rounded.lg}` (12px) and that is the only exception.
-- Use `{typography.display-xl}` SF Pro Rounded for the hero headline and `{typography.body-md}` system sans for everything else. Avoid intermediate display sizes.
-- Reserve `{component.pricing-card-dark}` (the inverted dark surface) for exactly one "look here" moment per page — never use it twice.
-- Render install commands and CLI examples inside `{component.install-snippet}` or `{component.terminal-card}` with `{typography.code-md}` / `{typography.code-sm}`. Code is a first-class component.
-- Keep the llama mascot the only illustration in the system. It is the brand.
+- Reserve `{colors.primary}` for filled CTAs and inline link emphasis — it should appear sparingly, one filled button per band.
+- Apply the gradient mesh to every marketing hero; bare-canvas heroes feel off-brand.
+- Render display tiers at weight 300 with negative letter-spacing — the thin tracking is the typographic signature.
+- Use `font-feature-settings: "tnum"` on every money / numeric cell.
+- Apply `font-feature-settings: "ss01"` globally on the body element.
+- Pair every feature explanation with a composited product UI mockup; the brand's argument is "look at the actual product."
 
 ### Don't
-- Don't introduce gradients, drop shadows, or atmospheric backgrounds. The canvas is pure `{colors.canvas}`.
-- Don't add brand colors. The system is `{colors.primary}` (black) on `{colors.canvas}` (white) with `{colors.body}` (gray) text. That is it.
-- Don't soften pills or sharpen cards — pills stay `{rounded.full}`, cards stay `{rounded.lg}`. Don't introduce `{rounded.md}` for buttons or `{rounded.full}` for cards.
-- Don't lift cards with shadows. Use a 1px `{colors.hairline}` border or invert to `{colors.surface-dark}` — those are the only two card treatments.
-- Don't replace `ui-sans-serif` with a branded display body face. The system relies on `system-ui` rendering to feel native.
-- Don't fill long-form pages with marketing chrome. FAQ answers stay in `{colors.body}` body-md prose with no decorative containers.
+- Don't bump display weight above 300 — at 400 the brand's editorial air collapses.
+- Don't add new accent colors outside the documented gradient stops (cream / orange / lavender / indigo / ruby / magenta).
+- Don't use the indigo `{colors.primary}` as a body-text color — it's a CTA and link color, not a type color at body size.
+- Don't shrink button padding below `8px 16px` — the tight pill is part of the brand's transactional feel.
+- Don't render money cells without `tnum` — it breaks the quiet financial-data signature.
+- Don't replace the pill shape with rounded-rectangles for buttons.
 
 ## Responsive Behavior
 
@@ -499,41 +458,30 @@ There is no photography. The only image-like elements are:
 
 | Name | Width | Key Changes |
 |---|---|---|
-| desktop-large | 1280px+ | Default desktop — 720px content column, 3-up pricing grid |
-| desktop | 1024px | Same layout; nav remains horizontal |
-| tablet | 850px | Pricing collapses from 3-up to 2-up + 1; nav search pill compresses |
-| tablet-narrow | 768px | Pricing collapses to 1-up stacked; primary nav becomes hamburger |
-| mobile | 640px | Hero headline drops from `{typography.display-xl}` (36px) to ~28px; install-snippet wraps; section padding tightens |
+| Wide | ≥ 1440px | Full gradient mesh edge-to-edge; dashboard composite at full scale |
+| Desktop | 1024–1440px | Default content max-width; pricing 4-up |
+| Tablet | 768–1023px | Pricing 2-up; dashboard composite simplifies to 2 panels |
+| Mobile | < 768px | Pricing 1-up; hamburger nav; display drops 56 → 36px |
 
 ### Touch Targets
-All interactive elements meet WCAG AA at the 36–40px height range. `{component.button-primary}` and `{component.button-secondary}` sit at 36px height with 20px horizontal padding, giving an effective tappable area of ~36×80px which exceeds the 44×44px AAA threshold via the inline padding. `{component.text-input}` sits at 40px. `{component.search-pill}` sits at 36px height with 16px padding. Footer links use `{typography.caption-sm}` (12px) but receive ~12px line-height + ~8px vertical padding for a tappable row of ~32–36px.
+- Pill buttons hit ≥ 40×40px on mobile via padding scaling. On smaller screens, buttons size up to 44×44px to maintain WCAG AAA.
+- Form fields stay at 40px minimum height.
 
 ### Collapsing Strategy
-- **Primary nav:** desktop horizontal → tablet-narrow hamburger drawer at 768px. The black "Download" CTA stays visible at all widths; it never collapses into the menu.
-- **Search pill:** desktop fixed width ~360px → tablet compressed to ~240px → mobile collapses to icon-only with a full-width overlay on tap.
-- **Pricing grid:** 3-up → 2+1 → 1-up stacked at 850, 768, and below. The dark "Max" card stays in its inverted treatment at every breakpoint.
-- **Automate-your-work split:** desktop 50/50 → tablet stacks vertical with text above terminal mockup.
-- **Hero headline:** `{typography.display-xl}` (36px) at desktop, scaling to ~28px at mobile with line-height holding at ~1.15.
-- **Section spacing:** `{spacing.section}` (88px) desktop → 64px tablet → 48px mobile.
-- **Install-snippet pill:** wraps `curl` text to a second line on narrow screens rather than truncating; the copy-icon stays anchored to the right edge.
+- Display tiers stair-step 56 → 48 → 32 → 26 → 22px through the breakpoints.
+- Gradient mesh re-tiles on mobile to preserve the wash without disappearing.
+- Dashboard composites simplify to single-panel mockups on mobile; the multi-layer composition only renders at desktop+.
+- Pricing tiers stair-step 4-up → 2-up → 1-up.
 
 ### Image Behavior
-The only image asset is the llama mascot (raster PNG at multiple resolutions: 16/32/48/64/180/192/512px). It is rendered at fixed pixel sizes on the hero and pricing cards rather than scaling responsively — the brand asset is treated like a logo, not a hero image.
+Product UI composites use `srcset` with art-direction crops at major breakpoints. Mobile crops focus on the most actionable inner panel; desktop crops show the full multi-layer composition.
 
 ## Iteration Guide
 
-1. Focus on ONE component at a time. Pull its YAML entry from the front matter and verify every property resolves.
-2. Reference component names and tokens directly (`{colors.primary}`, `{component.button-primary-active}`, `{rounded.full}`) — do not paraphrase.
-3. Run `npx @google/design.md lint DESIGN.md` after edits — `broken-ref`, `contrast-ratio`, and `orphaned-tokens` warnings flag issues automatically.
-4. Add new variants as separate component entries (`-active`, `-disabled`, `-focused`) — do not bury them inside prose.
-5. Default body to `{typography.body-md}`; reach for `{typography.body-sm}` for footer/utility text; reserve `{typography.display-xl}` strictly for the page-top headline.
-6. Keep `{colors.primary}` scarce per viewport — there should be at most one black pill per fold (counting nav, hero CTA, and pricing-card CTA together). The design's restraint is the design.
-7. When introducing a new component, ask whether it can be expressed with the existing pill + flat-card + terminal-mockup vocabulary before adding new tokens. The system's strength is that it almost never needs new ones.
-
-## Known Gaps
-
-- **Mobile screenshots not captured** — responsive behavior synthesizes Ollama's known mobile pattern (hamburger drawer, 1-up pricing stack, install-snippet wrap) from desktop evidence and the extracted breakpoint stack.
-- **Hover states not documented** by system policy.
-- **Form field styling** beyond search and install-snippet is not present in the captured surfaces — there is no visible long-form form on the home or pricing pages.
-- **Authenticated chrome** (account dropdown, billing settings, model dashboard) not in the captured pages.
-- **Models / Docs pages** not in the captured set — those surfaces likely add a sidebar and a docs typography tier that this document does not describe.
+1. Focus on ONE component at a time.
+2. Reference component names and tokens directly (`{colors.primary}`, `{button-primary-pill}-pressed`, `{rounded.pill}`).
+3. Run `npx @google/design.md lint DESIGN.md` after edits.
+4. Add new variants as separate entries.
+5. Default body to `{typography.body-md}` (15px); use `{typography.body-tabular}` for any money / numeric cell.
+6. Apply `ss01` globally on the body; apply `tnum` per-element on numeric content.
+7. The gradient mesh is non-negotiable on marketing heroes — bare-canvas heroes break the brand.

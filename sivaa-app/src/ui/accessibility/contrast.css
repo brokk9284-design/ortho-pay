@@ -6,7 +6,7 @@
 /* Ensure minimum contrast on dark surfaces */
 [data-theme='dark'] {
   --color-body: #b4b9c1;
-  --color-muted: #9499a3;
+  --color-mute: #9499a3;
 }
 
 /* High-contrast mode is handled via themes/high-contrast.css
@@ -21,7 +21,7 @@
 }
 
 .contrast-low {
-  color: var(--color-muted);
+  color: var(--color-mute);
 }
 
 /* Ensure text on dark surfaces meets AA */

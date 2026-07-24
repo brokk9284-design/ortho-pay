@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORTHO-PAY — Fintech Design System & Feature Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0a0a;color:#fafafa;line-height:1.6}
+.container{max-width:1100px;margin:0 auto;padding:40px 24px}
+h1{font-family:'Nunito',sans-serif;font-size:36px;font-weight:600;margin-bottom:8px;background:linear-gradient(135deg,#533afd,#ea2261);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h2{font-family:'Nunito',sans-serif;font-size:24px;font-weight:600;margin:48px 0 16px;color:#fff;border-bottom:1px solid #262626;padding-bottom:8px}
+h3{font-size:18px;font-weight:600;margin:32px 0 12px;color:#e5e5e5}
+p{margin-bottom:12px;color:#a3a3a3;font-size:14px}
+ul{margin:8px 0 16px 20px;color:#a3a3a3;font-size:14px}
+li{margin-bottom:6px}
+code{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:#171717;padding:2px 6px;border-radius:4px;color:#665efd}
+.badge{display:inline-block;padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:600;margin-left:8px}
+.badge-edit{background:rgba(83,58,253,0.15);color:#665efd;border:1px solid rgba(83,58,253,0.3)}
+.badge-new{background:rgba(39,201,63,0.15);color:#27c93f;border:1px solid rgba(39,201,63,0.3)}
+.badge-replace{background:rgba(234,34,97,0.15);color:#ea2261;border:1px solid rgba(234,34,97,0.3)}
+.badge-keep{background:rgba(255,189,46,0.15);color:#ffbd2e;border:1px solid rgba(255,189,46,0.3)}
+.section{background:#111;border:1px solid #222;border-radius:12px;padding:24px;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:16px 0}
+.card{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:8px;padding:16px}
+.card-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:8px}
+.gap{border-left:3px solid #ea2261;padding-left:16px;margin:16px 0}
+.gap-title{font-size:14px;font-weight:600;color:#ea2261;margin-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th{text-align:left;padding:8px;color:#737373;font-weight:600;border-bottom:1px solid #222}
+td{padding:8px;border-bottom:1px solid #1a1a1a;color:#a3a3a3}
+.toc{background:#111;border:1px solid #222;border-radius:12px;padding:20px;margin-bottom:32px}
+.toc a{color:#665efd;text-decoration:none;font-size:14px;display:block;padding:3px 0}
+.toc a:hover{text-decoration:underline}
+.mock{background:#fff;border-radius:12px;padding:20px;margin:16px 0;font-family:'Inter',sans-serif;color:#0d253d;overflow:hidden}
+.mock-dark{background:#0d253d;color:#fff}
+.mock-card{background:#f6f9fc;border:1px solid #e3e8ee;border-radius:12px;padding:16px;margin:8px 0}
+.mock-dark .mock-card{background:#1c1e54;border-color:#273951}
+.mock-label{font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:#64748d;font-weight:600}
+.mock-balance{font-size:32px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-0.64px}
+.mock-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9999px;font-size:14px;font-weight:500;border:none;cursor:pointer;background:#533afd;color:#fff}
+.mock-btn-ghost{background:transparent;color:#533afd;border:1px solid #533afd}
+.mock-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:9999px;font-size:11px;font-weight:600}
+.mock-pill-success{background:rgba(22,163,74,0.1);color:#16a34a}
+.mock-pill-warn{background:rgba(217,119,7,0.1);color:#d97706}
+.mock-pill-error{background:rgba(220,38,38,0.1);color:#dc2626}
+.mock-pill-info{background:rgba(37,99,235,0.1);color:#2563eb}
+.mock-pill-primary{background:rgba(83,58,253,0.1);color:#533afd}
+.mock-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0}
+.mock-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.mock-2col{grid-template-columns:1fr}}
+.mock-step{display:flex;align-items:center;gap:6px;font-size:12px;color:#64748d}
+.mock-step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;background:#e3e8ee;color:#0d253d}
+.mock-step.active .mock-step-num{background:#533afd;color:#fff}
+.mock-step.done .mock-step-num{background:#16a34a;color:#fff}
+.mock-step-line{flex:1;height:2px;background:#e3e8ee;border-radius:1px}
+.mock-progress{height:6px;border-radius:9999px;background:#e3e8ee;overflow:hidden;margin:8px 0}
+.mock-progress-bar{height:100%;border-radius:9999px;background:linear-gradient(90deg,#533afd,#665efd);transition:width 600ms}
+.mock-toggle{width:44px;height:24px;border-radius:9999px;background:#e3e8ee;position:relative;cursor:pointer;transition:background 200ms}
+.mock-toggle.on{background:#533afd}
+.mock-toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:transform 200ms}
+.mock-toggle.on::after{transform:translateX(20px)}
+.mock-txn{display:flex;align-items:center;gap:12px;padding:12px;border-radius:8px;background:#fff;border:1px solid #e3e8ee;margin:6px 0;transition:all 200ms}
+.mock-txn:hover{border-color:#533afd;transform:translateX(2px)}
+.mock-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.mock-amount{font-variant-numeric:tabular-nums;font-weight:800;font-size:14px}
+.mock-otp{display:flex;gap:8px;justify-content:center;margin:12px 0}
+.mock-otp-d{width:40px;height:48px;border-radius:8px;border:2px solid #e3e8ee;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;font-family:ui-monospace,monospace}
+.mock-otp-d.filled{border-color:#533afd;background:rgba(83,58,253,0.05)}
+.mock-otp-d.active{border-color:#533afd;box-shadow:0 0 0 3px rgba(83,58,253,0.15)}
+.mock-typing{display:inline-flex;gap:3px}
+.mock-typing span{width:6px;height:6px;border-radius:50%;background:#64748d;animation:tb 1.4s infinite ease-in-out}
+.mock-typing span:nth-child(2){animation-delay:0.2s}
+.mock-typing span:nth-child(3){animation-delay:0.4s}
+@keyframes tb{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>ORTHO-PAY — Fintech Design System &amp; Feature Plan</h1>
+<p>Comprehensive plan for upgrading the design system, adding new features, and identifying gaps. Review before implementation.</p>
+
+<div class="toc">
+<h3 style="margin-top:0">Table of Contents</h3>
+<a href="#p1">Part 1 — DESIGN.md vs Current CSS: Critical Disconnect</a>
+<a href="#p2">Part 2 — CSS File Audit: What to Edit, Create, Replace (41 files)</a>
+<a href="#p3">Part 3 — Design Token Upgrades (Fintech)</a>
+<a href="#p4">Part 4 — Motion &amp; Animation System</a>
+<a href="#p5">Part 5 — Theme Toggle System</a>
+<a href="#p6">Part 6 — Responsive Strategy (Mobile-First → Desktop)</a>
+<a href="#p7">Part 7 — Global Country List</a>
+<a href="#p8">Part 8 — Feature: Portfolio Management (Send + Request)</a>
+<a href="#p9">Part 9 — Feature: Deposit Flow</a>
+<a href="#p10">Part 10 — Feature: Withdrawal Flow (Crypto + Cash)</a>
+<a href="#p11">Part 11 — Feature: KYC Gate ($500 Limit)</a>
+<a href="#p12">Part 12 — Feature: Request Page</a>
+<a href="#p13">Part 13 — Feature: Chat Upgrades</a>
+<a href="#p14">Part 14 — Feature: Profile/Settings Page</a>
+<a href="#p15">Part 15 — Dashboard: Remove "Submit Another Document"</a>
+<a href="#p16">Part 16 — Gaps You Haven't Mentioned</a>
+<a href="#p17">Part 17 — Admin Management Panel (Full Customisation)</a>
+<a href="#p18">Part 18 — Icon System (Animated / Flat, No Emojis)</a>
+<a href="#p19">Part 19 — Paytag Naming Convention</a>
+</div>
+
+<!-- ═══ PART 1 ═══ -->
+<h2 id="p1">Part 1 — DESIGN.md vs Current CSS: Critical Disconnect</h2>
+<div class="section">
+<p><strong>DESIGN.md</strong> describes a "Stripi-inspired" system: indigo (#533afd), Sohne/Inter typography, gradient meshes, layered shadows, tabular figures. <strong>The actual CSS</strong> is "Ollama-inspired": pure black (#000000), Nunito font, no shadows, no gradients, flat monochrome. These are fundamentally different design languages.</p>
+<table>
+<tr><th>Token</th><th>DESIGN.md</th><th>Current CSS</th><th>Action</th></tr>
+<tr><td>Primary color</td><td>#533afd (indigo)</td><td>#000000 (black)</td><td><span class="badge badge-replace">REPLACE</span></td></tr>
+<tr><td>Display font</td><td>Sohne / Inter (wt 300)</td><td>Nunito (wt 500-600)</td><td><span class="badge badge-replace">REPLACE</span></td></tr>
+<tr><td>Body font</td><td>Inter (wt 300, ss01)</td><td>system-ui</td><td><span class="badge badge-edit">EDIT</span></td></tr>
+<tr><td>Shadows</td><td>3 levels (card, float, mesh)</td><td><code>--shadow-none</code> only</td><td><span class="badge badge-replace">REPLACE</span></td></tr>
+<tr><td>Gradient mesh</td><td>Signature atmospheric backdrop</td><td>Not implemented</td><td><span class="badge badge-new">NEW</span></td></tr>
+<tr><td>Tabular figures</td><td><code>tnum</code> on all money</td><td>Not applied</td><td><span class="badge badge-new">NEW</span></td></tr>
+<tr><td>Letter spacing</td><td>Negative (-1.4px to -0.2px)</td><td>0 everywhere</td><td><span class="badge badge-edit">EDIT</span></td></tr>
+<tr><td>Dark mode</td><td>Admin-only</td><td>Has dark.css but admin-only</td><td><span class="badge badge-edit">EDIT</span></td></tr>
+</table>
+<p><strong>Recommendation:</strong> Adopt DESIGN.md as the target. The current Ollama monochrome system doesn't serve a fintech product. Migrate CSS to match DESIGN.md while adding fintech extensions below.</p>
+</div>
+
+<!-- ═══ PART 2 ═══ -->
+<h2 id="p2">Part 2 — CSS File Audit: 41 Files → Action Plan</h2>
+
+<div class="section">
+<h3>Foundation (10 files)</h3>
+<table>
+<tr><th>File</th><th>Action</th><th>Changes</th></tr>
+<tr><td><code>foundation/colors.css</code></td><td><span class="badge badge-replace">REPLACE</span></td><td>Replace Ollama black/white with DESIGN.md indigo palette. Add fintech semantic colors: success/error/warning/info. Add gradient mesh stops. Add dark-mode-aware structure.</td></tr>
+<tr><td><code>foundation/typography.css</code></td><td><span class="badge badge-replace">REPLACE</span></td><td>Switch Nunito → Inter. Add negative letter-spacing on display tiers. Add <code>ss01</code> globally. Add <code>tnum</code> tabular figure tokens. Add display-xxl (56px) and display-xl (48px).</td></tr>
+<tr><td><code>foundation/border-radius.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add <code>--radius-xs: 4px</code> (missing). Add <code>--radius-xl: 16px</code> for dashboard chrome.</td></tr>
+<tr><td><code>foundation/spacing.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add <code>--space-huge: 64px</code>. Add <code>--container-dashboard</code> and <code>--container-auth</code> max-widths.</td></tr>
+<tr><td><code>foundation/shadows.css</code></td><td><span class="badge badge-replace">REPLACE</span></td><td>Replace <code>--shadow-none</code> with 3-level system: Level 1 (card lift), Level 2 (floating), Level 3 (modal). Dark-mode variants.</td></tr>
+<tr><td><code>foundation/breakpoints.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add <code>--bp-ultrawide: 1440px</code>. Add <code>--container-dashboard: 1280px</code>, <code>--container-auth: 440px</code>.</td></tr>
+<tr><td><code>foundation/blur.css</code></td><td><span class="badge badge-keep">KEEP</span></td><td>No changes.</td></tr>
+<tr><td><code>foundation/opacity.css</code></td><td><span class="badge badge-keep">KEEP</span></td><td>No changes.</td></tr>
+<tr><td><code>foundation/z-index.css</code></td><td><span class="badge badge-keep">KEEP</span></td><td>No changes.</td></tr>
+<tr><td><code>foundation/components.css</code></td><td><span class="badge badge-replace">REPLACE</span></td><td>Update all tokens to indigo primary. Add fintech tokens: balance-card, txn-row, amount-input, currency-selector, step-indicator, kyc-banner.</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>Themes (3 files)</h3>
+<table>
+<tr><th>File</th><th>Action</th><th>Changes</th></tr>
+<tr><td><code>themes/light.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add explicit light-mode semantic colors. Add gradient mesh stops.</td></tr>
+<tr><td><code>themes/dark.css</code></td><td><span class="badge badge-replace">REPLACE</span></td><td>Expand from admin-only to full app dark mode. Override all indigo/semantic tokens. Dark gradient mesh. Dark shadows. Dark scrollbar.</td></tr>
+<tr><td><code>themes/high-contrast.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Update to reference new color tokens. Add fintech semantic contrast colors.</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>Motion (7 existing + 3 new)</h3>
+<table>
+<tr><th>File</th><th>Action</th><th>Changes</th></tr>
+<tr><td><code>motion/transitions.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add <code>transition-shadow</code>, <code>transition-transform</code>. Add spring-based hover lift easing.</td></tr>
+<tr><td><code>motion/page-transitions.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add dashboard route transitions. Add slide-in for bottom sheets. Add scale-in for modals.</td></tr>
+<tr><td><code>motion/skeleton-loader.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Fix broken refs (<code>--color-surface-strong</code> missing). Add skeleton-balance, skeleton-txn-row, skeleton-chart.</td></tr>
+<tr><td><code>motion/live-pulse.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Fix <code>--color-down</code> ref. Add success/pending/error pulse variants for payment status.</td></tr>
+<tr><td><code>motion/number-count.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add <code>.number-roll</code> for balance counter. Add <code>.number-flash-success</code> for incoming payments.</td></tr>
+<tr><td><code>motion/signal-alert.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Fix <code>--color-primary</code> ref. Add success/error/warning toast entrance animations.</td></tr>
+<tr><td><code>motion/reduced-motion.css</code></td><td><span class="badge badge-keep">KEEP</span></td><td>No changes.</td></tr>
+<tr><td><code>motion/icon-animations.css</code></td><td><span class="badge badge-new">NEW</span></td><td>Animated Lucide icon wrappers: spin, pulse, bounce, shake, check-burst. Coin flip, card flip, shield animation.</td></tr>
+<tr><td><code>motion/micro-interactions.css</code></td><td><span class="badge badge-new">NEW</span></td><td>Button press ripples, input focus glow, card hover lift, tab indicator slide, checkbox check animation, toggle spring, OTP bounce, amount counter scroll.</td></tr>
+<tr><td><code>motion/gradient-mesh.css</code></td><td><span class="badge badge-new">NEW</span></td><td>Animated gradient mesh backdrop for hero/auth. Slow 20s drift. Reduced-motion fallback.</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>Components (6 existing + 8 new)</h3>
+<table>
+<tr><th>File</th><th>Action</th><th>Changes</th></tr>
+<tr><td><code>components/buttons/button.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add hover lift (translateY -1px + shadow). Add press spring. Add <code>.btn-success</code>, <code>.btn-danger</code>, <code>.btn-loading</code>.</td></tr>
+<tr><td><code>components/buttons/icon-button.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add hover scale. Add success/danger variants. Fix <code>--color-surface-strong</code> ref.</td></tr>
+<tr><td><code>components/inputs/inputs.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add <code>.amount-input</code> with currency prefix + tabular figures. Add <code>.select</code> styled dropdown. Add <code>.otp-input-grid</code>. Add input success/error states with icons.</td></tr>
+<tr><td><code>components/cards/cards.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add <code>.balance-card</code>, <code>.txn-card</code>, <code>.stat-card</code>, <code>.kyc-banner</code>. Add hover lift with shadow.</td></tr>
+<tr><td><code>components/navigation/navigation.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add <code>.bottom-nav</code> (mobile fixed). Add <code>.dashboard-header</code> with theme toggle + notifications. Add active nav indicator animation.</td></tr>
+<tr><td><code>components/overlays/overlays.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Fix <code>--color-surface-dark-elevated</code> ref. Add <code>.sheet-stepper</code> for multi-step flows. Add <code>.confirm-dialog</code>.</td></tr>
+</table>
+<table>
+<tr><th>NEW File</th><th>Action</th><th>Purpose</th></tr>
+<tr><td><code>components/fintech/balance.css</code></td><td><span class="badge badge-new">NEW</span></td><td>Balance card with gradient surface, tabular amount, delta indicator, deposit/withdraw quick actions.</td></tr>
+<tr><td><code>components/fintech/transaction.css</code></td><td><span class="badge badge-new">NEW</span></td><td>Transaction row with type icon, counterparty, date, tabular amount, status pill, clickable hover. Stagger animation.</td></tr>
+<tr><td><code>components/fintech/payment-method.css</code></td><td><span class="badge badge-new">NEW</span></td><td>Payment method selector card with icon, fee range, min/max. Selected state with indigo border + check.</td></tr>
+<tr><td><code>components/fintech/stepper.css</code></td><td><span class="badge badge-new">NEW</span></td><td>Multi-step progress indicator for deposit/withdraw/KYC. Horizontal on desktop, vertical on mobile.</td></tr>
+<tr><td><code>components/fintech/kyc-gate.css</code></td><td><span class="badge badge-new">NEW</span></td><td>KYC verification banner with warning gradient, lock icon, progress bar, CTA. Blocks actions beyond $500.</td></tr>
+<tr><td><code>components/fintech/currency-selector.css</code></td><td><span class="badge badge-new">NEW</span></td><td>Country/currency picker with flag, code, name. Searchable dropdown. Grid for mobile.</td></tr>
+<tr><td><code>components/fintech/fee-preview.css</code></td><td><span class="badge badge-new">NEW</span></td><td>Fee breakdown card: amount, fee %, fixed fee, total. Animated number transitions.</td></tr>
+<tr><td><code>components/fintech/chat-upgrades.css</code></td><td><span class="badge badge-new">NEW</span></td><td>Read receipt indicators, typing indicator, chat search bar, message status icons, scroll-to-bottom FAB.</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>Accessibility (4 files)</h3>
+<table>
+<tr><td><code>accessibility/focus.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Update focus ring to indigo. Add focus-visible for new fintech components.</td></tr>
+<tr><td><code>accessibility/keyboard.css</code></td><td><span class="badge badge-keep">KEEP</span></td><td>No changes.</td></tr>
+<tr><td><code>accessibility/screen-reader.css</code></td><td><span class="badge badge-keep">KEEP</span></td><td>No changes.</td></tr>
+<tr><td><code>accessibility/contrast.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add contrast checks for indigo on white. Ensure semantic colors meet WCAG AA.</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>Responsiveness (5 files)</h3>
+<table>
+<tr><td><code>responsiveness/mobile.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add bottom nav. Add full-screen sheet for deposit/withdraw. Add dashboard single-column. Add auth max-width.</td></tr>
+<tr><td><code>responsiveness/tablet.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add 2-column dashboard. Add sidebar collapse. Add transaction list 2-up.</td></tr>
+<tr><td><code>responsiveness/desktop.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td><strong>Major expansion:</strong> Full dashboard grid (sidebar + main + right panel). Portfolio chart area. Multi-column transactions. Desktop nav.</td></tr>
+<tr><td><code>responsiveness/ultrawide.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>3-column dashboard for 1440px+. Wider transaction tables. Side-by-side portfolio + transactions.</td></tr>
+<tr><td><code>responsiveness/orientation.css</code></td><td><span class="badge badge-keep">KEEP</span></td><td>No changes.</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>Utilities (5 files) + Root Index (1)</h3>
+<table>
+<tr><td><code>utilities/spacing.css</code></td><td><span class="badge badge-keep">KEEP</span></td><td>No changes.</td></tr>
+<tr><td><code>utilities/visibility.css</code></td><td><span class="badge badge-keep">KEEP</span></td><td>No changes.</td></tr>
+<tr><td><code>utilities/overflow.css</code></td><td><span class="badge badge-keep">KEEP</span></td><td>No changes.</td></tr>
+<tr><td><code>utilities/positioning.css</code></td><td><span class="badge badge-keep">KEEP</span></td><td>No changes.</td></tr>
+<tr><td><code>utilities/transforms.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add <code>.lift-hover</code>, <code>.scale-tap</code>, <code>.tilt-hover</code> utilities.</td></tr>
+<tr><td><code>index.css</code></td><td><span class="badge badge-edit">EDIT</span></td><td>Add imports for 11 new files. Update import order.</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>Summary: 41 existing → 69 total files</h3>
+<div class="grid">
+<div class="card"><div class="card-title"><span class="badge badge-edit">22 EDIT</span></div><div style="font-size:12px;color:#737373">colors, typography, border-radius, spacing, shadows, breakpoints, components, light, dark, high-contrast, transitions, page-transitions, skeleton, live-pulse, number-count, signal-alert, button, icon-button, inputs, cards, navigation, overlays, focus, contrast, mobile, tablet, desktop, ultrawide, transforms, index</div></div>
+<div class="card"><div class="card-title"><span class="badge badge-new">28 NEW</span></div><div style="font-size:12px;color:#737373">icon-system, admin-dashboard, fee-manager, user-manager, chat-oversight, portfolio-oversight, icon-animations, micro-interactions, gradient-mesh, balance, transaction, payment-method, stepper, kyc-gate, currency-selector, fee-preview, chat-upgrades, country-selector, portfolio (5), deposit (5), withdrawal (5), kyc (5), theme-toggle</div></div>
+<div class="card"><div class="card-title"><span class="badge badge-keep">8 KEEP</span></div><div style="font-size:12px;color:#737373">blur, opacity, z-index, reduced-motion, keyboard, screen-reader, orientation, spacing/visibility/overflow/positioning utilities</div></div>
+</div>
+</div>
+
+<!-- ═══ PART 3 ═══ -->
+<h2 id="p3">Part 3 — Design Token Upgrades (Fintech)</h2>
+<div class="section">
+<h3>New Color Tokens</h3>
+<div class="mock">
+<div class="mock-2col">
+<div>
+<div class="mock-row"><span class="mock-pill mock-pill-success">Success</span> <code>--color-success: #16a34a</code></div>
+<div class="mock-row"><span class="mock-pill mock-pill-error">Error</span> <code>--color-error: #dc2626</code></div>
+<div class="mock-row"><span class="mock-pill mock-pill-warn">Warning</span> <code>--color-warning: #d97706</code></div>
+<div class="mock-row"><span class="mock-pill mock-pill-info">Info</span> <code>--color-info: #2563eb</code></div>
+</div>
+<div>
+<div class="mock-row"><span class="mock-pill mock-pill-primary">Primary</span> <code>--color-primary: #533afd</code></div>
+<div style="font-size:12px;color:#64748d;margin-top:8px">
+<div>--color-primary-deep: #4434d4</div>
+<div>--color-primary-press: #2e2b8c</div>
+<div>--color-primary-soft: #665efd</div>
+<div>--color-primary-subdued: #b9b9f9</div>
+<div>--color-brand-dark: #1c1e54</div>
+<div>--color-ink: #0d253d</div>
+<div>--color-canvas-soft: #f6f9fc</div>
+<div>--color-canvas-cream: #f5e9d4</div>
+</div>
+</div>
+</div>
+</div>
+<h3>Tabular Figures for All Money</h3>
+<div class="mock">
+<div class="mock-card">
+<div class="mock-label">Money / Numeric Typography</div>
+<div style="font-size:32px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-0.64px;font-feature-settings:'tnum'">$12,847.50</div>
+<div style="font-size:14px;color:#64748d;margin-top:4px">font-feature-settings: 'tnum' · font-variant-numeric: tabular-nums · letter-spacing: -0.64px</div>
+</div>
+</div>
+<h3>Shadow System (replacing --shadow-none)</h3>
+<div class="mock">
+<div class="mock-2col">
+<div class="mock-card" style="box-shadow:rgba(0,55,112,0.08) 0 1px 3px">
+<div class="mock-label">Level 1 — Card Lift</div>
+<div style="font-size:13px;color:#64748d">Subtle elevation for cards on white</div>
+</div>
+<div class="mock-card" style="box-shadow:rgba(0,55,112,0.08) 0 8px 24px,rgba(0,55,112,0.04) 0 2px 6px">
+<div class="mock-label">Level 2 — Floating Panel</div>
+<div style="font-size:13px;color:#64748d">Modals, dropdowns, dashboard chrome</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PART 4 ═══ -->
+<h2 id="p4">Part 4 — Motion &amp; Animation System</h2>
+<div class="section">
+<p>The current CSS has motion infrastructure but <strong>none of it is applied to actual components</strong>. Buttons have basic <code>transition: background-color 120ms</code> but no hover lift, no press spring, no loading state. The site feels static.</p>
+<h3>Planned Motion Upgrades</h3>
+<ul>
+<li><strong>Button hover lift</strong> — <code>translateY(-1px)</code> + Level 1 shadow on hover, spring press on active</li>
+<li><strong>Card hover</strong> — border color shift to indigo + subtle shadow lift + <code>translateX(2px)</code> for transaction rows</li>
+<li><strong>Page transitions</strong> — Route enter: fade + slide-up 8px. Stagger children 40ms apart.</li>
+<li><strong>Modal/dropdown</strong> — Scale-in from 0.95 + fade. Backdrop blur fade-in.</li>
+<li><strong>Bottom sheet</strong> — Spring slide-up from bottom on mobile. Scale-in on desktop.</li>
+<li><strong>Number count-up</strong> — Balance animates from 0 to value on load. Amounts flash green on update.</li>
+<li><strong>Skeleton loaders</strong> — Shimmer on all async content (balance, transactions, KYC, chat).</li>
+<li><strong>Icon animations</strong> — Lucide wrappers: <code>.icon-spin</code>, <code>.icon-pulse</code>, <code>.icon-check-burst</code>, <code>.icon-shake</code>. Coin flip on crypto select, shield animation on KYC verified.</li>
+<li><strong>OTP digit bounce</strong> — Each digit box bounces when filled. Auto-advance with smooth transition.</li>
+<li><strong>Toggle switch</strong> — Spring easing on knob translate. Color fade on track.</li>
+<li><strong>Tab indicator</strong> — Slides smoothly between tabs using <code>transform</code>.</li>
+<li><strong>Gradient mesh drift</strong> — Slow 20s infinite drift on hero gradient. Paused on reduced-motion.</li>
+<li><strong>Toast slide-in</strong> — Spring from right + fade. Exit: fade + slide right.</li>
+<li><strong>Typing indicator</strong> — Three dots bouncing in sequence.</li>
+<li><strong>Progress bars</strong> — Animated width transition with gradient fill.</li>
+</ul>
+<h3>Mockup: Animated Interactions</h3>
+<div class="mock">
+<div class="mock-label">Button States (hover, press, loading)</div>
+<div class="mock-row">
+<button class="mock-btn">Send Payment</button>
+<button class="mock-btn mock-btn-ghost">Cancel</button>
+<button class="mock-btn" style="opacity:0.7"><span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite"></span> Processing...</button>
+</div>
+<div class="mock-label" style="margin-top:16px">Typing Indicator</div>
+<div style="background:#f6f9fc;border:1px solid #e3e8ee;border-radius:12px;padding:10px 14px;display:inline-block;border-bottom-left-radius:4px">
+<div class="mock-typing"><span></span><span></span><span></span></div>
+</div>
+<div class="mock-label" style="margin-top:16px">OTP Digit Animation</div>
+<div class="mock-otp">
+<div class="mock-otp-d filled">4</div>
+<div class="mock-otp-d filled">7</div>
+<div class="mock-otp-d active">|</div>
+<div class="mock-otp-d">—</div>
+<div class="mock-otp-d">—</div>
+<div class="mock-otp-d">—</div>
+</div>
+<div class="mock-label" style="margin-top:16px">Progress Bar (KYC Verification)</div>
+<div class="mock-progress"><div class="mock-progress-bar" style="width:66%"></div></div>
+<div style="font-size:12px;color:#64748d;margin-top:4px">2 of 3 documents verified</div>
+</div>
+</div>
+
+<!-- ═══ PART 5 ═══ -->
+<h2 id="p5">Part 5 — Theme Toggle System</h2>
+<div class="section">
+<p>Currently <code>dark.css</code> only applies to admin via <code>[data-theme='dark']</code>. The user wants a theme toggle on all pages.</p>
+<h3>Implementation Plan</h3>
+<ul>
+<li><strong>ThemeProvider component</strong> — React context wrapping <code>&lt;html data-theme&gt;</code>. Persists to <code>localStorage</code>. Respects <code>prefers-color-scheme</code> on first visit.</li>
+<li><strong>ThemeToggle component</strong> — Sun/Moon Lucide icon button. Animated rotation on toggle. Placed in nav (landing) and dashboard header (app).</li>
+<li><strong>CSS updates</strong> — <code>dark.css</code> expanded to override ALL tokens. Gradient mesh gets dark variant. Shadows get dark variants.</li>
+<li><strong>No flash of wrong theme</strong> — Inline script in <code>&lt;head&gt;</code> reads localStorage before paint.</li>
+</ul>
+<h3>Mockup: Theme Toggle</h3>
+<div class="mock-2col">
+<div class="mock">
+<div class="mock-row">
+<span style="font-size:14px;font-weight:600">ORTHO-PAY</span>
+<div style="display:flex;align-items:center;gap:8px;font-size:13px">Light <div class="mock-toggle"></div></div>
+</div>
+<div class="mock-card">
+<div class="mock-label">Balance</div>
+<div class="mock-balance">$12,847.50</div>
+</div>
+</div>
+<div class="mock mock-dark">
+<div class="mock-row">
+<span style="font-size:14px;font-weight:600">ORTHO-PAY</span>
+<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#fff">Dark <div class="mock-toggle on"></div></div>
+</div>
+<div class="mock-card">
+<div class="mock-label" style="color:#64748d">Balance</div>
+<div class="mock-balance" style="color:#fff">$12,847.50</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══ PART 6 ═══ -->
+<h2 id="p6">Part 6 — Responsive Strategy (Mobile-First → Desktop)</h2>
+<div class="section">
+<p>Currently the CSS is mobile-only with minimal desktop overrides. We need mobile-first with progressive enhancement to desktop.</p>
+<h3>Breakpoint Plan</h3>
+<table>
+<tr><th>Breakpoint</th><th>Width</th><th>Dashboard Layout</th></tr>
+<tr><td>Mobile (default)</td><td>0-767px</td><td>Single column, bottom nav, full-screen sheets</td></tr>
+<tr><td>Tablet</td><td>768-1023px</td><td>2-column (main + right panel), top bar only</td></tr>
+<tr><td>Desktop</td><td>1024-1439px</td><td>Sidebar + main + right panel, full nav</td></tr>
+<tr><td>Ultrawide</td><td>1440px+</td><td>Sidebar + wide main + right panel, 3-col transactions</td></tr>
+</table>
+<h3>Mockup: Desktop Dashboard Layout</h3>
+<div class="mock" style="padding:0;overflow:hidden">
+<div style="display:flex;min-height:400px">
+<div style="width:200px;border-right:1px solid #e3e8ee;padding:16px 12px;flex-shrink:0">
+<div style="font-size:16px;font-weight:700;margin-bottom:20px;color:#533afd">ORTHO-PAY</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<div style="padding:8px 12px;border-radius:8px;background:rgba(83,58,253,0.08);color:#533afd;font-size:13px;font-weight:500">Portfolio</div>
+<div style="padding:8px 12px;border-radius:8px;font-size:13px;color:#64748d">Send</div>
+<div style="padding:8px 12px;border-radius:8px;font-size:13px;color:#64748d">Request</div>
+<div style="padding:8px 12px;border-radius:8px;font-size:13px;color:#64748d">Deposit</div>
+<div style="padding:8px 12px;border-radius:8px;font-size:13px;color:#64748d">Withdraw</div>
+<div style="padding:8px 12px;border-radius:8px;font-size:13px;color:#64748d">Chat</div>
+<div style="padding:8px 12px;border-radius:8px;font-size:13px;color:#64748d">Settings</div>
+</div>
+</div>
+<div style="flex:1;padding:20px">
+<div class="mock-row" style="margin-bottom:16px">
+<div style="padding:8px 14px;border-radius:9999px;background:#f6f9fc;border:1px solid #e3e8ee;font-size:13px;color:#64748d">Search transactions...</div>
+<div style="display:flex;gap:8px;align-items:center">
+<div style="display:flex;align-items:center;gap:6px;font-size:13px">Dark <div class="mock-toggle on"></div></div>
+<div class="mock-icon" style="background:#533afd;color:#fff;font-size:12px;font-weight:600">OP</div>
+</div>
+</div>
+<div class="mock-2col">
+<div class="mock-card" style="background:#533afd;color:#fff;border:none">
+<div class="mock-label" style="color:rgba(255,255,255,0.7)">Total Balance</div>
+<div class="mock-balance" style="color:#fff">$12,847.50</div>
+<div style="display:flex;gap:8px;margin-top:12px">
+<button style="background:#fff;color:#533afd;font-size:12px;padding:6px 14px;border:none;border-radius:9999px;cursor:pointer">Deposit</button>
+<button style="background:rgba(255,255,255,0.15);color:#fff;font-size:12px;padding:6px 14px;border:none;border-radius:9999px;cursor:pointer">Withdraw</button>
+</div>
+</div>
+<div class="mock-card">
+<div class="mock-label">This Month</div>
+<div style="font-size:24px;font-weight:800;font-variant-numeric:tabular-nums">+$3,240</div>
+<div style="font-size:12px;color:#16a34a">▲ 12% vs last month</div>
+</div>
+</div>
+<div class="mock-card" style="margin-top:12px">
+<div class="mock-label">Recent Transactions</div>
+<div class="mock-txn">
+<div class="mock-icon" style="background:rgba(22,163,74,0.1);color:#16a34a">↓</div>
+<div style="flex:1"><div style="font-size:13px;font-weight:500">From $alex_m (paytag)</div><div style="font-size:11px;color:#64748d">Jul 23, 2026</div></div>
+<div class="mock-amount" style="color:#16a34a">+$250.00</div>
+<span class="mock-pill mock-pill-success">Completed</span>
+</div>
+<div class="mock-txn">
+<div class="mock-icon" style="background:rgba(37,99,235,0.1);color:#2563eb">↑</div>
+<div style="flex:1"><div style="font-size:13px;font-weight:500">To $sarah_k (paytag)</div><div style="font-size:11px;color:#64748d">Jul 22, 2026</div></div>
+<div class="mock-amount">-$480.00</div>
+<span class="mock-pill mock-pill-info">Escrow</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<h3>Mockup: Mobile Dashboard Layout</h3>
+<div class="mock" style="padding:0;overflow:hidden;max-width:375px;margin:12px auto">
+<div style="padding:16px">
+<div class="mock-row" style="margin-bottom:12px">
+<div style="font-size:16px;font-weight:700;color:#533afd">ORTHO-PAY</div>
+<div style="display:flex;gap:8px;align-items:center">
+<div class="mock-icon" style="background:#f6f9fc;border:1px solid #e3e8ee;font-size:14px;color:#64748b">[icon-bell]</div>
+<div class="mock-icon" style="background:#533afd;color:#fff;font-size:10px;font-weight:600">OP</div>
+</div>
+</div>
+<div class="mock-card" style="background:#533afd;color:#fff;border:none">
+<div class="mock-label" style="color:rgba(255,255,255,0.7)">Total Balance</div>
+<div class="mock-balance" style="color:#fff">$12,847.50</div>
+<div style="display:flex;gap:8px;margin-top:12px">
+<button style="background:#fff;color:#533afd;font-size:12px;padding:6px 14px;border:none;border-radius:9999px;cursor:pointer">Deposit</button>
+<button style="background:rgba(255,255,255,0.15);color:#fff;font-size:12px;padding:6px 14px;border:none;border-radius:9999px;cursor:pointer">Withdraw</button>
+</div>
+</div>
+<div class="mock-card" style="margin-top:8px">
+<div class="mock-label">Quick Actions</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:8px;background:#f6f9fc;font-size:10px;color:#64748d">Send</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:8px;background:#f6f9fc;font-size:10px;color:#64748d">Request</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:8px;background:#f6f9fc;font-size:10px;color:#64748d">Deposit</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:8px;background:#f6f9fc;font-size:10px;color:#64748d">Withdraw</div>
+</div>
+</div>
+<div class="mock-card" style="margin-top:8px">
+<div class="mock-label">Recent</div>
+<div class="mock-txn" style="padding:8px">
+<div class="mock-icon" style="background:rgba(22,163,74,0.1);color:#16a34a;width:32px;height:32px;font-size:12px">↓</div>
+<div style="flex:1"><div style="font-size:12px;font-weight:500">From $alex_m (paytag)</div><div style="font-size:10px;color:#64748d">Jul 23</div></div>
+<div class="mock-amount" style="color:#16a34a;font-size:13px">+$250</div>
+</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-around;padding:8px;background:#fff;border-top:1px solid #e3e8ee">
+<div style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:#533afd;font-weight:600">Home</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:#64748d">Portfolio</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:#64748d">Chat</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:#64748d">Settings</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 7: GLOBAL COUNTRY LIST                                  -->
+<!-- ============================================================ -->
+<div style="margin:48px 0 24px;padding:28px 32px;background:linear-gradient(135deg,#f8fafc,#eef2ff);border:1px solid #e2e8f0;border-radius:16px">
+<h2 style="font-size:28px;font-weight:800;color:#0f172a;margin:0 0 8px">Part 7 — Global Country List</h2>
+<p style="font-size:14px;color:#475569;margin:0 0 24px;line-height:1.6">A comprehensive country selector component supporting 250+ countries with flags, dial codes, currency codes, and search. Used across KYC, deposit, withdrawal, and settings flows.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px">
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 12px">Data Structure</h3>
+<pre style="font-size:12px;background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;overflow-x:auto;margin:0;line-height:1.5">interface Country {
+  code: string;       // ISO 3166-1 alpha-2 (e.g. "US")
+  name: string;       // English display name
+  flag: string;       // ISO 3166-1 alpha-2 code (rendered as flat icon, not emoji)
+  dialCode: string;   // e.g. "+1"
+  currency: string;   // ISO 4217 (e.g. "USD")
+  regions: string[];  // States/provinces if applicable
+  supported: boolean; // Service availability flag
+}</pre>
+</div>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 12px">New CSS File</h3>
+<table style="width:100%;font-size:13px;border-collapse:collapse">
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">File</td><td style="padding:8px 0;color:#475569"><code>src/ui/components/country-selector/country-selector.css</code></td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">Action</td><td style="padding:8px 0"><span style="background:#dcfce7;color:#166534;padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:600">CREATE NEW</span></td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">Tokens Used</td><td style="padding:8px 0;color:#475569"><code>--radius-full</code>, <code>--space-3</code>, <code>--color-text-muted</code></td></tr>
+<tr><td style="padding:8px 0;font-weight:600;color:#0f172a">Dependencies</td><td style="padding:8px 0;color:#475569">overlays.css (popover), inputs.css (search)</td></tr>
+</table>
+</div>
+</div>
+
+<h3 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 16px">Mockup — Country Selector Dropdown</h3>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:0;overflow:hidden;max-width:420px;margin-bottom:16px">
+<div style="padding:12px 16px;border-bottom:1px solid #e2e8f0;background:#f8fafc">
+<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:#fff;border:1px solid #cbd5e1;border-radius:9999px"><span style="font-size:14px;color:#94a3b8">[icon-search]</span><span style="font-size:13px;color:#94a3b8">Search country…</span></div>
+</div>
+<div style="max-height:280px;overflow-y:auto">
+<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;background:#eef2ff;border-left:3px solid #533afd"><span style="font-size:18px;color:#533afd;font-weight:700">[US]</span><div style="flex:1"><div style="font-size:14px;font-weight:600;color:#0f172a">United States</div><div style="font-size:11px;color:#64748b">+1 · USD</div></div><span style="font-size:14px;color:#533afd">✓</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer"><span style="font-size:18px;color:#64748b;font-weight:700">[UK]</span><div style="flex:1"><div style="font-size:14px;font-weight:500;color:#0f172a">United Kingdom</div><div style="font-size:11px;color:#64748b">+44 · GBP</div></div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer"><span style="font-size:18px;color:#64748b;font-weight:700">[CA]</span><div style="flex:1"><div style="font-size:14px;font-weight:500;color:#0f172a">Canada</div><div style="font-size:11px;color:#64748b">+1 · CAD</div></div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;opacity:0.5"><span style="font-size:18px;color:#64748b;font-weight:700">[AF]</span><div style="flex:1"><div style="font-size:14px;font-weight:500;color:#0f172a">Afghanistan <span style="font-size:10px;background:#fef2f2;color:#dc2626;padding:1px 6px;border-radius:9999px;margin-left:4px">Not supported</span></div><div style="font-size:11px;color:#64748b">+93 · AFN</div></div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer"><span style="font-size:18px;color:#64748b;font-weight:700">[JP]</span><div style="flex:1"><div style="font-size:14px;font-weight:500;color:#0f172a">Japan</div><div style="font-size:11px;color:#64748b">+81 · JPY</div></div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer"><span style="font-size:18px;color:#64748b;font-weight:700">[DE]</span><div style="flex:1"><div style="font-size:14px;font-weight:500;color:#0f172a">Germany</div><div style="font-size:11px;color:#64748b">+49 · EUR</div></div></div>
+</div>
+<div style="padding:10px 16px;border-top:1px solid #e2e8f0;background:#f8fafc;display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:#64748b">Showing 6 of 250 countries</span><span style="font-size:11px;color:#533afd;font-weight:600;cursor:pointer">View all →</span></div>
+</div>
+
+<div style="background:#fefce8;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin-top:16px">
+<p style="font-size:12px;color:#92400e;margin:0;line-height:1.5"><strong>Note:</strong> Countries marked <code>supported: false</code> should be visually dimmed and non-selectable. The selector must filter results in real-time as the user types. On mobile, this opens as a <strong>bottom sheet</strong> (see overlays.css) rather than a dropdown.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 8: PORTFOLIO MANAGEMENT                                  -->
+<!-- ============================================================ -->
+<div style="margin:48px 0 24px;padding:28px 32px;background:linear-gradient(135deg,#f8fafc,#f0fdf4);border:1px solid #e2e8f0;border-radius:16px">
+<h2 style="font-size:28px;font-weight:800;color:#0f172a;margin:0 0 8px">Part 8 — Portfolio Management</h2>
+<p style="font-size:14px;color:#475569;margin:0 0 24px;line-height:1.6">A comprehensive portfolio dashboard showing holdings, allocation, performance, and transaction history. Includes interactive charts, asset cards, and real-time valuation.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px">
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:13px;font-weight:700;color:#0f172a;margin:0 0 8px">New CSS Files</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li><code>portfolio/dashboard.css</code></li>
+<li><code>portfolio/asset-card.css</code></li>
+<li><code>portfolio/allocation-chart.css</code></li>
+<li><code>portfolio/transaction-list.css</code></li>
+<li><code>portfolio/performance-chart.css</code></li>
+</ul>
+</div>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:13px;font-weight:700;color:#0f172a;margin:0 0 8px">New Tokens</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li><code>--color-gain: #16a34a</code></li>
+<li><code>--color-loss: #dc2626</code></li>
+<li><code>--color-neutral: #64748b</code></li>
+<li><code>--chart-stroke-width: 2px</code></li>
+<li><code>--tabular-nums: 'tnum'</code></li>
+</ul>
+</div>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:13px;font-weight:700;color:#0f172a;margin:0 0 8px">Dependencies</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li>cards.css (card base)</li>
+<li>motion/number-count.css</li>
+<li>motion/live-pulse.css</li>
+<li>foundation/typography.css</li>
+<li>foundation/shadows.css</li>
+</ul>
+</div>
+</div>
+
+<h3 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 16px">Mockup — Portfolio Dashboard (Desktop)</h3>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;overflow:hidden">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
+<div>
+<div style="font-size:12px;color:#64748b;margin-bottom:4px">Total Portfolio Value</div>
+<div style="font-size:36px;font-weight:800;color:#0f172a;font-feature-settings:'tnum';letter-spacing:-0.02em">$248,592.34</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+<span style="font-size:14px;font-weight:600;color:#16a34a">▲ $3,421.18</span>
+<span style="font-size:12px;color:#64748b">(+1.39%) today</span>
+<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:9999px;font-weight:600"><span style="width:6px;height:6px;background:#16a34a;border-radius:50%;animation:pulse 2s infinite"></span>Live</span>
+</div>
+</div>
+<div style="display:flex;gap:8px">
+<button style="padding:8px 16px;background:#533afd;color:#fff;border:none;border-radius:9999px;font-size:12px;font-weight:600;cursor:pointer">Deposit</button>
+<button style="padding:8px 16px;background:#fff;color:#0f172a;border:1px solid #e2e8f0;border-radius:9999px;font-size:12px;font-weight:600;cursor:pointer">Withdraw</button>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:24px">
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<span style="font-size:14px;font-weight:700;color:#0f172a">Performance (30D)</span>
+<div style="display:flex;gap:4px">
+<span style="font-size:10px;padding:3px 8px;background:#533afd;color:#fff;border-radius:9999px;font-weight:600">30D</span>
+<span style="font-size:10px;padding:3px 8px;color:#64748b;border-radius:9999px">7D</span>
+<span style="font-size:10px;padding:3px 8px;color:#64748b;border-radius:9999px">1Y</span>
+<span style="font-size:10px;padding:3px 8px;color:#64748b;border-radius:9999px">All</span>
+</div>
+</div>
+<svg viewBox="0 0 400 120" style="width:100%;height:120px">
+<defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#533afd" stop-opacity="0.2"/><stop offset="100%" stop-color="#533afd" stop-opacity="0"/></linearGradient></defs>
+<path d="M0,80 L40,70 L80,75 L120,50 L160,55 L200,40 L240,45 L280,30 L320,35 L360,20 L400,25 L400,120 L0,120 Z" fill="url(#chartGrad)"/>
+<path d="M0,80 L40,70 L80,75 L120,50 L160,55 L200,40 L240,45 L280,30 L320,35 L360,20 L400,25" fill="none" stroke="#533afd" stroke-width="2"/>
+</svg>
+<div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:10px;color:#94a3b8">Jan 1</span><span style="font-size:10px;color:#94a3b8">Jan 15</span><span style="font-size:10px;color:#94a3b8">Jan 30</span></div>
+</div>
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+<div style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:16px">Allocation</div>
+<div style="display:flex;align-items:center;justify-content:center;margin-bottom:12px">
+<svg width="120" height="120" viewBox="0 0 120 120">
+<circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" stroke-width="12"/>
+<circle cx="60" cy="60" r="50" fill="none" stroke="#533afd" stroke-width="12" stroke-dasharray="157 314" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+<circle cx="60" cy="60" r="50" fill="none" stroke="#16a34a" stroke-width="12" stroke-dasharray="78 314" stroke-dashoffset="-157" transform="rotate(-90 60 60)"/>
+<circle cx="60" cy="60" r="50" fill="none" stroke="#f59e0b" stroke-width="12" stroke-dasharray="47 314" stroke-dashoffset="-235" transform="rotate(-90 60 60)"/>
+<text x="60" y="58" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">5</text>
+<text x="60" y="72" text-anchor="middle" font-size="10" fill="#64748b">Assets</text>
+</svg>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="width:8px;height:8px;background:#533afd;border-radius:2px"></span><span style="color:#0f172a;font-weight:500">BTC</span><span style="color:#64748b;margin-left:auto">50%</span></div>
+<div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="width:8px;height:8px;background:#16a34a;border-radius:2px"></span><span style="color:#0f172a;font-weight:500">ETH</span><span style="color:#64748b;margin-left:auto">25%</span></div>
+<div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="width:8px;height:8px;background:#f59e0b;border-radius:2px"></span><span style="color:#0f172a;font-weight:500">USDT</span><span style="color:#64748b;margin-left:auto">15%</span></div>
+<div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="width:8px;height:8px;background:#e2e8f0;border-radius:2px"></span><span style="color:#0f172a;font-weight:500">Other</span><span style="color:#64748b;margin-left:auto">10%</span></div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<span style="font-size:14px;font-weight:700;color:#0f172a">Holdings</span>
+<span style="font-size:12px;color:#533afd;font-weight:600;cursor:pointer">View all →</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px">
+<div style="width:40px;height:40px;background:#f59e0b;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff">₿</div>
+<div style="flex:1"><div style="font-size:14px;font-weight:600;color:#0f172a">Bitcoin</div><div style="font-size:11px;color:#64748b">2.13 BTC</div></div>
+<div style="text-align:right"><div style="font-size:14px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$124,296.17</div><div style="font-size:11px;color:#16a34a;font-weight:600">+2.14%</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px">
+<div style="width:40px;height:40px;background:#627eea;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff">Ξ</div>
+<div style="flex:1"><div style="font-size:14px;font-weight:600;color:#0f172a">Ethereum</div><div style="font-size:11px;color:#64748b">18.4 ETH</div></div>
+<div style="text-align:right"><div style="font-size:14px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$62,148.08</div><div style="font-size:11px;color:#16a34a;font-weight:600">+0.87%</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:16px;padding:14px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px">
+<div style="width:40px;height:40px;background:#26a17b;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff">₮</div>
+<div style="flex:1"><div style="font-size:14px;font-weight:600;color:#0f172a">Tether</div><div style="font-size:11px;color:#64748b">37,289 USDT</div></div>
+<div style="text-align:right"><div style="font-size:14px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$37,289.00</div><div style="font-size:11px;color:#64748b;font-weight:600">0.00%</div></div>
+</div>
+</div>
+</div>
+
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:24px 0 12px">Mockup — Portfolio Dashboard (Mobile)</h3>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px;max-width:375px">
+<div style="font-size:11px;color:#64748b;margin-bottom:2px">Total Value</div>
+<div style="font-size:28px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$248,592</div>
+<div style="display:flex;gap:6px;align-items:center;margin-bottom:16px">
+<span style="font-size:12px;font-weight:600;color:#16a34a">▲ +1.39%</span>
+<span style="font-size:10px;background:#dcfce7;color:#16a34a;padding:1px 6px;border-radius:9999px;font-weight:600">Live</span>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:16px">
+<button style="flex:1;padding:10px;background:#533afd;color:#fff;border:none;border-radius:9999px;font-size:12px;font-weight:600">Deposit</button>
+<button style="flex:1;padding:10px;background:#fff;color:#0f172a;border:1px solid #e2e8f0;border-radius:9999px;font-size:12px;font-weight:600">Withdraw</button>
+</div>
+<div style="background:#f8fafc;border-radius:12px;padding:12px;margin-bottom:12px">
+<div style="font-size:12px;font-weight:600;color:#0f172a;margin-bottom:8px">Allocation</div>
+<div style="display:flex;gap:2px;height:8px;border-radius:9999px;overflow:hidden;margin-bottom:8px">
+<div style="flex:50;background:#533afd"></div><div style="flex:25;background:#16a34a"></div><div style="flex:15;background:#f59e0b"></div><div style="flex:10;background:#e2e8f0"></div>
+</div>
+<div style="display:flex;gap:12px;font-size:10px;color:#64748b"><span>₿ 50%</span><span>Ξ 25%</span><span>₮ 15%</span><span>Other 10%</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f8fafc;border-radius:10px">
+<div style="width:32px;height:32px;background:#f59e0b;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">₿</div>
+<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#0f172a">Bitcoin</div><div style="font-size:10px;color:#64748b">2.13 BTC</div></div>
+<div style="text-align:right"><div style="font-size:12px;font-weight:700;color:#0f172a">$124,296</div><div style="font-size:10px;color:#16a34a">+2.14%</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f8fafc;border-radius:10px">
+<div style="width:32px;height:32px;background:#627eea;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">Ξ</div>
+<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#0f172a">Ethereum</div><div style="font-size:10px;color:#64748b">18.4 ETH</div></div>
+<div style="text-align:right"><div style="font-size:12px;font-weight:700;color:#0f172a">$62,148</div><div style="font-size:10px;color:#16a34a">+0.87%</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 9: DEPOSIT FLOW                                         -->
+<!-- ============================================================ -->
+<div style="margin:48px 0 24px;padding:28px 32px;background:linear-gradient(135deg,#f8fafc,#eff6ff);border:1px solid #e2e8f0;border-radius:16px">
+<h2 style="font-size:28px;font-weight:800;color:#0f172a;margin:0 0 8px">Part 9 — Deposit Flow</h2>
+<p style="font-size:14px;color:#475569;margin:0 0 24px;line-height:1.6">A multi-step deposit flow supporting bank transfer, card, and crypto deposits. Includes amount entry, payment method selection, confirmation, and success states.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:13px;font-weight:700;color:#0f172a;margin:0 0 8px">New CSS Files</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li><code>deposit/deposit-stepper.css</code></li>
+<li><code>deposit/amount-input.css</code></li>
+<li><code>deposit/payment-method.css</code></li>
+<li><code>deposit/deposit-confirm.css</code></li>
+<li><code>deposit/deposit-success.css</code></li>
+</ul>
+</div>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:13px;font-weight:700;color:#0f172a;margin:0 0 8px">Flow Steps</h4>
+<ol style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li>Select currency & enter amount</li>
+<li>Choose payment method</li>
+<li>Review & confirm details</li>
+<li>Processing (skeleton loader)</li>
+<li>Success confirmation</li>
+</ol>
+</div>
+</div>
+
+<h3 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 16px">Mockup — Deposit Flow (Step 2: Payment Method)</h3>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;max-width:480px">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:24px">
+<div style="display:flex;align-items:center;gap:6px"><span style="width:24px;height:24px;background:#533afd;color:#fff;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">1</span><span style="font-size:12px;color:#533afd;font-weight:600">Amount</span></div>
+<div style="flex:1;height:2px;background:#533afd"></div>
+<div style="display:flex;align-items:center;gap:6px"><span style="width:24px;height:24px;background:#533afd;color:#fff;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">2</span><span style="font-size:12px;color:#0f172a;font-weight:600">Method</span></div>
+<div style="flex:1;height:2px;background:#e2e8f0"></div>
+<div style="display:flex;align-items:center;gap:6px"><span style="width:24px;height:24px;background:#e2e8f0;color:#94a3b8;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">3</span><span style="font-size:12px;color:#94a3b8">Confirm</span></div>
+</div>
+
+<div style="background:#f8fafc;border-radius:12px;padding:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+<div><div style="font-size:11px;color:#64748b">Depositing</div><div style="font-size:24px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$5,000.00</div></div>
+<div style="text-align:right"><div style="font-size:11px;color:#64748b">Currency</div><div style="font-size:16px;font-weight:700;color:#0f172a">USD [US]</div></div>
+</div>
+
+<div style="font-size:13px;font-weight:600;color:#0f172a;margin-bottom:12px">Select Payment Method</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+<div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border:2px solid #533afd;border-radius:12px;background:#eef2ff;cursor:pointer">
+<div style="width:40px;height:40px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#533afd;font-weight:700">[icon-bank]</div>
+<div style="flex:1"><div style="font-size:14px;font-weight:600;color:#0f172a">Bank Transfer (ACH)</div><div style="font-size:11px;color:#64748b">1-3 business days · No fee</div></div>
+<div style="width:20px;height:20px;background:#533afd;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff">✓</div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid #e2e8f0;border-radius:12px;cursor:pointer">
+<div style="width:40px;height:40px;background:#f8fafc;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#64748b;font-weight:700">[icon-card]</div>
+<div style="flex:1"><div style="font-size:14px;font-weight:600;color:#0f172a">Debit/Credit Card</div><div style="font-size:11px;color:#64748b">Instant · 2.9% fee</div></div>
+<div style="width:20px;height:20px;border:2px solid #e2e8f0;border-radius:9999px"></div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid #e2e8f0;border-radius:12px;cursor:pointer">
+<div style="width:40px;height:40px;background:#f8fafc;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px">₿</div>
+<div style="flex:1"><div style="font-size:14px;font-weight:600;color:#0f172a">Crypto Deposit</div><div style="font-size:11px;color:#64748b">~10 min · No fee</div></div>
+<div style="width:20px;height:20px;border:2px solid #e2e8f0;border-radius:9999px"></div>
+</div>
+</div>
+
+<div style="display:flex;gap:12px">
+<button style="flex:1;padding:12px;background:#fff;color:#64748b;border:1px solid #e2e8f0;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer">Back</button>
+<button style="flex:2;padding:12px;background:#533afd;color:#fff;border:none;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer">Continue →</button>
+</div>
+</div>
+
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:24px 0 12px">Mockup — Deposit Success State</h3>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:32px;max-width:480px;text-align:center">
+<div style="width:64px;height:64px;background:#dcfce7;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 16px">✓</div>
+<div style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:8px">Deposit Successful!</div>
+<div style="font-size:14px;color:#64748b;margin-bottom:24px">Your deposit of <strong style="color:#0f172a">$5,000.00</strong> has been initiated via Bank Transfer.</div>
+<div style="background:#f8fafc;border-radius:12px;padding:16px;margin-bottom:24px;text-align:left">
+<div style="display:flex;justify-content:space-between;padding:6px 0"><span style="font-size:12px;color:#64748b">Amount</span><span style="font-size:12px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$5,000.00</span></div>
+<div style="display:flex;justify-content:space-between;padding:6px 0"><span style="font-size:12px;color:#64748b">Method</span><span style="font-size:12px;font-weight:600;color:#0f172a">Bank Transfer (ACH)</span></div>
+<div style="display:flex;justify-content:space-between;padding:6px 0"><span style="font-size:12px;color:#64748b">Reference</span><span style="font-size:12px;font-weight:600;color:#0f172a;font-family:monospace">DP-2024-892K</span></div>
+<div style="display:flex;justify-content:space-between;padding:6px 0"><span style="font-size:12px;color:#64748b">Estimated arrival</span><span style="font-size:12px;font-weight:600;color:#0f172a">1-3 business days</span></div>
+</div>
+<button style="width:100%;padding:12px;background:#533afd;color:#fff;border:none;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer">View Portfolio</button>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 10: WITHDRAWAL FLOW                                      -->
+<!-- ============================================================ -->
+<div style="margin:48px 0 24px;padding:28px 32px;background:linear-gradient(135deg,#f8fafc,#fff7ed);border:1px solid #e2e8f0;border-radius:16px">
+<h2 style="font-size:28px;font-weight:800;color:#0f172a;margin:0 0 8px">Part 10 — Withdrawal Flow</h2>
+<p style="font-size:14px;color:#475569;margin:0 0 24px;line-height:1.6">A multi-step withdrawal flow with balance check, destination selection, fee disclosure, 2FA verification, and processing status. Includes withdrawal limits and compliance checks.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:13px;font-weight:700;color:#0f172a;margin:0 0 8px">New CSS Files</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li><code>withdrawal/withdrawal-stepper.css</code></li>
+<li><code>withdrawal/amount-input.css</code></li>
+<li><code>withdrawal/destination-selector.css</code></li>
+<li><code>withdrawal/2fa-verify.css</code></li>
+<li><code>withdrawal/withdrawal-status.css</code></li>
+</ul>
+</div>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:13px;font-weight:700;color:#0f172a;margin:0 0 8px">Flow Steps</h4>
+<ol style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li>Select asset & enter amount</li>
+<li>Choose withdrawal destination</li>
+<li>Review fees & limits</li>
+<li>2FA verification</li>
+<li>Processing & tracking</li>
+</ol>
+</div>
+</div>
+
+<h3 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 16px">Mockup — Withdrawal Flow (Step 3: Review)</h3>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;max-width:480px">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:24px">
+<div style="display:flex;align-items:center;gap:6px"><span style="width:20px;height:20px;background:#533afd;color:#fff;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">✓</span></div>
+<div style="flex:1;height:2px;background:#533afd"></div>
+<div style="display:flex;align-items:center;gap:6px"><span style="width:20px;height:20px;background:#533afd;color:#fff;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">✓</span></div>
+<div style="flex:1;height:2px;background:#533afd"></div>
+<div style="display:flex;align-items:center;gap:6px"><span style="width:24px;height:24px;background:#533afd;color:#fff;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">3</span><span style="font-size:12px;color:#0f172a;font-weight:600">Review</span></div>
+<div style="flex:1;height:2px;background:#e2e8f0"></div>
+<div style="display:flex;align-items:center;gap:6px"><span style="width:20px;height:20px;background:#e2e8f0;color:#94a3b8;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">4</span><span style="font-size:12px;color:#94a3b8">2FA</span></div>
+</div>
+
+<div style="background:#f8fafc;border-radius:12px;padding:16px;margin-bottom:16px">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e2e8f0"><span style="font-size:12px;color:#64748b">Withdrawal Amount</span><span style="font-size:16px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">1.5 BTC</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e2e8f0"><span style="font-size:12px;color:#64748b">≈ USD Value</span><span style="font-size:14px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$87,521.50</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e2e8f0"><span style="font-size:12px;color:#64748b">Network Fee</span><span style="font-size:14px;font-weight:800;color:#dc2626;font-feature-settings:'tnum'">−0.0001 BTC ($5.83)</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e2e8f0"><span style="font-size:12px;color:#64748b">Destination</span><span style="font-size:12px;font-weight:600;color:#0f172a;font-family:monospace">bc1q...x7f2</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><span style="font-size:13px;font-weight:600;color:#0f172a">You Receive</span><span style="font-size:18px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">1.4999 BTC</span></div>
+</div>
+
+<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start">
+<span style="font-size:16px;color:#f59e0b;font-weight:700">[icon-alert]</span>
+<div><div style="font-size:12px;font-weight:600;color:#92400e">Withdrawal Limit</div><div style="font-size:11px;color:#92400e;line-height:1.4;margin-top:2px">Daily limit: 2 BTC · Monthly limit: 10 BTC. This withdrawal is within limits.</div></div>
+</div>
+
+<div style="display:flex;gap:12px">
+<button style="flex:1;padding:12px;background:#fff;color:#64748b;border:1px solid #e2e8f0;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer">Back</button>
+<button style="flex:2;padding:12px;background:#533afd;color:#fff;border:none;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer">Verify with 2FA →</button>
+</div>
+</div>
+
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:24px 0 12px">Mockup — 2FA Verification</h3>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:32px;max-width:480px;text-align:center">
+<div style="width:48px;height:48px;background:#eef2ff;border-radius:9999px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><span style="font-size:20px;color:#533afd;font-weight:700">[icon-shield]</span></div>
+<div style="font-size:18px;font-weight:700;color:#0f172a;margin-bottom:8px">Enter Verification Code</div>
+<div style="font-size:13px;color:#64748b;margin-bottom:24px">Enter the 6-digit code from your authenticator app to confirm this withdrawal.</div>
+<div style="display:flex;gap:8px;justify-content:center;margin-bottom:24px">
+<input style="width:40px;height:48px;text-align:center;font-size:20px;font-weight:700;border:2px solid #533afd;border-radius:8px;background:#eef2ff;color:#0f172a" value="3" readonly />
+<input style="width:40px;height:48px;text-align:center;font-size:20px;font-weight:700;border:2px solid #533afd;border-radius:8px;background:#eef2ff;color:#0f172a" value="7" readonly />
+<input style="width:40px;height:48px;text-align:center;font-size:20px;font-weight:700;border:2px solid #533afd;border-radius:8px;background:#eef2ff;color:#0f172a" value="2" readonly />
+<input style="width:40px;height:48px;text-align:center;font-size:20px;font-weight:700;border:2px solid #cbd5e1;border-radius:8px;color:#0f172a" value="" />
+<input style="width:40px;height:48px;text-align:center;font-size:20px;font-weight:700;border:2px solid #cbd5e1;border-radius:8px;color:#0f172a" value="" />
+<input style="width:40px;height:48px;text-align:center;font-size:20px;font-weight:700;border:2px solid #cbd5e1;border-radius:8px;color:#0f172a" value="" />
+</div>
+<button style="width:100%;padding:12px;background:#533afd;color:#fff;border:none;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer">Confirm Withdrawal</button>
+<div style="font-size:11px;color:#64748b;margin-top:12px">Code expires in <span style="color:#dc2626;font-weight:600">2:47</span></div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 11: KYC GATE                                             -->
+<!-- ============================================================ -->
+<div style="margin:48px 0 24px;padding:28px 32px;background:linear-gradient(135deg,#f8fafc,#fdf2f8);border:1px solid #e2e8f0;border-radius:16px">
+<h2 style="font-size:28px;font-weight:800;color:#0f172a;margin:0 0 8px">Part 11 — KYC Gate</h2>
+<p style="font-size:14px;color:#475569;margin:0 0 24px;line-height:1.6">A KYC (Know Your Customer) verification gating system that restricts access to deposit, withdrawal, and trading features until identity verification is complete. Supports tiered verification levels.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px">
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:13px;font-weight:700;color:#0f172a;margin:0 0 8px">New CSS Files</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li><code>kyc/kyc-gate.css</code></li>
+<li><code>kyc/kyc-stepper.css</code></li>
+<li><code>kyc/document-upload.css</code></li>
+<li><code>kyc/kyc-status.css</code></li>
+<li><code>kyc/verification-badge.css</code></li>
+</ul>
+</div>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:13px;font-weight:700;color:#0f172a;margin:0 0 8px">Verification Tiers</h4>
+<table style="width:100%;font-size:11px;border-collapse:collapse">
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:4px 0;font-weight:600;color:#0f172a">Tier 1</td><td style="padding:4px 0;color:#64748b">Email + Phone</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:4px 0;font-weight:600;color:#0f172a">Tier 2</td><td style="padding:4px 0;color:#64748b">Personal Info + ID</td></tr>
+<tr><td style="padding:4px 0;font-weight:600;color:#0f172a">Tier 3</td><td style="padding:4px 0;color:#64748b">Proof of Address</td></tr>
+</table>
+</div>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:13px;font-weight:700;color:#0f172a;margin:0 0 8px">Feature Gating</h4>
+<table style="width:100%;font-size:11px;border-collapse:collapse">
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:4px 0;color:#64748b">Deposit</td><td style="padding:4px 0;font-weight:600;color:#16a34a">Tier 1+</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:4px 0;color:#64748b">Withdraw</td><td style="padding:4px 0;font-weight:600;color:#f59e0b">Tier 2+</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:4px 0;color:#64748b">Trade</td><td style="padding:4px 0;font-weight:600;color:#f59e0b">Tier 2+</td></tr>
+<tr><td style="padding:4px 0;color:#64748b">High Limit</td><td style="padding:4px 0;font-weight:600;color:#dc2626">Tier 3</td></tr>
+</table>
+</div>
+</div>
+
+<h3 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 16px">Mockup — KYC Gate (Blocked Action)</h3>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:32px;max-width:480px;text-align:center">
+<div style="width:64px;height:64px;background:#fef3c7;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;color:#f59e0b;font-weight:700">[icon-lock]</div>
+<div style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:8px">Verify Your Identity</div>
+<div style="font-size:14px;color:#64748b;margin-bottom:20px;line-height:1.5">To withdraw funds, you need to complete <strong style="color:#0f172a">Tier 2 verification</strong>. This requires personal information and a government-issued ID.</div>
+
+<div style="background:#f8fafc;border-radius:12px;padding:16px;margin-bottom:24px;text-align:left">
+<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #e2e8f0">
+<span style="width:20px;height:20px;background:#16a34a;color:#fff;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:10px">✓</span>
+<span style="font-size:12px;color:#64748b;text-decoration:line-through">Tier 1: Email + Phone verified</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:8px 0">
+<span style="width:20px;height:20px;background:#533afd;color:#fff;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">2</span>
+<span style="font-size:12px;font-weight:600;color:#0f172a">Tier 2: Personal Info + ID</span>
+<span style="font-size:10px;background:#fef3c7;color:#92400e;padding:1px 8px;border-radius:9999px;font-weight:600;margin-left:auto">Required</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:8px 0;opacity:0.5">
+<span style="width:20px;height:20px;background:#e2e8f0;color:#94a3b8;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:10px">3</span>
+<span style="font-size:12px;color:#94a3b8">Tier 3: Proof of Address</span>
+</div>
+</div>
+
+<button style="width:100%;padding:14px;background:#533afd;color:#fff;border:none;border-radius:9999px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:12px">Start Verification →</button>
+<button style="width:100%;padding:12px;background:transparent;color:#64748b;border:none;font-size:12px;font-weight:500;cursor:pointer">Learn more about KYC</button>
+</div>
+
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:24px 0 12px">Mockup — KYC Document Upload</h3>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;max-width:480px">
+<div style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px">Upload Government ID</div>
+<div style="font-size:12px;color:#64748b;margin-bottom:20px">Please upload a clear photo of your ID document. Accepted formats: JPG, PNG, PDF (max 10MB).</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+<div style="border:2px dashed #533afd;border-radius:12px;padding:24px;text-align:center;background:#eef2ff;cursor:pointer">
+<div style="font-size:22px;margin-bottom:8px;color:#533afd;font-weight:700">[icon-camera]</div>
+<div style="font-size:12px;font-weight:600;color:#0f172a">Front Side</div>
+<div style="font-size:10px;color:#64748b;margin-top:4px">Tap to upload</div>
+</div>
+<div style="border:2px dashed #cbd5e1;border-radius:12px;padding:24px;text-align:center;background:#f8fafc;cursor:pointer">
+<div style="font-size:22px;margin-bottom:8px;color:#533afd;font-weight:700">[icon-camera]</div>
+<div style="font-size:12px;font-weight:600;color:#0f172a">Back Side</div>
+<div style="font-size:10px;color:#64748b;margin-top:4px">Tap to upload</div>
+</div>
+</div>
+
+<div style="background:#f8fafc;border-radius:8px;padding:12px 16px;margin-bottom:20px">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="width:32px;height:32px;background:#dcfce7;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#16a34a;font-weight:700">[icon-doc]</div>
+<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#0f172a">passport_front.jpg</div><div style="font-size:10px;color:#64748b">2.4 MB · Uploaded</div></div>
+<span style="font-size:14px;color:#16a34a">✓</span>
+</div>
+</div>
+
+<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;margin-bottom:20px;display:flex;gap:8px;align-items:flex-start">
+<span style="font-size:14px;color:#f59e0b;font-weight:700">[icon-tip]</span>
+<div style="font-size:11px;color:#92400e;line-height:1.4">Ensure all text is clearly visible. Avoid glare, shadows, or cropped edges. Your document must not be expired.</div>
+</div>
+
+<div style="display:flex;gap:12px">
+<button style="flex:1;padding:12px;background:#fff;color:#64748b;border:1px solid #e2e8f0;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer">Back</button>
+<button style="flex:2;padding:12px;background:#533afd;color:#fff;border:none;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer">Submit for Review →</button>
+</div>
+</div>
+
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:24px 0 12px">Mockup — KYC Status Badges</h3>
+<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+<div style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#dcfce7;border-radius:9999px"><span style="width:8px;height:8px;background:#16a34a;border-radius:50%"></span><span style="font-size:12px;font-weight:600;color:#16a34a">Verified · Tier 1</span></div>
+<div style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#fef3c7;border-radius:9999px"><span style="width:8px;height:8px;background:#f59e0b;border-radius:50%"></span><span style="font-size:12px;font-weight:600;color:#92400e">Pending Review · Tier 2</span></div>
+<div style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#fef2f2;border-radius:9999px"><span style="width:8px;height:8px;background:#dc2626;border-radius:50%"></span><span style="font-size:12px;font-weight:600;color:#dc2626">Action Needed · Tier 3</span></div>
+<div style="display:flex;align-items:center;gap:8px;padding:6px 14px;background:#f1f5f9;border-radius:9999px"><span style="width:8px;height:8px;background:#94a3b8;border-radius:50%"></span><span style="font-size:12px;font-weight:600;color:#64748b">Unverified</span></div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 17: ADMIN MANAGEMENT PANEL                              -->
+<!-- ============================================================ -->
+<div id="p17" style="margin:48px 0 24px;padding:28px 32px;background:linear-gradient(135deg,#f8fafc,#1c1e54);border:1px solid #e2e8f0;border-radius:16px">
+<h2 style="font-size:28px;font-weight:800;color:#0f172a;margin:0 0 8px">Part 17 — Admin Management Panel (Full Customisation)</h2>
+<p style="font-size:14px;color:#475569;margin:0 0 24px;line-height:1.6">A comprehensive admin panel enabling full customisation of fees, limits, user settings, chat oversight, and portfolio management. All settings are configurable per-user, per-group, or globally. The admin panel reads from and writes to the existing database schema (<code>fee_rules</code>, <code>payment_methods</code>, <code>profiles</code>, <code>wallets</code>, <code>transaction_chats</code>, <code>transaction_messages</code>).</p>
+
+<!-- 17.1 Fee Structure Management -->
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 16px">17.1 Fee Structure Management</h3>
+<p style="font-size:13px;color:#475569;margin:0 0 16px;line-height:1.6">Admin can create, edit, activate/deactivate fee rules and payment method fees. Changes propagate in real-time to user-facing deposit/withdrawal flows. The existing <code>fee_rules</code> table (tier-based) and <code>payment_methods</code> table (per-method fees) are both fully editable.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 8px">Tier-Based Fee Rules</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li>Edit min/max amount brackets</li>
+<li>Adjust percentage per tier</li>
+<li>Activate/deactivate individual rules</li>
+<li>Add new tiers dynamically</li>
+<li>Preview fee calculation before saving</li>
+</ul>
+</div>
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 8px">Per-Method Fee Configuration</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li>Set fee_percentage + fee_fixed per method</li>
+<li>Configure min/max amounts per method</li>
+<li>Set daily and monthly limits per method</li>
+<li>Edit JSONB config (wallet addresses, handles)</li>
+<li>Toggle method active/inactive</li>
+<li>Reorder methods via sort_order</li>
+</ul>
+</div>
+</div>
+
+<h4 style="font-size:14px;font-weight:700;color:#0f172a;margin:16px 0 12px">Mockup — Fee Management Dashboard</h4>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;overflow:hidden">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<div style="font-size:16px;font-weight:700;color:#0f172a">Fee Rules</div>
+<button style="background:#533afd;color:#fff;border:none;border-radius:9999px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer">+ Add Tier</button>
+</div>
+<table style="width:100%;font-size:12px;border-collapse:collapse">
+<thead>
+<tr style="border-bottom:2px solid #e2e8f0">
+<th style="text-align:left;padding:8px 12px;font-weight:700;color:#0f172a">Min Amount</th>
+<th style="text-align:left;padding:8px 12px;font-weight:700;color:#0f172a">Max Amount</th>
+<th style="text-align:left;padding:8px 12px;font-weight:700;color:#0f172a">Fee %</th>
+<th style="text-align:center;padding:8px 12px;font-weight:700;color:#0f172a">Status</th>
+<th style="text-align:right;padding:8px 12px;font-weight:700;color:#0f172a">Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom:1px solid #f1f5f9">
+<td style="padding:8px 12px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$0.00</td>
+<td style="padding:8px 12px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$49.99</td>
+<td style="padding:8px 12px;font-weight:800;color:#533afd">3.00%</td>
+<td style="padding:8px 12px;text-align:center"><span style="background:#dcfce7;color:#166534;padding:2px 10px;border-radius:9999px;font-size:10px;font-weight:600">Active</span></td>
+<td style="padding:8px 12px;text-align:right"><span style="font-size:12px;color:#533afd;font-weight:600;cursor:pointer">Edit</span></td>
+</tr>
+<tr style="border-bottom:1px solid #f1f5f9">
+<td style="padding:8px 12px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$50.00</td>
+<td style="padding:8px 12px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$499.99</td>
+<td style="padding:8px 12px;font-weight:800;color:#533afd">2.00%</td>
+<td style="padding:8px 12px;text-align:center"><span style="background:#dcfce7;color:#166534;padding:2px 10px;border-radius:9999px;font-size:10px;font-weight:600">Active</span></td>
+<td style="padding:8px 12px;text-align:right"><span style="font-size:12px;color:#533afd;font-weight:600;cursor:pointer">Edit</span></td>
+</tr>
+<tr style="border-bottom:1px solid #f1f5f9">
+<td style="padding:8px 12px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$500.00</td>
+<td style="padding:8px 12px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">No limit</td>
+<td style="padding:8px 12px;font-weight:800;color:#533afd">1.00%</td>
+<td style="padding:8px 12px;text-align:center"><span style="background:#dcfce7;color:#166534;padding:2px 10px;border-radius:9999px;font-size:10px;font-weight:600">Active</span></td>
+<td style="padding:8px 12px;text-align:right"><span style="font-size:12px;color:#533afd;font-weight:600;cursor:pointer">Edit</span></td>
+</tr>
+</tbody>
+</table>
+
+<div style="margin-top:16px;padding:12px 16px;background:#eef2ff;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:12px;color:#475569">Preview: $1,000 transaction → Tier 3 (1.00%) = <strong style="color:#0f172a;font-weight:800">$10.00 fee</strong></span>
+<button style="background:#fff;color:#533afd;border:1px solid #533afd;border-radius:9999px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer">Save Changes</button>
+</div>
+</div>
+</div>
+
+<!-- 17.2 User Management -->
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 16px">17.2 User Management</h3>
+<p style="font-size:13px;color:#475569;margin:0 0 16px;line-height:1.6">Admin can view all users, search by paytag/email/phone, filter by KYC status, wallet status, and country. Per-user overrides allow custom fees, limits, and feature access. Bulk actions apply changes to selected users.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 8px">Per-User Overrides</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li>Custom fee percentage override</li>
+<li>Custom daily/monthly withdrawal limits</li>
+<li>Force KYC tier (bypass or require)</li>
+<li>Freeze/suspend wallet</li>
+<li>Disable specific payment methods for user</li>
+<li>Set custom transaction limits</li>
+</ul>
+</div>
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 8px">Bulk Actions (Select Users)</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li>Apply fee changes to all selected</li>
+<li>Set uniform limits across selected</li>
+<li>Freeze/suspend all selected wallets</li>
+<li>Force KYC re-verification for selected</li>
+<li>Export selected user data (CSV)</li>
+<li>Send notification to all selected</li>
+</ul>
+</div>
+</div>
+
+<h4 style="font-size:14px;font-weight:700;color:#0f172a;margin:16px 0 12px">Mockup — User Management Table</h4>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px;overflow:hidden">
+<div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+<div style="flex:1;min-width:200px;padding:8px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:9999px;font-size:13px;color:#94a3b8">Search by paytag, email, or phone...</div>
+<select style="padding:8px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:9999px;font-size:12px;color:#475569;border:none;cursor:pointer"><option>All KYC Status</option></select>
+<select style="padding:8px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:9999px;font-size:12px;color:#475569;border:none;cursor:pointer"><option>All Wallet Status</option></select>
+<select style="padding:8px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:9999px;font-size:12px;color:#475569;border:none;cursor:pointer"><option>All Countries</option></select>
+</div>
+<table style="width:100%;font-size:12px;border-collapse:collapse">
+<thead>
+<tr style="border-bottom:2px solid #e2e8f0">
+<th style="text-align:left;padding:8px"><input type="checkbox" /></th>
+<th style="text-align:left;padding:8px;font-weight:700;color:#0f172a">Paytag</th>
+<th style="text-align:left;padding:8px;font-weight:700;color:#0f172a">Name</th>
+<th style="text-align:left;padding:8px;font-weight:700;color:#0f172a">KYC</th>
+<th style="text-align:left;padding:8px;font-weight:700;color:#0f172a">Wallet</th>
+<th style="text-align:right;padding:8px;font-weight:700;color:#0f172a">Total Sent</th>
+<th style="text-align:right;padding:8px;font-weight:700;color:#0f172a">Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom:1px solid #f1f5f9">
+<td style="padding:8px"><input type="checkbox" /></td>
+<td style="padding:8px;font-weight:600;color:#533afd">$alex_m</td>
+<td style="padding:8px;color:#475569">Alex Morgan</td>
+<td style="padding:8px"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">Verified</span></td>
+<td style="padding:8px"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">Active</span></td>
+<td style="padding:8px;text-align:right;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$12,450</td>
+<td style="padding:8px;text-align:right"><span style="font-size:11px;color:#533afd;font-weight:600;cursor:pointer">Manage</span></td>
+</tr>
+<tr style="border-bottom:1px solid #f1f5f9">
+<td style="padding:8px"><input type="checkbox" /></td>
+<td style="padding:8px;font-weight:600;color:#533afd">$sarah_k</td>
+<td style="padding:8px;color:#475569">Sarah Kim</td>
+<td style="padding:8px"><span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">Pending</span></td>
+<td style="padding:8px"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">Active</span></td>
+<td style="padding:8px;text-align:right;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$3,200</td>
+<td style="padding:8px;text-align:right"><span style="font-size:11px;color:#533afd;font-weight:600;cursor:pointer">Manage</span></td>
+</tr>
+<tr style="border-bottom:1px solid #f1f5f9">
+<td style="padding:8px"><input type="checkbox" /></td>
+<td style="padding:8px;font-weight:600;color:#533afd">$john_d</td>
+<td style="padding:8px;color:#475569">John Davis</td>
+<td style="padding:8px"><span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">Rejected</span></td>
+<td style="padding:8px"><span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">Frozen</span></td>
+<td style="padding:8px;text-align:right;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$890</td>
+<td style="padding:8px;text-align:right"><span style="font-size:11px;color:#533afd;font-weight:600;cursor:pointer">Manage</span></td>
+</tr>
+</tbody>
+</table>
+<div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:12px;color:#64748b">3 of 1,247 users selected</span>
+<div style="display:flex;gap:8px">
+<button style="padding:6px 14px;background:#fff;color:#dc2626;border:1px solid #fecaca;border-radius:9999px;font-size:12px;font-weight:600;cursor:pointer">Freeze Selected</button>
+<button style="padding:6px 14px;background:#533afd;color:#fff;border:none;border-radius:9999px;font-size:12px;font-weight:600;cursor:pointer">Apply Overrides</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 17.3 Chat Management -->
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 16px">17.3 Chat Management & Oversight</h3>
+<p style="font-size:13px;color:#475569;margin:0 0 16px;line-height:1.6">Admin can view all transaction chats (<code>transaction_chats</code> + <code>transaction_messages</code>), search by participant, filter by message type (user/system/file), and take moderation actions. Disputes can be resolved by admin directly in the chat context.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 8px">Chat Oversight</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li>View all 1:1 transaction chats</li>
+<li>Filter by participant paytag</li>
+<li>Filter by message type (user/system/file)</li>
+<li>Search message content</li>
+<li>View linked payment/escrow context</li>
+<li>Export chat transcript (PDF/CSV)</li>
+</ul>
+</div>
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 8px">Moderation Actions</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li>Pin admin message to chat</li>
+<li>Freeze chat (prevent new messages)</li>
+<li>Flag chat for dispute review</li>
+<li>Link chat to support ticket</li>
+<li>Send system message to both parties</li>
+<li>Force-read receipt on both sides</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- 17.4 Portfolio Management Oversight -->
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 16px">17.4 Portfolio Management Oversight</h3>
+<p style="font-size:13px;color:#475569;margin:0 0 16px;line-height:1.6">Admin can view any user's portfolio, wallet balances (<code>wallets</code>), transaction history (<code>wallet_transactions</code>), and escrow holds. Manual adjustments (credit/debit) are logged in the immutable <code>audit_logs</code> table.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 8px">Portfolio View</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li>View user wallet: total_sent, total_received, locked_balance</li>
+<li>View all wallet_transactions (ledger entries)</li>
+<li>View active escrow holds for user</li>
+<li>View payment history with status breakdown</li>
+<li>View KYC document submissions</li>
+</ul>
+</div>
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px">
+<h4 style="font-size:14px;font-weight:700;color:#0f172a;margin:0 0 8px">Manual Adjustments</h4>
+<ul style="margin:0;padding:0 0 0 16px;font-size:12px;color:#475569;line-height:1.8">
+<li>Credit user wallet (adjust_in) with reason</li>
+<li>Debit user wallet (adjust_out) with reason</li>
+<li>Release escrow hold manually</li>
+<li>Refund escrow payment manually</li>
+<li>All actions logged to audit_logs (immutable)</li>
+<li>Requires super_admin for adjustments &gt; $1,000</li>
+</ul>
+</div>
+</div>
+
+<h4 style="font-size:14px;font-weight:700;color:#0f172a;margin:16px 0 12px">Mockup — Admin Portfolio Detail</h4>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;overflow:hidden">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<div><span style="font-size:14px;font-weight:700;color:#0f172a">$alex_m</span><span style="font-size:12px;color:#64748b;margin-left:8px">Alex Morgan · alex@mail.com</span></div>
+<div style="display:flex;gap:8px">
+<button style="padding:6px 14px;background:#fff;color:#16a34a;border:1px solid #bbf7d0;border-radius:9999px;font-size:12px;font-weight:600;cursor:pointer">Credit</button>
+<button style="padding:6px 14px;background:#fff;color:#dc2626;border:1px solid #fecaca;border-radius:9999px;font-size:12px;font-weight:600;cursor:pointer">Debit</button>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+<div style="background:#f8fafc;border-radius:12px;padding:16px;text-align:center">
+<div style="font-size:11px;color:#64748b;margin-bottom:4px">Total Sent</div>
+<div style="font-size:22px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$12,450</div>
+</div>
+<div style="background:#f8fafc;border-radius:12px;padding:16px;text-align:center">
+<div style="font-size:11px;color:#64748b;margin-bottom:4px">Total Received</div>
+<div style="font-size:22px;font-weight:800;color:#0f172a;font-feature-settings:'tnum'">$8,920</div>
+</div>
+<div style="background:#eef2ff;border-radius:12px;padding:16px;text-align:center">
+<div style="font-size:11px;color:#64748b;margin-bottom:4px">Locked in Escrow</div>
+<div style="font-size:22px;font-weight:800;color:#533afd;font-feature-settings:'tnum'">$1,200</div>
+</div>
+</div>
+<div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:8px">Recent Ledger Entries</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-radius:8px;font-size:12px"><span style="color:#64748b">transfer_out · To $sarah_k</span><span style="font-weight:800;color:#dc2626;font-feature-settings:'tnum'">-$480.00</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-radius:8px;font-size:12px"><span style="color:#64748b">transfer_in · From $john_d</span><span style="font-weight:800;color:#16a34a;font-feature-settings:'tnum'">+$250.00</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-radius:8px;font-size:12px"><span style="color:#64748b">escrow_hold · Payment ref #892K</span><span style="font-weight:800;color:#f59e0b;font-feature-settings:'tnum'">-$1,200.00</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 12px;background:#fef2f2;border-radius:8px;font-size:12px"><span style="color:#64748b">fee · Platform fee</span><span style="font-weight:800;color:#dc2626;font-feature-settings:'tnum'">-$14.40</span></div>
+</div>
+</div>
+</div>
+
+<!-- 17.5 New CSS Files for Admin -->
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 12px">New CSS Files — Admin Panel</h3>
+<table style="width:100%;font-size:12px;border-collapse:collapse">
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">File</td><td style="padding:8px 0;color:#475569"><code>src/ui/components/admin/admin-dashboard.css</code></td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">File</td><td style="padding:8px 0;color:#475569"><code>src/ui/components/admin/fee-manager.css</code></td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">File</td><td style="padding:8px 0;color:#475569"><code>src/ui/components/admin/user-manager.css</code></td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">File</td><td style="padding:8px 0;color:#475569"><code>src/ui/components/admin/chat-oversight.css</code></td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">File</td><td style="padding:8px 0;color:#475569"><code>src/ui/components/admin/portfolio-oversight.css</code></td></tr>
+<tr><td style="padding:8px 0;font-weight:600;color:#0f172a">Action</td><td style="padding:8px 0"><span style="background:#dcfce7;color:#166534;padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:600">CREATE NEW (5 files)</span></td></tr>
+</table>
+</div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 18: ICON SYSTEM (ANIMATED / FLAT, NO EMOJIS)            -->
+<!-- ============================================================ -->
+<div id="p18" style="margin:48px 0 24px;padding:28px 32px;background:linear-gradient(135deg,#f8fafc,#f0fdf4);border:1px solid #e2e8f0;border-radius:16px">
+<h2 style="font-size:28px;font-weight:800;color:#0f172a;margin:0 0 8px">Part 18 — Icon System (Animated / Flat, No Emojis)</h2>
+<p style="font-size:14px;color:#475569;margin:0 0 24px;line-height:1.6">All emojis are removed from the project. Icons are rendered as SVG-based components with two states: <strong>flat</strong> (static, default) and <strong>animated</strong> (on hover, focus, or interaction). This ensures consistent rendering across platforms, better accessibility, and a professional fintech aesthetic.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 12px">Icon States</h3>
+<table style="width:100%;font-size:12px;border-collapse:collapse">
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">Flat (Default)</td><td style="padding:8px 0;color:#475569">Static SVG, 1.5px stroke, currentColor</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">Animated (Hover)</td><td style="padding:8px 0;color:#475569">SVG with CSS transition: scale 1.1, rotate 5deg, color shift</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">Animated (Active)</td><td style="padding:8px 0;color:#475569">SVG with keyframe: pulse, spin, or bounce depending on context</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">Animated (Loading)</td><td style="padding:8px 0;color:#475569">SVG with spin animation (e.g. processing state)</td></tr>
+<tr><td style="padding:8px 0;font-weight:600;color:#0f172a">Animated (Success)</td><td style="padding:8px 0;color:#475569">SVG with checkmark draw animation (stroke-dashoffset)</td></tr>
+</table>
+</div>
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 12px">Icon Library</h3>
+<table style="width:100%;font-size:12px;border-collapse:collapse">
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:6px 0;font-weight:600;color:#0f172a">icon-bell</td><td style="padding:6px 0;color:#475569">Notifications (swing on hover)</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:6px 0;font-weight:600;color:#0f172a">icon-search</td><td style="padding:6px 0;color:#475569">Search (expand on focus)</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:6px 0;font-weight:600;color:#0f172a">icon-bank</td><td style="padding:6px 0;color:#475569">Bank transfer (shake on hover)</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:6px 0;font-weight:600;color:#0f172a">icon-card</td><td style="padding:6px 0;color:#475569">Debit/credit card (flip on hover)</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:6px 0;font-weight:600;color:#0f172a">icon-camera</td><td style="padding:6px 0;color:#475569">Document upload (flash on active)</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:6px 0;font-weight:600;color:#0f172a">icon-shield</td><td style="padding:6px 0;color:#475569">2FA / security (pulse on hover)</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:6px 0;font-weight:600;color:#0f172a">icon-lock</td><td style="padding:6px 0;color:#475569">KYC gate (shake on blocked action)</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:6px 0;font-weight:600;color:#0f172a">icon-alert</td><td style="padding:6px 0;color:#475569">Warning (bounce on appear)</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:6px 0;font-weight:600;color:#0f172a">icon-tip</td><td style="padding:6px 0;color:#475569">Info / tip (subtle glow on hover)</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:6px 0;font-weight:600;color:#0f172a">icon-doc</td><td style="padding:6px 0;color:#475569">Document (slide-in on upload)</td></tr>
+<tr><td style="padding:6px 0;font-weight:600;color:#0f172a">icon-check</td><td style="padding:6px 0;color:#475569">Success (draw animation on complete)</td></tr>
+</table>
+</div>
+</div>
+
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 12px">New CSS File</h3>
+<table style="width:100%;font-size:12px;border-collapse:collapse">
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">File</td><td style="padding:8px 0;color:#475569"><code>src/ui/components/icons/icon-system.css</code></td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">Action</td><td style="padding:8px 0"><span style="background:#dcfce7;color:#166534;padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:600">CREATE NEW</span></td></tr>
+<tr><td style="padding:8px 0;font-weight:600;color:#0f172a">Dependencies</td><td style="padding:8px 0;color:#475569">motion/transitions.css, motion/reduced-motion.css</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 19: PAYTAG NAMING CONVENTION                            -->
+<!-- ============================================================ -->
+<div id="p19" style="margin:48px 0 24px;padding:28px 32px;background:linear-gradient(135deg,#f8fafc,#eef2ff);border:1px solid #e2e8f0;border-radius:16px">
+<h2 style="font-size:28px;font-weight:800;color:#0f172a;margin:0 0 8px">Part 19 — Paytag Naming Convention</h2>
+<p style="font-size:14px;color:#475569;margin:0 0 24px;line-height:1.6">The user identifier system uses <strong>"paytag"</strong> with a <strong>$</strong> prefix symbol. This replaces the previous "siva_tag" / "$ORTHO" naming. The database column <code>siva_tag</code> in the <code>profiles</code> table should be renamed to <code>paytag</code> in a migration. Display format: <code>$username</code> (e.g. <code>$alex_m</code>).</p>
+
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 12px">Naming Convention</h3>
+<table style="width:100%;font-size:13px;border-collapse:collapse">
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;font-weight:600;color:#0f172a">Term</td><td style="padding:8px 0;font-weight:600;color:#0f172a">Value</td><td style="padding:8px 0;font-weight:600;color:#0f172a">Example</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;color:#475569">Display name</td><td style="padding:8px 0;color:#0f172a">paytag</td><td style="padding:8px 0;color:#533afd;font-weight:600">$alex_m</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;color:#475569">Symbol</td><td style="padding:8px 0;color:#0f172a">$ (dollar sign)</td><td style="padding:8px 0;color:#533afd;font-weight:600">$</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;color:#475569">DB column (current)</td><td style="padding:8px 0;color:#dc2626">siva_tag</td><td style="padding:8px 0;color:#64748b">profiles.siva_tag</td></tr>
+<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px 0;color:#475569">DB column (target)</td><td style="padding:8px 0;color:#16a34a">paytag</td><td style="padding:8px 0;color:#64748b">profiles.paytag</td></tr>
+<tr><td style="padding:8px 0;color:#475569">Validation</td><td style="padding:8px 0;color:#0f172a">^[a-zA-Z0-9_]{3,30}$</td><td style="padding:8px 0;color:#64748b">3-30 chars, alphanumeric + underscore</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- IMPLEMENTATION ROADMAP                                       -->
+<!-- ============================================================ -->
+<div style="margin:48px 0 24px;padding:28px 32px;background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:16px;color:#e2e8f0">
+<h2 style="font-size:28px;font-weight:800;color:#fff;margin:0 0 8px">Implementation Roadmap</h2>
+<p style="font-size:14px;color:#94a3b8;margin:0 0 24px;line-height:1.6">A phased approach to implementing the design system upgrade. Each phase is self-contained and can be shipped independently.</p>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;gap:16px;align-items:flex-start;padding:16px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1)">
+<div style="width:32px;height:32px;background:#533afd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">1</div>
+<div><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Foundation Token Upgrade</div><div style="font-size:12px;color:#94a3b8;line-height:1.5">Update colors, typography, shadows, spacing tokens. Add fintech-specific tokens (gain/loss, tabular-nums). Edit 6 foundation files.</div><div style="font-size:11px;color:#533afd;margin-top:6px;font-weight:600">Effort: 2-3 days</div></div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;padding:16px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1)">
+<div style="width:32px;height:32px;background:#533afd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">2</div>
+<div><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Theme System Enhancement</div><div style="font-size:12px;color:#94a3b8;line-height:1.5">Upgrade dark theme, add high-contrast theme, implement theme toggle component. Edit 3 theme files, create 1 new.</div><div style="font-size:11px;color:#533afd;margin-top:6px;font-weight:600">Effort: 1-2 days</div></div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;padding:16px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1)">
+<div style="width:32px;height:32px;background:#533afd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">3</div>
+<div><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Motion & Animation Polish</div><div style="font-size:12px;color:#94a3b8;line-height:1.5">Add fintech-specific animations (number count-up, live pulse, signal alerts). Edit 4 motion files, verify reduced-motion compliance.</div><div style="font-size:11px;color:#533afd;margin-top:6px;font-weight:600">Effort: 1-2 days</div></div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;padding:16px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1)">
+<div style="width:32px;height:32px;background:#533afd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">4</div>
+<div><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Component Refinement</div><div style="font-size:12px;color:#94a3b8;line-height:1.5">Update buttons, inputs, cards, navigation, overlays with new tokens. Edit 7 component files.</div><div style="font-size:11px;color:#533afd;margin-top:6px;font-weight:600">Effort: 3-4 days</div></div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;padding:16px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1)">
+<div style="width:32px;height:32px;background:#533afd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">5</div>
+<div><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Fintech Feature Components</div><div style="font-size:12px;color:#94a3b8;line-height:1.5">Build country selector, portfolio dashboard, deposit flow, withdrawal flow, KYC gate. Create 20+ new CSS files.</div><div style="font-size:11px;color:#533afd;margin-top:6px;font-weight:600">Effort: 5-7 days</div></div>
+</div>
+<div style="display:flex;gap:16px;align-items:flex-start;padding:16px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1)">
+<div style="width:32px;height:32px;background:#533afd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0">6</div>
+<div><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Responsive & Accessibility Audit</div><div style="font-size:12px;color:#94a3b8;line-height:1.5">Verify all breakpoints, test with screen readers, ensure WCAG AA compliance, validate reduced-motion. Edit 5 responsive files.</div><div style="font-size:11px;color:#533afd;margin-top:6px;font-weight:600">Effort: 2-3 days</div></div>
+</div>
+</div>
+
+<div style="margin-top:24px;padding:16px 20px;background:rgba(83,58,253,0.15);border:1px solid rgba(83,58,253,0.3);border-radius:12px">
+<div style="font-size:13px;font-weight:700;color:#a5b4fc;margin-bottom:6px">Total Estimated Effort</div>
+<div style="font-size:12px;color:#94a3b8;line-height:1.5">14-21 days for full implementation. Phases 1-3 can run in parallel with Phase 4. Phase 5 depends on Phases 1-4. Phase 6 is continuous.</div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FILE AUDIT SUMMARY TABLE                                      -->
+<!-- ============================================================ -->
+<div style="margin:48px 0 24px;padding:28px 32px;background:#fff;border:1px solid #e2e8f0;border-radius:16px">
+<h2 style="font-size:28px;font-weight:800;color:#0f172a;margin:0 0 8px">Complete File Audit Summary</h2>
+<p style="font-size:14px;color:#475569;margin:0 0 24px;line-height:1.6">All 41 existing CSS files audited, plus 28 new files identified (including admin panel + icon system). Actions: <span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">EDIT</span> <span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">CREATE</span> <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">REPLACE</span> <span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">KEEP</span></p>
+
+<table style="width:100%;font-size:12px;border-collapse:collapse">
+<thead>
+<tr style="border-bottom:2px solid #e2e8f0">
+<th style="text-align:left;padding:8px 12px;font-weight:700;color:#0f172a">File</th>
+<th style="text-align:left;padding:8px 12px;font-weight:700;color:#0f172a">Category</th>
+<th style="text-align:center;padding:8px 12px;font-weight:700;color:#0f172a">Action</th>
+<th style="text-align:left;padding:8px 12px;font-weight:700;color:#0f172a">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">foundation/colors.css</td><td style="padding:6px 12px;color:#64748b">Foundation</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add fintech semantic colors (gain/loss/neutral)</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">foundation/typography.css</td><td style="padding:6px 12px;color:#64748b">Foundation</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add tabular-nums, monetary font features</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">foundation/shadows.css</td><td style="padding:6px 12px;color:#64748b">Foundation</td><td style="padding:6px 12px;text-align:center"><span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">REPLACE</span></td><td style="padding:6px 12px;color:#64748b">Only has --shadow-none; add elevation system</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">foundation/spacing.css</td><td style="padding:6px 12px;color:#64748b">Foundation</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Well-structured, no changes needed</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">foundation/border-radius.css</td><td style="padding:6px 12px;color:#64748b">Foundation</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Good token vocabulary, matches spec</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">foundation/breakpoints.css</td><td style="padding:6px 12px;color:#64748b">Foundation</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Mobile-first, well-defined</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">foundation/blur.css</td><td style="padding:6px 12px;color:#64748b">Foundation</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Adequate for current needs</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">foundation/opacity.css</td><td style="padding:6px 12px;color:#64748b">Foundation</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Good semantic aliases</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">foundation/z-index.css</td><td style="padding:6px 12px;color:#64748b">Foundation</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add z-index for KYC modal, country selector</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">foundation/components.css</td><td style="padding:6px 12px;color:#64748b">Foundation</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add fintech component tokens</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">themes/light.css</td><td style="padding:6px 12px;color:#64748b">Theme</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Default, minimal overrides</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">themes/dark.css</td><td style="padding:6px 12px;color:#64748b">Theme</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add fintech semantic color overrides</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">themes/high-contrast.css</td><td style="padding:6px 12px;color:#64748b">Theme</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add gain/loss high-contrast colors</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">motion/transitions.css</td><td style="padding:6px 12px;color:#64748b">Motion</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add fintech-specific transition tokens</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">motion/page-transitions.css</td><td style="padding:6px 12px;color:#64748b">Motion</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Good as-is</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">motion/skeleton-loader.css</td><td style="padding:6px 12px;color:#64748b">Motion</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add chart skeleton, table skeleton</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">motion/live-pulse.css</td><td style="padding:6px 12px;color:#64748b">Motion</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Good for live indicators</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">motion/number-count.css</td><td style="padding:6px 12px;color:#64748b">Motion</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add currency formatting support</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">motion/signal-alert.css</td><td style="padding:6px 12px;color:#64748b">Motion</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Good for alerts</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">motion/reduced-motion.css</td><td style="padding:6px 12px;color:#64748b">Motion</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add new animation classes to reduced-motion</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">components/buttons/button.css</td><td style="padding:6px 12px;color:#64748b">Component</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Update tokens, add financial button variants</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">components/buttons/icon-button.css</td><td style="padding:6px 12px;color:#64748b">Component</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Update token references</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">components/inputs/inputs.css</td><td style="padding:6px 12px;color:#64748b">Component</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add amount input, OTP input styles</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">components/cards/cards.css</td><td style="padding:6px 12px;color:#64748b">Component</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add asset card, stat card variants</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">components/navigation/navigation.css</td><td style="padding:6px 12px;color:#64748b">Component</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add KYC badge in nav, portfolio tab</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">components/overlays/overlays.css</td><td style="padding:6px 12px;color:#64748b">Component</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add KYC modal, country selector bottom sheet</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">responsiveness/mobile.css</td><td style="padding:6px 12px;color:#64748b">Responsive</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add fintech mobile layouts (dashboard, flows)</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">responsiveness/tablet.css</td><td style="padding:6px 12px;color:#64748b">Responsive</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add tablet portfolio grid</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">responsiveness/desktop.css</td><td style="padding:6px 12px;color:#64748b">Responsive</td><td style="padding:6px 12px;text-align:center"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">EDIT</span></td><td style="padding:6px 12px;color:#64748b">Add desktop dashboard grid</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">responsiveness/ultrawide.css</td><td style="padding:6px 12px;color:#64748b">Responsive</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Minor tweaks only</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">responsiveness/orientation.css</td><td style="padding:6px 12px;color:#64748b">Responsive</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Good as-is</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">utilities/spacing.css</td><td style="padding:6px 12px;color:#64748b">Utility</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Good as-is</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">utilities/visibility.css</td><td style="padding:6px 12px;color:#64748b">Utility</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Good as-is</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">utilities/overflow.css</td><td style="padding:6px 12px;color:#64748b">Utility</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Good as-is</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">utilities/positioning.css</td><td style="padding:6px 12px;color:#64748b">Utility</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Good as-is</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#0f172a">utilities/transforms.css</td><td style="padding:6px 12px;color:#64748b">Utility</td><td style="padding:6px 12px;text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">KEEP</span></td><td style="padding:6px 12px;color:#64748b">Good as-is</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#533afd;font-weight:600">NEW: country-selector/</td><td style="padding:6px 12px;color:#64748b">Fintech</td><td style="padding:6px 12px;text-align:center"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">CREATE</span></td><td style="padding:6px 12px;color:#64748b">Country selector with search, flags, dial codes</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#533afd;font-weight:600">NEW: portfolio/ (5 files)</td><td style="padding:6px 12px;color:#64748b">Fintech</td><td style="padding:6px 12px;text-align:center"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">CREATE</span></td><td style="padding:6px 12px;color:#64748b">Dashboard, asset card, charts, transaction list</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#533afd;font-weight:600">NEW: deposit/ (5 files)</td><td style="padding:6px 12px;color:#64748b">Fintech</td><td style="padding:6px 12px;text-align:center"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">CREATE</span></td><td style="padding:6px 12px;color:#64748b">Stepper, amount, method, confirm, success</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#533afd;font-weight:600">NEW: withdrawal/ (5 files)</td><td style="padding:6px 12px;color:#64748b">Fintech</td><td style="padding:6px 12px;text-align:center"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">CREATE</span></td><td style="padding:6px 12px;color:#64748b">Stepper, amount, destination, 2FA, status</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#533afd;font-weight:600">NEW: kyc/ (5 files)</td><td style="padding:6px 12px;color:#64748b">Fintech</td><td style="padding:6px 12px;text-align:center"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">CREATE</span></td><td style="padding:6px 12px;color:#64748b">Gate, stepper, document upload, status, badge</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#533afd;font-weight:600">NEW: theme-toggle.css</td><td style="padding:6px 12px;color:#64748b">Component</td><td style="padding:6px 12px;text-align:center"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">CREATE</span></td><td style="padding:6px 12px;color:#64748b">Light/dark/high-contrast toggle switch</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#533afd;font-weight:600">NEW: admin/ (5 files)</td><td style="padding:6px 12px;color:#64748b">Admin</td><td style="padding:6px 12px;text-align:center"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">CREATE</span></td><td style="padding:6px 12px;color:#64748b">Dashboard, fee-manager, user-manager, chat-oversight, portfolio-oversight</td></tr>
+<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 12px;font-family:monospace;color:#533afd;font-weight:600">NEW: icons/icon-system.css</td><td style="padding:6px 12px;color:#64748b">Component</td><td style="padding:6px 12px;text-align:center"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600">CREATE</span></td><td style="padding:6px 12px;color:#64748b">SVG icon system: flat default, animated on interaction (replaces all emojis)</td></tr>
+</tbody>
+</table>
+
+<div style="margin-top:20px;display:flex;gap:16px;flex-wrap:wrap">
+<div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:#f8fafc;border-radius:9999px"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">EDIT</span><span style="font-size:12px;color:#475569">17 files</span></div>
+<div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:#f8fafc;border-radius:9999px"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">CREATE</span><span style="font-size:12px;color:#475569">28 new files</span></div>
+<div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:#f8fafc;border-radius:9999px"><span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">REPLACE</span><span style="font-size:12px;color:#475569">1 file</span></div>
+<div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:#f8fafc;border-radius:9999px"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">KEEP</span><span style="font-size:12px;color:#475569">15 files</span></div>
+</div>
+</div>
+
+<!-- Footer -->
+<div style="margin:48px 0 0;padding:24px 32px;background:#0f172a;border-radius:12px;text-align:center">
+<p style="font-size:13px;color:#94a3b8;margin:0;line-height:1.6">ORTHO-PAY Design System — Upgrade Plan v1.0<br/>Generated for review and implementation planning. All mockups are illustrative and subject to refinement during implementation.</p>
+</div>
+
+</body>
+</html>

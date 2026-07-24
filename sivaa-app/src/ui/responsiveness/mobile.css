@@ -28,6 +28,36 @@
 
     /* Footer padding tightens */
     --component-footer-padding: 32px var(--space-lg);
+
+    /* Fintech: smaller money displays on mobile */
+    --text-money-xl-size: 24px;
+    --text-money-xl-letter-spacing: -0.48px;
+    --text-money-lg-size: 20px;
+    --text-money-lg-letter-spacing: -0.4px;
+
+    /* Fintech: reduced balance card padding */
+    --component-balance-card-padding: var(--space-lg);
+
+    /* Fintech: smaller OTP digits on mobile */
+    --component-otp-input-size: 40px;
+
+    /* Fintech: admin sidebar becomes drawer */
+    --component-admin-panel-sidebar-width: 240px;
+  }
+
+  /* Fintech: stat cards stack vertically */
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Fintech: transaction row wraps amount below */
+  .transaction-row {
+    flex-wrap: wrap;
+  }
+
+  /* Fintech: stepper labels hide on very small screens */
+  .stepper-step-label {
+    display: none;
   }
 }
 

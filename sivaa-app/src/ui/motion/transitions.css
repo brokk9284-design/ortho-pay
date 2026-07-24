@@ -116,3 +116,158 @@
 .animate-zoom-out {
   animation: zoom-out var(--duration-fast) var(--ease-default) both;
 }
+
+/* --- Fintech-specific keyframes --- */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@keyframes check-burst {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes otp-bounce {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes typing-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+@keyframes progress-fill {
+  from { width: 0; }
+}
+
+@keyframes toast-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes toast-out {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes gradient-drift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* --- Fintech animation utilities --- */
+.animate-spin {
+  animation: spin 0.8s linear infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s var(--ease-default) infinite;
+}
+
+.animate-shake {
+  animation: shake var(--duration-fast) var(--ease-default) both;
+}
+
+.animate-check-burst {
+  animation: check-burst var(--duration-normal) var(--ease-spring) both;
+}
+
+.animate-otp-bounce {
+  animation: otp-bounce var(--duration-fast) var(--ease-spring) both;
+}
+
+.animate-toast-in {
+  animation: toast-in var(--duration-normal) var(--ease-spring) both;
+}
+
+.animate-toast-out {
+  animation: toast-out var(--duration-fast) var(--ease-in) both;
+}
+
+.animate-gradient-drift {
+  background-size: 200% 200%;
+  animation: gradient-drift 20s var(--ease-default) infinite;
+}
+
+/* --- Typing indicator --- */
+.typing-indicator {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-mute);
+  animation: typing-dot 1.4s var(--ease-default) infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* --- Button hover lift --- */
+.btn-lift {
+  transition: transform var(--duration-fast) var(--ease-spring),
+              box-shadow var(--duration-fast) var(--ease-default);
+}
+
+.btn-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card);
+}
+
+.btn-lift:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* --- Card hover --- */
+.card-hover {
+  transition: border-color var(--duration-fast) var(--ease-default),
+              box-shadow var(--duration-fast) var(--ease-default),
+              transform var(--duration-fast) var(--ease-default);
+}
+
+.card-hover:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-card);
+}
+
+/* --- Transaction row slide --- */
+.tx-row-hover {
+  transition: transform var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-default);
+}
+
+.tx-row-hover:hover {
+  transform: translateX(2px);
+  background: var(--component-transaction-row-hover-bg);
+}
+
+/* --- Progress bar --- */
+.progress-bar-fill {
+  animation: progress-fill var(--duration-slow) var(--ease-out) both;
+  transition: width var(--duration-normal) var(--ease-default);
+}

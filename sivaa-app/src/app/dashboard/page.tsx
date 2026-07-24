@@ -1,7 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  Send,
+  Download,
+  ArrowUpRight,
+  ArrowDownLeft,
+  ShieldCheck,
+  ShieldAlert,
+  Clock,
+  CheckCircle2,
+  X,
+  Upload,
+  CreditCard,
+  Bitcoin,
+  DollarSign,
+  Wallet,
+  ChevronDown,
+  ChevronUp,
+  RefreshCw,
+  Search,
+  Receipt,
+} from "lucide-react";
+import { DashboardHeader, EmptyState, LoadingState } from "@/components/DashboardShared";
+import { useToast } from "@/components/Toast";
 
 interface PaymentMethod {
   method_id: string;
@@ -35,8 +59,13 @@ interface Transaction {
 }
 
 export default function UserDashboard() {
+  const router = useRouter();
+  const { toast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [sivaTag, setSivaTag] = useState("$...");
+  const [sivaTag, setSivaTag] = useState("...");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [unreadChats, setUnreadChats] = useState(0);
   const [totalSent, setTotalSent] = useState(0);
   const [totalReceived, setTotalReceived] = useState(0);
   const [showSendForm, setShowSendForm] = useState(false);
@@ -47,12 +76,12 @@ export default function UserDashboard() {
   const [kycDocuments, setKycDocuments] = useState<KycDocument[]>([]);
   const [kycStatus, setKycStatus] = useState<string>("unverified");
   const [showKycUpload, setShowKycUpload] = useState(false);
+  const [showKycDetails, setShowKycDetails] = useState(false);
   const [kycDocType, setKycDocType] = useState("passport");
   const [kycFile, setKycFile] = useState<File | null>(null);
   const [kycUploading, setKycUploading] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
-  const [sendSuccess, setSendSuccess] = useState("");
   const [show2fa, setShow2fa] = useState(false);
   const [twoFactorCode, setTwoFactorCode] = useState("");
   const [requestingCode, setRequestingCode] = useState(false);
@@ -60,17 +89,44 @@ export default function UserDashboard() {
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [showReceiptUpload, setShowReceiptUpload] = useState(false);
   const [receiptUploading, setReceiptUploading] = useState(false);
+  const [txnFilter, setTxnFilter] = useState<string>("all");
+  const [txnSearch, setTxnSearch] = useState("");
+  const [loadingTxns, setLoadingTxns] = useState(true);
+  const [resending2fa, setResending2fa] = useState(false);
 
   useEffect(() => {
-    fetch("/api/v1/auth/me")
-      .then((res) => res.ok ? res.json() : null)
+    fetch("/api/v1/auth/me", { credentials: "include" })
+      .then((res) => {
+        if (res.status === 401) { router.push("/login"); return null; }
+        return res.ok ? res.json() : null;
+      })
       .then((data) => {
-        if (data?.user?.siva_tag) setSivaTag(`$${data.user.siva_tag}`);
+        if (data?.user?.siva_tag) setSivaTag(data.user.siva_tag);
         if (data?.user?.kyc_status) setKycStatus(data.user.kyc_status);
+        if (data?.is_admin) setIsAdmin(true);
       })
       .catch(() => {});
 
-    fetch("/api/v1/wallet/history")
+    fetch("/api/v1/notifications", { credentials: "include" })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (data?.notifications) {
+          setUnreadNotifications(data.notifications.filter((n: { read: boolean }) => !n.read).length);
+        }
+      })
+      .catch(() => {});
+
+    fetch("/api/v1/chats", { credentials: "include" })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (data?.unreadCounts) {
+          const total = Object.values(data.unreadCounts).reduce((a: number, b: unknown) => a + (b as number), 0);
+          setUnreadChats(total as number);
+        }
+      })
+      .catch(() => {});
+
+    fetch("/api/v1/wallet/history", { credentials: "include" })
       .then((res) => res.ok ? res.json() : null)
       .then((data) => {
         if (data?.wallet) {
@@ -80,7 +136,7 @@ export default function UserDashboard() {
       })
       .catch(() => {});
 
-    fetch("/api/v1/payments?limit=20")
+    fetch("/api/v1/payments?limit=20", { credentials: "include" })
       .then((res) => res.ok ? res.json() : null)
       .then((data) => {
         if (data?.payments) {
@@ -107,9 +163,10 @@ export default function UserDashboard() {
           setTransactions(mapped);
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoadingTxns(false));
 
-    fetch("/api/v1/payment-methods")
+    fetch("/api/v1/payment-methods", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         if (data.payment_methods) {
@@ -121,25 +178,59 @@ export default function UserDashboard() {
       })
       .catch(() => {});
 
-    fetch("/api/v1/kyc")
+    fetch("/api/v1/kyc", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         if (data.documents) setKycDocuments(data.documents);
       })
       .catch(() => {});
-  }, []);
+  }, [router]);
 
   const monthSent = totalSent;
   const monthReceived = totalReceived;
 
+  const filteredTxns = useMemo(() => {
+    return transactions.filter((t) => {
+      if (txnFilter !== "all" && t.status !== txnFilter) return false;
+      if (txnSearch && !t.counterparty.toLowerCase().includes(txnSearch.toLowerCase()) && !t.reference.toLowerCase().includes(txnSearch.toLowerCase())) return false;
+      return true;
+    });
+  }, [transactions, txnFilter, txnSearch]);
+
+  const feePreview = useMemo(() => {
+    const amt = parseFloat(sendAmount);
+    if (!amt || amt <= 0) return null;
+    const method = paymentMethods.find((m) => m.method_id === selectedMethodId);
+    if (!method) return null;
+    const fee = amt * (method.fee_percentage / 100) + method.fee_fixed;
+    return { fee, total: amt + fee, method };
+  }, [sendAmount, selectedMethodId, paymentMethods]);
+
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     setSendError("");
-    setSendSuccess("");
 
     if (!sendTag || !sendAmount || !selectedMethodId) {
       setSendError("Please fill in all fields");
       return;
+    }
+
+    const amt = parseFloat(sendAmount);
+    if (isNaN(amt) || amt <= 0) {
+      setSendError("Amount must be a positive number");
+      return;
+    }
+
+    const method = paymentMethods.find((m) => m.method_id === selectedMethodId);
+    if (method) {
+      if (amt < method.min_amount) {
+        setSendError(`Minimum amount for ${method.display_name} is $${method.min_amount}`);
+        return;
+      }
+      if (method.max_amount && amt > method.max_amount) {
+        setSendError(`Maximum amount for ${method.display_name} is $${method.max_amount}`);
+        return;
+      }
     }
 
     // Request 2FA code first
@@ -157,6 +248,7 @@ export default function UserDashboard() {
         return;
       }
       setShow2fa(true);
+      toast("Verification code sent to your email", "info");
     } catch {
       setSendError("Network error requesting verification code");
     }
@@ -187,7 +279,7 @@ export default function UserDashboard() {
         return;
       }
 
-      setSendSuccess(`Payment of $${sendAmount} to $${sendTag} is now in escrow. Reference: ${data.payment?.reference || ""}`);
+      toast(`Payment of $${sendAmount} to $${sendTag} is now in escrow`, "success");
       setShowSendForm(false);
       setShow2fa(false);
       setSendTag("");
@@ -197,6 +289,27 @@ export default function UserDashboard() {
       setSendError("Network error. Please try again.");
     }
     setSending(false);
+  };
+
+  const handleResend2fa = async () => {
+    setResending2fa(true);
+    setSendError("");
+    try {
+      const res = await fetch("/api/v1/payments/2fa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ purpose: "payment_send" }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setSendError(data.error || "Failed to resend code");
+      } else {
+        toast("New verification code sent", "info");
+      }
+    } catch {
+      setSendError("Network error. Please try again.");
+    }
+    setResending2fa(false);
   };
 
   const handleKycUpload = async (e: React.FormEvent) => {
@@ -220,7 +333,8 @@ export default function UserDashboard() {
       if (res.ok) {
         setShowKycUpload(false);
         setKycFile(null);
-        const refreshRes = await fetch("/api/v1/kyc");
+        toast("KYC document submitted for review", "success");
+        const refreshRes = await fetch("/api/v1/kyc", { credentials: "include" });
         const refreshData = await refreshRes.json();
         if (refreshData.documents) setKycDocuments(refreshData.documents);
       } else {
@@ -259,7 +373,7 @@ export default function UserDashboard() {
         setShowReceiptUpload(false);
         setReceiptFile(null);
         setReceiptPaymentId("");
-        setSendSuccess("Receipt uploaded successfully. It will be reviewed by our team.");
+        toast("Receipt uploaded successfully", "success");
       } else {
         const data = await res.json();
         setSendError(data.error || "Failed to upload receipt");
@@ -289,22 +403,12 @@ export default function UserDashboard() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--color-canvas)", color: "var(--color-ink)", fontFamily: "var(--font-body)" }}>
-      {/* Top Nav */}
-      <header className="w-full" style={{ borderBottom: "1px solid var(--color-hairline)", backgroundColor: "var(--color-surface-soft)" }}>
-        <div className="mx-auto px-4 flex items-center justify-between" style={{ maxWidth: "480px", height: "56px" }}>
-          <Link href="/" className="text-lg font-bold font-display tracking-tight" style={{ color: "var(--color-ink)" }}>
-            ORTHO-PAY
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard/chat" className="text-xs transition" style={{ color: "var(--color-charcoal)" }}>
-              Chats
-            </Link>
-            <Link href="/admin" className="text-xs transition" style={{ color: "var(--color-charcoal)" }}>
-              Admin
-            </Link>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader
+        sivaTag={sivaTag}
+        unreadNotifications={unreadNotifications}
+        unreadChats={unreadChats}
+        isAdmin={isAdmin}
+      />
 
       {/* Main Content */}
       <main className="flex-1 mx-auto px-4 py-6 w-full" style={{ maxWidth: "480px" }}>
@@ -315,19 +419,8 @@ export default function UserDashboard() {
               <div className="text-xs uppercase tracking-wider mb-1" style={{ opacity: 0.6 }}>
                 Your ORTHO Tag
               </div>
-              <div className="text-2xl font-display font-bold">{sivaTag}</div>
+              <div className="text-2xl font-display font-bold">${sivaTag}</div>
             </div>
-            <button
-              className="text-xs px-3 py-1 rounded-full transition"
-              style={{ backgroundColor: "rgba(255,255,255,0.1)", color: "var(--color-canvas)" }}
-              onClick={() => {
-                if (typeof navigator !== "undefined" && navigator.clipboard) {
-                  navigator.clipboard.writeText(sivaTag);
-                }
-              }}
-            >
-              Copy
-            </button>
           </div>
         </div>
 
@@ -374,20 +467,14 @@ export default function UserDashboard() {
             className="flex items-center justify-center gap-2 py-3 rounded-xl transition"
             style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
-            </svg>
+            <Send size={18} />
             <span className="text-sm font-medium">Send</span>
           </button>
           <button
             className="flex items-center justify-center gap-2 py-3 rounded-xl transition"
             style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)", color: "var(--color-ink)" }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="1 4 1 10 7 10" />
-              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-            </svg>
+            <Download size={18} />
             <span className="text-sm font-medium">Request</span>
           </button>
         </div>
@@ -476,6 +563,22 @@ export default function UserDashboard() {
                       </p>
                     );
                   })()}
+                  {feePreview && (
+                    <div className="mt-3 rounded-lg p-3" style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span style={{ color: "var(--color-charcoal)" }}>Payment amount</span>
+                        <span className="font-mono" style={{ color: "var(--color-ink)" }}>${parseFloat(sendAmount).toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span style={{ color: "var(--color-charcoal)" }}>Transaction fee</span>
+                        <span className="font-mono" style={{ color: "var(--color-ink)" }}>${feePreview.fee.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between text-xs font-semibold pt-1" style={{ borderTop: "1px solid var(--color-hairline)" }}>
+                        <span style={{ color: "var(--color-ink)" }}>You pay</span>
+                        <span className="font-mono" style={{ color: "var(--color-ink)" }}>${feePreview.total.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {sendError && (
                   <div className="text-sm rounded-lg p-3" style={{ color: "#ef4444", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
@@ -513,6 +616,7 @@ export default function UserDashboard() {
                 type="text"
                 value={twoFactorCode}
                 onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                onKeyDown={(e) => e.key === "Enter" && twoFactorCode.length >= 6 && handleConfirmSend()}
                 placeholder="000000"
                 maxLength={6}
                 className="w-full text-center text-2xl font-mono tracking-widest py-3 rounded-xl outline-none mb-4"
@@ -531,15 +635,15 @@ export default function UserDashboard() {
               >
                 {sending ? "Confirming..." : "Confirm Payment"}
               </button>
+              <button
+                onClick={handleResend2fa}
+                disabled={resending2fa}
+                className="w-full text-xs mt-3 transition disabled:opacity-50"
+                style={{ color: "var(--color-charcoal)", background: "none", border: "none", cursor: "pointer" }}
+              >
+                {resending2fa ? "Sending new code..." : "Resend code"}
+              </button>
             </div>
-          </div>
-        )}
-
-        {/* Success Message */}
-        {sendSuccess && (
-          <div className="mb-4 text-sm rounded-lg p-3" style={{ color: "var(--color-terminal-green)", backgroundColor: "rgba(34, 197, 94, 0.08)", border: "1px solid var(--color-terminal-green)" }}>
-            {sendSuccess}
-            <button className="ml-2 underline" onClick={() => setSendSuccess("")}>Dismiss</button>
           </div>
         )}
 
@@ -549,18 +653,55 @@ export default function UserDashboard() {
             <h3 className="text-sm font-medium uppercase tracking-wider" style={{ color: "var(--color-charcoal)" }}>
               Identity Verification (KYC)
             </h3>
-            <span
-              className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold"
-              style={{
-                color: kycStatus === "verified" ? "var(--color-terminal-green)" : kycStatus === "pending" ? "var(--color-terminal-yellow)" : "var(--color-charcoal)",
-                border: `1px solid ${kycStatus === "verified" ? "var(--color-terminal-green)" : kycStatus === "pending" ? "var(--color-terminal-yellow)" : "var(--color-hairline)"}`,
-              }}
-            >
-              {kycStatus}
-            </span>
+            {kycStatus === "verified" && (
+              <span
+                className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                style={{ color: "var(--color-terminal-green)", border: "1px solid var(--color-terminal-green)" }}
+              >
+                verified
+              </span>
+            )}
           </div>
 
-          {kycDocuments.length === 0 ? (
+          {kycStatus === "verified" ? (
+            <div className="rounded-xl" style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
+              <button
+                onClick={() => setShowKycDetails(!showKycDetails)}
+                className="w-full flex items-center justify-between p-4"
+              >
+                <span className="text-sm font-medium" style={{ color: "var(--color-terminal-green)" }}>
+                  KYC verification complete
+                </span>
+                <span className="text-xs" style={{ color: "var(--color-charcoal)" }}>
+                  {showKycDetails ? "Hide" : "Show"}
+                </span>
+              </button>
+              {showKycDetails && (
+                <div className="px-4 pb-4">
+                  <p className="text-xs mb-2" style={{ color: "var(--color-charcoal)" }}>
+                    Your identity has been verified. You can send and receive payments without restrictions.
+                  </p>
+                  {kycDocuments.length > 0 && (
+                    <div className="flex flex-col gap-1">
+                      {kycDocuments.map((doc) => (
+                        <div key={doc.document_id} className="flex items-center justify-between p-2 rounded-lg" style={{ backgroundColor: "var(--color-canvas)" }}>
+                          <span className="text-[10px]" style={{ color: "var(--color-mute)" }}>
+                            {new Date(doc.created_at).toLocaleDateString()}
+                          </span>
+                          <span
+                            className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                            style={{ color: "var(--color-terminal-green)", border: "1px solid var(--color-terminal-green)" }}
+                          >
+                            {doc.status}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : kycDocuments.length === 0 ? (
             <div className="rounded-xl p-4" style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
               <p className="text-xs mb-3" style={{ color: "var(--color-charcoal)" }}>
                 No KYC documents submitted yet. Verify your identity to send and receive payments.
@@ -575,7 +716,7 @@ export default function UserDashboard() {
                 <div key={doc.document_id} className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
                   <div>
                     <div className="text-sm font-medium" style={{ color: "var(--color-ink)" }}>
-                      {doc.document_type.replace(/_/g, " ")}
+                      KYC Document
                     </div>
                     <div className="text-[10px]" style={{ color: "var(--color-mute)" }}>
                       {new Date(doc.created_at).toLocaleDateString()}
@@ -692,74 +833,110 @@ export default function UserDashboard() {
           <h3 className="text-sm font-medium uppercase tracking-wider mb-3" style={{ color: "var(--color-charcoal)" }}>
             Transaction History
           </h3>
-          <div className="flex flex-col gap-2">
-            {transactions.map((txn) => (
-              <div
-                key={txn.id}
-                className="flex items-center justify-between p-4 rounded-xl"
-                style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}
+
+          {/* Filter + Search */}
+          <div className="flex gap-2 mb-3 flex-wrap">
+            {["all", "escrow_held", "completed", "reversed"].map((f) => (
+              <button
+                key={f}
+                onClick={() => setTxnFilter(f)}
+                className="text-xs px-3 py-1 rounded-full transition"
+                style={{
+                  backgroundColor: txnFilter === f ? "var(--color-ink)" : "var(--color-surface-soft)",
+                  color: txnFilter === f ? "var(--color-canvas)" : "var(--color-charcoal)",
+                  border: `1px solid ${txnFilter === f ? "var(--color-ink)" : "var(--color-hairline)"}`,
+                }}
               >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="rounded-full flex items-center justify-center shrink-0"
-                    style={{
-                      width: 40,
-                      height: 40,
-                      backgroundColor: txn.type === "received" ? "var(--color-surface-dark)" : "var(--color-ink)",
-                    }}
-                  >
-                    {txn.type === "sent" ? (
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-canvas)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="22" y1="2" x2="11" y2="13" />
-                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                      </svg>
-                    ) : (
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-terminal-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="1 4 1 10 7 10" />
-                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-                      </svg>
-                    )}
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium" style={{ color: "var(--color-ink)" }}>
-                      {txn.counterparty}
-                    </div>
-                    <div className="text-xs" style={{ color: "var(--color-mute)" }}>
-                      {txn.date}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div
-                    className="text-sm font-mono font-semibold"
-                    style={{
-                      color: txn.type === "received" ? "var(--color-terminal-green)" : "var(--color-ink)",
-                    }}
-                  >
-                    {formatAmount(txn.amount, txn.type)}
-                  </div>
-                  <div
-                    className="text-[10px] font-medium mt-0.5"
-                    style={{ color: getStatusColor(txn.status) }}
-                  >
-                    {getStatusLabel(txn.status)}
-                  </div>
-                  {txn.status === "escrow_held" && (
-                    <button
-                      className="text-[10px] mt-1 underline"
-                      style={{ color: "var(--color-charcoal)" }}
-                      onClick={() => {
-                        setReceiptPaymentId(txn.id);
-                        setShowReceiptUpload(true);
-                      }}
-                    >
-                      Upload Receipt
-                    </button>
-                  )}
-                </div>
-              </div>
+                {f === "all" ? "All" : f === "escrow_held" ? "In Escrow" : f === "completed" ? "Completed" : "Reversed"}
+              </button>
             ))}
           </div>
+          <div className="mb-3">
+            <div className="flex items-center rounded-xl px-3" style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
+              <Search size={14} style={{ color: "var(--color-mute)" }} />
+              <input
+                type="text"
+                value={txnSearch}
+                onChange={(e) => setTxnSearch(e.target.value)}
+                placeholder="Search by tag or reference..."
+                className="flex-1 bg-transparent py-2 px-2 outline-none text-xs"
+                style={{ color: "var(--color-ink)" }}
+              />
+            </div>
+          </div>
+
+          {loadingTxns ? (
+            <LoadingState message="Loading transactions..." />
+          ) : filteredTxns.length === 0 ? (
+            <EmptyState
+              icon={<Receipt size={24} style={{ color: "var(--color-mute)" }} />}
+              title={transactions.length === 0 ? "No transactions yet" : "No matching transactions"}
+              message={transactions.length === 0 ? "Your payment history will appear here once you start sending or receiving." : "Try adjusting your filters or search."}
+            />
+          ) : (
+            <div className="flex flex-col gap-2">
+              {filteredTxns.map((txn) => (
+                <div
+                  key={txn.id}
+                  className="flex items-center justify-between p-4 rounded-xl"
+                  style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="rounded-full flex items-center justify-center shrink-0"
+                      style={{
+                        width: 40,
+                        height: 40,
+                        backgroundColor: txn.type === "received" ? "var(--color-surface-dark)" : "var(--color-ink)",
+                      }}
+                    >
+                      {txn.type === "sent" ? (
+                        <ArrowUpRight size={16} style={{ color: "var(--color-canvas)" }} />
+                      ) : (
+                        <ArrowDownLeft size={16} style={{ color: "var(--color-terminal-green)" }} />
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium" style={{ color: "var(--color-ink)" }}>
+                        {txn.counterparty}
+                      </div>
+                      <div className="text-xs" style={{ color: "var(--color-mute)" }}>
+                        {txn.date}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div
+                      className="text-sm font-mono font-semibold"
+                      style={{
+                        color: txn.type === "received" ? "var(--color-terminal-green)" : "var(--color-ink)",
+                      }}
+                    >
+                      {formatAmount(txn.amount, txn.type)}
+                    </div>
+                    <div
+                      className="text-[10px] font-medium mt-0.5"
+                      style={{ color: getStatusColor(txn.status) }}
+                    >
+                      {getStatusLabel(txn.status)}
+                    </div>
+                    {txn.status === "escrow_held" && (
+                      <button
+                        className="text-[10px] mt-1 underline"
+                        style={{ color: "var(--color-charcoal)" }}
+                        onClick={() => {
+                          setReceiptPaymentId(txn.id);
+                          setShowReceiptUpload(true);
+                        }}
+                      >
+                        Upload Receipt
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
     </div>
@@ -768,41 +945,15 @@ export default function UserDashboard() {
 
 function PaymentMethodIcon({ iconKey, size = 24 }: { iconKey: string; size?: number }) {
   const icons: Record<string, React.ReactNode> = {
-    crypto: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" />
-        <path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94" />
-      </svg>
-    ),
-    cashapp: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="4" />
-        <path d="M12 7l2 2-2 2-2-2z" />
-        <path d="M9 14l3 3 3-3" />
-      </svg>
-    ),
-    paypal: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M7 4h6a4 4 0 0 1 4 4 4 4 0 0 1-4 4H9l-2 8" />
-        <path d="M9 8h4a2 2 0 0 1 0 4H9" />
-      </svg>
-    ),
-    venmo: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 7l4 10 4-10" />
-        <path d="M14 7v6a3 3 0 0 0 3 3 3 3 0 0 0 3-3V7" />
-      </svg>
-    ),
+    crypto: <Bitcoin size={size} />,
+    cashapp: <DollarSign size={size} />,
+    paypal: <CreditCard size={size} />,
+    venmo: <Wallet size={size} />,
   };
 
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "currentColor" }}>
-      {icons[iconKey] || (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-          <line x1="1" y1="10" x2="23" y2="10" />
-        </svg>
-      )}
+      {icons[iconKey] || <CreditCard size={size} />}
     </div>
   );
 }
