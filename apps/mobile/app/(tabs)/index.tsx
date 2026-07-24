@@ -79,7 +79,7 @@ export default function HomeScreen() {
 
       <View style={styles.identityCard}>
         <View>
-          <Text style={styles.identityLabel}>Your SIVA Tag</Text>
+          <Text style={styles.identityLabel}>Your ORTHO Tag</Text>
           <Text style={styles.identityTag}>${user?.siva_tag || "..."}</Text>
         </View>
       </View>

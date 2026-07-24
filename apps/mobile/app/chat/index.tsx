@@ -119,7 +119,7 @@ export default function ChatListScreen() {
 
       {showNew && (
         <View style={styles.newChatContainer}>
-          <Text style={styles.inputLabel}>Enter SIVA Tag</Text>
+          <Text style={styles.inputLabel}>Enter ORTHO Tag</Text>
           <View style={styles.inputRow}>
             <TextInput
               style={styles.textInput}
@@ -151,7 +151,7 @@ export default function ChatListScreen() {
           <View style={styles.emptyState}>
             <Text style={{ fontSize: 32, marginBottom: 12 }}>💬</Text>
             <Text style={{ color: theme.colors.ink, fontSize: 14, fontWeight: "600" }}>No chats yet</Text>
-            <Text style={{ color: theme.colors.charcoal, fontSize: 12, marginTop: 4 }}>Enter a SIVA tag to start</Text>
+            <Text style={{ color: theme.colors.charcoal, fontSize: 12, marginTop: 4 }}>Enter a ORTHO tag to start</Text>
           </View>
         }
       />

@@ -653,7 +653,7 @@ export default function AdminDashboard() {
                   <input
                     className="search-pill-input"
                     type="text"
-                    placeholder="Search by $SIVA tag, name, or email..."
+                    placeholder="Search by $ORTHO tag, name, or email..."
                     value={userSearch}
                     onChange={(e) => setUserSearch(e.target.value)}
                   />
@@ -667,7 +667,7 @@ export default function AdminDashboard() {
                       <thead>
                         <tr style={{ borderBottom: "1px solid var(--color-hairline)", color: "var(--color-body)" }}>
                           <th className="p-4 font-medium">Name</th>
-                          <th className="p-4 font-medium">$SIVA Tag</th>
+                          <th className="p-4 font-medium">$ORTHO Tag</th>
                           <th className="p-4 font-medium">KYC</th>
                           <th className="p-4 font-medium">Joined</th>
                         </tr>
@@ -718,7 +718,7 @@ export default function AdminDashboard() {
                     <h3 className="font-display font-medium text-sm mb-4" style={{ color: "var(--color-ink)" }}>User Details</h3>
                     <div className="flex flex-col gap-3 text-sm">
                       <DetailRow label="Name" value={selectedUser.name} />
-                      <DetailRow label="$SIVA Tag" value={`$${selectedUser.siva_tag}`} />
+                      <DetailRow label="$ORTHO Tag" value={`$${selectedUser.siva_tag}`} />
                       <DetailRow label="Email" value={selectedUser.email || "—"} />
                       <DetailRow label="Phone" value={selectedUser.phone || "—"} />
                       <DetailRow label="Country" value={selectedUser.country} />

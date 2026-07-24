@@ -43,7 +43,7 @@ CREATE TYPE public.txn_type AS ENUM (
 -- 2. Profiles Table
 -- ------------------------------------------
 -- Links to Supabase auth.users
--- Every user gets a unique $SIVA tag (stored without $ prefix, e.g. "alice")
+-- Every user gets a unique $ORTHO tag (stored without $ prefix, e.g. "alice")
 CREATE TABLE public.profiles (
     id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
     siva_tag VARCHAR(30) UNIQUE NOT NULL,   -- e.g. "alice" (displayed as $alice)
@@ -175,7 +175,7 @@ CREATE TABLE public.payment_verifications (
 -- ------------------------------------------
 -- 8b. Payment Requests Table
 -- ------------------------------------------
--- A receiver can request payment from another user by $SIVA tag.
+-- A receiver can request payment from another user by $ORTHO tag.
 -- The requested sender gets notified by email + in-app notification.
 -- When the sender fulfills the request, it creates a normal escrow payment
 -- linked back to this request.
@@ -186,7 +186,7 @@ CREATE TABLE public.payment_requests (
     amount NUMERIC(15, 2) NOT NULL CHECK (amount > 0.00),
     payment_method_id UUID REFERENCES public.payment_methods(method_id),
     message TEXT,                                  -- optional note from requester
-    status public.payment_status DEFAULT 'pending'::public.payment_status NOT NULL,  -- pending, fulfilled, cancelled, expired
+    status public.payment_status_type DEFAULT 'pending'::public.payment_status_type NOT NULL,  -- pending, fulfilled, cancelled, expired
     fulfilled_payment_id UUID REFERENCES public.payments(payment_id),  -- set when sender creates the payment
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
@@ -886,11 +886,11 @@ INSERT INTO public.payment_methods (code, display_name, icon_key, fee_percentage
   '{"networks": ["BTC", "ETH", "USDT", "USDC"], "instructions": "Send crypto to the provided wallet address. Funds are held in escrow until admin confirmation."}'::jsonb,
   true, 1),
 ('cashapp', 'Cash App', 'cashapp', 2.50, 0.00, 1.00, 10000.00, 5000.00, 50000.00,
-  '{"handle": "$ortho-pay-escrow", "instructions": "Send payment to $ortho-pay-escrow on Cash App with your $SIVA tag in the note."}'::jsonb,
+  '{"handle": "$ortho-pay-escrow", "instructions": "Send payment to $ortho-pay-escrow on Cash App with your $ORTHO tag in the note."}'::jsonb,
   true, 2),
 ('paypal', 'PayPal', 'paypal', 3.00, 0.30, 1.00, 10000.00, 5000.00, 50000.00,
-  '{"email": "escrow@ortho-m8.com", "instructions": "Send PayPal payment to escrow@ortho-m8.com with your $SIVA tag in the memo."}'::jsonb,
+  '{"email": "escrow@ortho-m8.com", "instructions": "Send PayPal payment to escrow@ortho-m8.com with your $ORTHO tag in the memo."}'::jsonb,
   true, 3),
 ('venmo', 'Venmo', 'venmo', 2.50, 0.00, 1.00, 5000.00, 3000.00, 30000.00,
-  '{"handle": "@ortho-pay-escrow", "instructions": "Send Venmo payment to @ortho-pay-escrow with your $SIVA tag in the note."}'::jsonb,
+  '{"handle": "@ortho-pay-escrow", "instructions": "Send Venmo payment to @ortho-pay-escrow with your $ORTHO tag in the note."}'::jsonb,
   true, 4);

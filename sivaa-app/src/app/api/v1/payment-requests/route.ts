@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!targetProfile) {
-      return NextResponse.json({ error: "User not found with that SIVA tag" }, { status: 404 });
+      return NextResponse.json({ error: "User not found with that ORTHO tag" }, { status: 404 });
     }
 
     if (targetProfile.id === user.id) {

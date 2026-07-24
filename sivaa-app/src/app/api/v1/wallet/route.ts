@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find receiver by $SIVA tag
+    // Find receiver by $ORTHO tag
     const { data: receiver } = await supabase
       .from("profiles")
       .select("id, siva_tag, name, kyc_status")

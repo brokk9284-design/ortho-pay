@@ -53,7 +53,7 @@ export default function RegisterPage() {
           Create your account
         </h1>
         <p className="text-sm text-center mb-8" style={{ color: "var(--color-charcoal)" }}>
-          Get a unique $SIVA tag to send and receive
+          Get a unique $ORTHO tag to send and receive
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

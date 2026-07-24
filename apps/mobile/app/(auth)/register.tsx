@@ -37,7 +37,7 @@ export default function RegisterScreen() {
           Create Account
         </Text>
         <Text style={{ fontSize: 14, color: theme.colors.charcoal, textAlign: "center", marginBottom: 32 }}>
-          Get your $SIVA tag and start sending.
+          Get your $ORTHO tag and start sending.
         </Text>
 
         {error && (

@@ -34,71 +34,8 @@ interface Transaction {
   date: string;
 }
 
-const mockTransactions: Transaction[] = [
-  {
-    id: "txn-1",
-    type: "sent",
-    counterparty: "$bob",
-    amount: 1200,
-    fee: 12,
-    status: "escrow_held",
-    reference: "ORTHO-PAY-29402-ESC",
-    date: "Jul 23, 2026",
-  },
-  {
-    id: "txn-2",
-    type: "received",
-    counterparty: "$sarah",
-    amount: 650,
-    fee: 6.5,
-    status: "completed",
-    reference: "ORTHO-PAY-85930-ESC",
-    date: "Jul 23, 2026",
-  },
-  {
-    id: "txn-3",
-    type: "sent",
-    counterparty: "$james",
-    amount: 35,
-    fee: 1.05,
-    status: "reversed",
-    reference: "ORTHO-PAY-10294-ESC",
-    date: "Jul 22, 2026",
-  },
-  {
-    id: "txn-4",
-    type: "received",
-    counterparty: "$alice",
-    amount: 250,
-    fee: 2.5,
-    status: "completed",
-    reference: "ORTHO-PAY-79102-ESC",
-    date: "Jul 21, 2026",
-  },
-  {
-    id: "txn-5",
-    type: "sent",
-    counterparty: "$mike",
-    amount: 800,
-    fee: 8,
-    status: "completed",
-    reference: "ORTHO-PAY-66012-ESC",
-    date: "Jul 20, 2026",
-  },
-  {
-    id: "txn-6",
-    type: "received",
-    counterparty: "$bob",
-    amount: 150,
-    fee: 4.5,
-    status: "completed",
-    reference: "ORTHO-PAY-55431-ESC",
-    date: "Jul 18, 2026",
-  },
-];
-
 export default function UserDashboard() {
-  const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [sivaTag, setSivaTag] = useState("$...");
   const [totalSent, setTotalSent] = useState(0);
   const [totalReceived, setTotalReceived] = useState(0);
@@ -116,6 +53,9 @@ export default function UserDashboard() {
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
   const [sendSuccess, setSendSuccess] = useState("");
+  const [show2fa, setShow2fa] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState("");
+  const [requestingCode, setRequestingCode] = useState(false);
   const [receiptPaymentId, setReceiptPaymentId] = useState("");
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [showReceiptUpload, setShowReceiptUpload] = useState(false);
@@ -194,9 +134,38 @@ export default function UserDashboard() {
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSending(true);
     setSendError("");
     setSendSuccess("");
+
+    if (!sendTag || !sendAmount || !selectedMethodId) {
+      setSendError("Please fill in all fields");
+      return;
+    }
+
+    // Request 2FA code first
+    setRequestingCode(true);
+    try {
+      const res = await fetch("/api/v1/payments/2fa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ purpose: "payment_send" }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setSendError(data.error || "Failed to send verification code");
+        setRequestingCode(false);
+        return;
+      }
+      setShow2fa(true);
+    } catch {
+      setSendError("Network error requesting verification code");
+    }
+    setRequestingCode(false);
+  };
+
+  const handleConfirmSend = async () => {
+    setSending(true);
+    setSendError("");
 
     try {
       const res = await fetch("/api/v1/wallet", {
@@ -206,6 +175,7 @@ export default function UserDashboard() {
           receiver_tag: sendTag,
           amount: parseFloat(sendAmount),
           payment_method_id: selectedMethodId,
+          two_factor_code: twoFactorCode,
         }),
       });
 
@@ -219,8 +189,10 @@ export default function UserDashboard() {
 
       setSendSuccess(`Payment of $${sendAmount} to $${sendTag} is now in escrow. Reference: ${data.payment?.reference || ""}`);
       setShowSendForm(false);
+      setShow2fa(false);
       setSendTag("");
       setSendAmount("");
+      setTwoFactorCode("");
     } catch {
       setSendError("Network error. Please try again.");
     }
@@ -341,7 +313,7 @@ export default function UserDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-xs uppercase tracking-wider mb-1" style={{ opacity: 0.6 }}>
-                Your SIVA Tag
+                Your ORTHO Tag
               </div>
               <div className="text-2xl font-display font-bold">{sivaTag}</div>
             </div>
@@ -435,7 +407,7 @@ export default function UserDashboard() {
               <form onSubmit={handleSend} className="flex flex-col gap-4">
                 <div>
                   <label className="text-xs font-medium uppercase tracking-wider mb-2 block" style={{ color: "var(--color-charcoal)" }}>
-                    Recipient $SIVA Tag
+                    Recipient $ORTHO Tag
                   </label>
                   <div className="flex items-center rounded-xl px-4" style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
                     <span className="text-lg font-display font-semibold" style={{ color: "var(--color-charcoal)" }}>$</span>
@@ -513,11 +485,52 @@ export default function UserDashboard() {
                 <button
                   type="submit"
                   className="btn btn-primary btn-lg w-full"
-                  disabled={sending || !selectedMethodId}
+                  disabled={requestingCode || !selectedMethodId}
                 >
-                  {sending ? "Sending..." : `Send to $${sendTag || "..."}`}
+                  {requestingCode ? "Sending code..." : `Send to $${sendTag || "..."}`}
                 </button>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* 2FA Verification Modal */}
+        {show2fa && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setShow2fa(false)}>
+            <div
+              className="w-full rounded-t-2xl sm:rounded-2xl p-6"
+              style={{ backgroundColor: "var(--color-canvas)", maxWidth: "400px" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-display font-medium" style={{ color: "var(--color-ink)" }}>Verify Payment</h3>
+                <button onClick={() => setShow2fa(false)} className="text-sm" style={{ color: "var(--color-charcoal)" }}>Cancel</button>
+              </div>
+              <p className="text-sm mb-4" style={{ color: "var(--color-charcoal)" }}>
+                We sent a 6-digit code to your email. Enter it below to confirm your payment of ${sendAmount} to ${sendTag}.
+              </p>
+              <input
+                type="text"
+                value={twoFactorCode}
+                onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                placeholder="000000"
+                maxLength={6}
+                className="w-full text-center text-2xl font-mono tracking-widest py-3 rounded-xl outline-none mb-4"
+                style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)", color: "var(--color-ink)" }}
+                autoFocus
+              />
+              {sendError && (
+                <div className="text-sm rounded-lg p-3 mb-4" style={{ color: "#ef4444", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
+                  {sendError}
+                </div>
+              )}
+              <button
+                onClick={handleConfirmSend}
+                className="btn btn-primary btn-lg w-full"
+                disabled={sending || twoFactorCode.length < 6}
+              >
+                {sending ? "Confirming..." : "Confirm Payment"}
+              </button>
             </div>
           </div>
         )}

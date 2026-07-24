@@ -116,7 +116,7 @@ export default function ChatListPage() {
         {showNewChat && (
           <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
             <label className="text-xs font-medium uppercase tracking-wider mb-2 block" style={{ color: "var(--color-charcoal)" }}>
-              Enter SIVA Tag
+              Enter ORTHO Tag
             </label>
             <div className="flex gap-2">
               <input
@@ -151,7 +151,7 @@ export default function ChatListPage() {
               <span className="text-2xl">💬</span>
             </div>
             <p className="text-sm mb-1" style={{ color: "var(--color-ink)" }}>No chats yet</p>
-            <p className="text-xs" style={{ color: "var(--color-charcoal)" }}>Enter a SIVA tag to start a conversation</p>
+            <p className="text-xs" style={{ color: "var(--color-charcoal)" }}>Enter a ORTHO tag to start a conversation</p>
           </div>
         ) : (
           <div className="flex flex-col gap-1">

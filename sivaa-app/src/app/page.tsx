@@ -40,7 +40,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-body-md mb-8 max-w-[500px]" style={{ color: "var(--color-body)" }}>
-            ORTHO-PAY is an escrow payment platform for buyers and sellers. Send money to any $SIVA tag — funds are held safely until our team verifies and approves the transaction.
+            ORTHO-PAY is an escrow payment platform for buyers and sellers. Send money to any $ORTHO tag — funds are held safely until our team verifies and approves the transaction.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 mb-12">
@@ -91,9 +91,9 @@ export default function LandingPage() {
                     <path d="M22 2l-7 20-4-9-9-4 20-7z" />
                   </svg>
                 </div>
-                <h3 className="text-heading-sm mb-2" style={{ color: "var(--color-ink)" }}>Send to a $SIVA tag</h3>
+                <h3 className="text-heading-sm mb-2" style={{ color: "var(--color-ink)" }}>Send to a $ORTHO tag</h3>
                 <p className="text-body-sm" style={{ color: "var(--color-body)" }}>
-                  Enter the recipient&apos;s $SIVA tag and the amount. Funds are debited and held in escrow.
+                  Enter the recipient&apos;s $ORTHO tag and the amount. Funds are debited and held in escrow.
                 </p>
               </div>
               <div className="text-center">
@@ -124,17 +124,17 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 4. $SIVA Tag Section */}
+        {/* 4. $ORTHO Tag Section */}
         <section className="w-full" style={{ borderTop: "1px solid var(--color-hairline)", paddingTop: "var(--space-section)", paddingBottom: "var(--space-section)" }}>
           <div className="mx-auto px-4 text-center" style={{ maxWidth: "var(--space-content-max-width)" }}>
             <div className="inline-flex items-center justify-center mb-6 rounded-full" style={{ width: 64, height: 64, backgroundColor: "var(--color-ink)" }}>
               <span className="text-2xl font-display font-bold" style={{ color: "var(--color-canvas)" }}>$</span>
             </div>
             <h2 className="text-display-lg mb-4" style={{ color: "var(--color-ink)" }}>
-              Your $SIVA tag is your identity
+              Your $ORTHO tag is your identity
             </h2>
             <p className="text-body-md mb-8 max-w-[500px] mx-auto" style={{ color: "var(--color-body)" }}>
-              Every ORTHO-PAY user gets a unique $SIVA tag — like $alice or $bob. Share it to receive payments. No bank details, no phone numbers, just your tag.
+              Every ORTHO-PAY user gets a unique $ORTHO tag — like $alice or $bob. Share it to receive payments. No bank details, no phone numbers, just your tag.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <div className="rounded-full px-6 py-3 flex items-center gap-2" style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
@@ -190,7 +190,7 @@ export default function LandingPage() {
                 <div className="pricing-card-divider"></div>
                 <div className="pricing-card-features-label">Includes:</div>
                 <ul className="pricing-card-features">
-                  <li className="feature-bullet"><span className="feature-bullet-check">✓</span> Free $SIVA tag</li>
+                  <li className="feature-bullet"><span className="feature-bullet-check">✓</span> Free $ORTHO tag</li>
                   <li className="feature-bullet"><span className="feature-bullet-check">✓</span> Escrow-protected payments</li>
                   <li className="feature-bullet"><span className="feature-bullet-check">✓</span> 3% fee per transaction</li>
                 </ul>
@@ -240,9 +240,9 @@ export default function LandingPage() {
 
             <div className="flex flex-col gap-2">
               <div className="faq-row">
-                <h4 className="faq-row-question">What is a $SIVA tag?</h4>
+                <h4 className="faq-row-question">What is a $ORTHO tag?</h4>
                 <p className="faq-row-answer">
-                  A $SIVA tag is your unique ORTHO-PAY handle — like $alice or $bob. You pick it when you sign up, and anyone can send you money using just your tag. No bank details needed.
+                  A $ORTHO tag is your unique ORTHO-PAY handle — like $alice or $bob. You pick it when you sign up, and anyone can send you money using just your tag. No bank details needed.
                 </p>
               </div>
               <div className="faq-row">

@@ -98,7 +98,7 @@ function renderTemplate(type: string, vars: Record<string, string>): string {
         </td></tr>
         <tr><td style="padding:40px">
           <h2 style="margin:0 0 16px;color:#0d1117;font-size:20px">Welcome to ORTHO-PAY, ${v.name}</h2>
-          <p style="margin:0 0 16px;color:#3d3d3d;font-size:15px;line-height:1.6">Your account is ready. You can now send and receive escrow-secured payments with your unique SIVA tag:</p>
+          <p style="margin:0 0 16px;color:#3d3d3d;font-size:15px;line-height:1.6">Your account is ready. You can now send and receive escrow-secured payments with your unique ORTHO tag:</p>
           <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0">
             <tr><td style="background:#f4f4f5;border-radius:8px;padding:20px;text-align:center">
               <span style="font-size:28px;font-weight:700;color:#0d1117;letter-spacing:0.5px">$${v.sivaTag}</span>

@@ -9,8 +9,8 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "ORTHO-PAY — Escrow Payments with $SIVA Tags",
-  description: "An escrow payment platform for buyers and sellers. Send money to any $SIVA tag — funds are held safely until approved. USA & England. USD only.",
+  title: "ORTHO-PAY — Escrow Payments with $ORTHO Tags",
+  description: "An escrow payment platform for buyers and sellers. Send money to any $ORTHO tag — funds are held safely until approved. USA & England. USD only.",
 };
 
 export default function RootLayout({

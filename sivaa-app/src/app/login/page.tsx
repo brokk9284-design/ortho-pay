@@ -31,10 +31,10 @@ export default function LoginPage() {
         return;
       }
 
-      if (data.siva_tag) {
-        router.push("/dashboard");
-      } else {
+      if (data.is_admin) {
         router.push("/admin");
+      } else {
+        router.push("/dashboard");
       }
     } catch {
       setError("Network error. Please try again.");

@@ -77,7 +77,7 @@ export default function PayScreen() {
       {error && <View style={styles.errorBox}><Text style={styles.errorText}>{error}</Text></View>}
       {success && <View style={styles.successBox}><Text style={styles.successText}>{success}</Text></View>}
 
-      <Text style={styles.label}>Recipient $SIVA Tag</Text>
+      <Text style={styles.label}>Recipient $ORTHO Tag</Text>
       <View style={styles.tagInput}>
         <Text style={{ fontSize: 18, fontWeight: "600", color: theme.colors.charcoal }}>$</Text>
         <TextInput

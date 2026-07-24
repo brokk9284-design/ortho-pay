@@ -30,6 +30,13 @@ export async function POST(request: NextRequest) {
       .eq("id", data.user.id)
       .single();
 
+    const { data: adminRecord } = await supabase
+      .from("admins")
+      .select("profile_id, role, is_active")
+      .eq("profile_id", data.user.id)
+      .eq("is_active", true)
+      .single();
+
     return NextResponse.json({
       message: "Login successful",
       user: {
@@ -37,6 +44,8 @@ export async function POST(request: NextRequest) {
         email: data.user.email,
         siva_tag: profile?.siva_tag,
         name: profile?.name,
+        is_admin: !!adminRecord,
+        admin_role: adminRecord?.role || null,
       },
       session: {
         access_token: data.session?.access_token,
