@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { MessageSquare, Plus, LogOut, ArrowLeft } from "lucide-react";
+import { MessageSquare, Plus } from "lucide-react";
 
 interface ChatItem {
   chat_id: string;
@@ -28,14 +28,10 @@ export default function ChatListPage() {
   const [sivaTagInput, setSivaTagInput] = useState("");
   const [resolving, setResolving] = useState(false);
   const [currentUserId, setCurrentUserId] = useState("");
-  const logout = async () => {
-    try { await fetch("/api/v1/auth/logout", { method: "POST", credentials: "include" }); } catch {}
-    router.push("/login");
-  };
 
   useEffect(() => {
     fetch("/api/v1/auth/me", { credentials: "include" })
-      .then((res) => res.ok ? res.json() : null)
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.user?.id) setCurrentUserId(data.user.id);
       })
@@ -104,31 +100,41 @@ export default function ChatListPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--color-canvas)", color: "var(--color-ink)", fontFamily: "var(--font-body)" }}>
-      <header className="w-full" style={{ borderBottom: "1px solid var(--color-hairline)", backgroundColor: "var(--color-surface-soft)" }}>
-        <div className="mx-auto px-4 flex items-center justify-between" style={{ maxWidth: "480px", height: "56px" }}>
-          <Link href="/dashboard" className="text-sm transition flex items-center gap-1" style={{ color: "var(--color-charcoal)" }}>
-            <ArrowLeft size={16} />
-            Back
-          </Link>
-          <span className="text-lg font-bold font-display tracking-tight" style={{ color: "var(--color-ink)" }}>
-            Chats
-          </span>
+    <div className="min-h-screen" style={{ fontFamily: "var(--font-body)" }}>
+      <div className="mx-auto px-4 lg:px-8 py-6" style={{ maxWidth: "800px" }}>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6 dash-item-enter">
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 800, color: "var(--color-ink)", marginBottom: 4 }}>
+              Chats
+            </h1>
+            <p style={{ fontSize: 14, color: "var(--color-charcoal)" }}>
+              Message other ORTHO-PAY users
+            </p>
+          </div>
           <button
             onClick={() => setShowNewChat(!showNewChat)}
-            className="flex items-center gap-1 text-xs px-3 py-1 rounded-full transition"
-            style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+            className="flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition"
+            style={{
+              backgroundColor: "var(--color-primary)",
+              color: "var(--color-on-primary)",
+              fontWeight: 600,
+              border: "none",
+              cursor: "pointer",
+            }}
           >
-            <Plus size={12} />
-            New
+            <Plus size={16} />
+            New Chat
           </button>
         </div>
-      </header>
 
-      <main className="flex-1 mx-auto px-4 py-4 w-full" style={{ maxWidth: "480px" }}>
+        {/* New Chat Form */}
         {showNewChat && (
-          <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
-            <label className="text-xs font-medium uppercase tracking-wider mb-2 block" style={{ color: "var(--color-charcoal)" }}>
+          <div
+            className="dash-workflow-card dash-item-enter mb-4"
+            style={{ padding: 20 }}
+          >
+            <label style={{ fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--color-charcoal)", marginBottom: 8, display: "block" }}>
               Enter ORTHO Tag
             </label>
             <div className="flex gap-2">
@@ -138,69 +144,89 @@ export default function ChatListPage() {
                 onChange={(e) => setSivaTagInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleResolveTag()}
                 placeholder="$alice"
-                className="flex-1 px-3 py-2 rounded-lg text-sm outline-none"
-                style={{ backgroundColor: "var(--color-canvas)", border: "1px solid var(--color-hairline)", color: "var(--color-ink)" }}
+                className="flex-1 px-4 py-3 rounded-xl text-sm outline-none"
+                style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)", color: "var(--color-ink)" }}
+                autoFocus
               />
               <button
                 onClick={handleResolveTag}
                 disabled={resolving || !sivaTagInput.trim()}
-                className="px-4 py-2 rounded-lg text-sm font-medium transition disabled:opacity-50"
-                style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+                className="btn btn-primary"
+                style={{ borderRadius: 12 }}
               >
                 {resolving ? "..." : "Start"}
               </button>
             </div>
-            {error && <p className="text-xs mt-2" style={{ color: "var(--color-terminal-red)" }}>{error}</p>}
+            {error && (
+              <p style={{ fontSize: 13, marginTop: 8, color: "var(--color-error)" }}>{error}</p>
+            )}
           </div>
         )}
 
+        {/* Chat List */}
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <span className="text-sm" style={{ color: "var(--color-charcoal)" }}>Loading chats...</span>
+            <span style={{ fontSize: 14, color: "var(--color-charcoal)" }}>Loading chats...</span>
           </div>
         ) : chats.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <div className="mb-4 rounded-full flex items-center justify-center" style={{ width: 56, height: 56, backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}>
+          <div className="flex flex-col items-center justify-center py-16 dash-item-enter">
+            <div
+              className="mb-4 rounded-full flex items-center justify-center"
+              style={{
+                width: 56,
+                height: 56,
+                backgroundColor: "var(--color-surface-soft)",
+                border: "1px solid var(--color-hairline)",
+              }}
+            >
               <MessageSquare size={24} style={{ color: "var(--color-mute)" }} />
             </div>
-            <p className="text-sm mb-1" style={{ color: "var(--color-ink)" }}>No chats yet</p>
-            <p className="text-xs" style={{ color: "var(--color-charcoal)" }}>Enter a ORTHO tag to start a conversation</p>
+            <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 4, color: "var(--color-ink)" }}>No chats yet</p>
+            <p style={{ fontSize: 13, color: "var(--color-charcoal)" }}>Enter a ORTHO tag to start a conversation</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-1">
-            {chats.map((chat) => {
+          <div className="flex flex-col gap-2">
+            {chats.map((chat, i) => {
               const other = getOtherUser(chat);
               const unread = unreadCounts[chat.chat_id] || 0;
               return (
                 <Link
                   key={chat.chat_id}
                   href={`/dashboard/chat/${chat.chat_id}`}
-                  className="flex items-center gap-3 p-3 rounded-xl transition hover:opacity-80"
-                  style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)" }}
+                  className="dash-txn-row dash-item-enter"
+                  style={{ animationDelay: `${i * 40}ms`, textDecoration: "none" }}
                 >
-                  <div className="rounded-full flex items-center justify-center flex-shrink-0" style={{ width: 44, height: 44, backgroundColor: "var(--color-ink)" }}>
-                    <span className="text-sm font-bold" style={{ color: "var(--color-canvas)" }}>
-                      {other?.name?.charAt(0).toUpperCase() || "?"}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold truncate" style={{ color: "var(--color-ink)" }}>
-                        {other?.name || "Unknown"}
-                      </span>
-                      <span className="text-xs flex-shrink-0 ml-2" style={{ color: "var(--color-charcoal)" }}>
-                        {formatTime(chat.last_message_at || chat.created_at)}
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ width: 44, height: 44, backgroundColor: "var(--color-ink)" }}
+                    >
+                      <span style={{ fontSize: 14, fontWeight: 700, color: "var(--color-canvas)" }}>
+                        {other?.name?.charAt(0).toUpperCase() || "?"}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs" style={{ color: "var(--color-charcoal)" }}>
-                        ${other?.siva_tag || "unknown"}
-                      </span>
-                      {unread > 0 && (
-                        <span className="text-xs font-bold rounded-full px-2 py-0.5" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
-                          {unread}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <span style={{ fontSize: 14, fontWeight: 600, color: "var(--color-ink)" }} className="truncate">
+                          {other?.name || "Unknown"}
                         </span>
-                      )}
+                        <span style={{ fontSize: 12, color: "var(--color-charcoal)", flexShrink: 0, marginLeft: 8 }}>
+                          {formatTime(chat.last_message_at || chat.created_at)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span style={{ fontSize: 13, color: "var(--color-charcoal)" }}>
+                          ${other?.siva_tag || "unknown"}
+                        </span>
+                        {unread > 0 && (
+                          <span
+                            className="dash-badge dash-badge-info"
+                            style={{ minWidth: 20, justifyContent: "center" }}
+                          >
+                            {unread}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -208,7 +234,7 @@ export default function ChatListPage() {
             })}
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

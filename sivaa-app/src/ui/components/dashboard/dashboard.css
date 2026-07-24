@@ -1,0 +1,453 @@
+/* ============================================================
+ * ORTHO-PAY Dashboard — Modern Fintech Styles
+ * CashApp/PayPal-inspired cards, animations, transitions
+ * ============================================================ */
+
+/* --- Balance Card --- */
+.dash-balance-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  padding: 28px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-deep) 100%);
+  color: var(--color-on-primary);
+  transition: transform var(--duration-normal) var(--ease-spring),
+              box-shadow var(--duration-normal) var(--ease-default);
+}
+
+.dash-balance-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(29, 78, 216, 0.25);
+}
+
+.dash-balance-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.dash-balance-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+/* --- Stat Card --- */
+.dash-stat-card {
+  border-radius: 16px;
+  padding: 20px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-hairline);
+  transition: border-color var(--duration-fast) var(--ease-default),
+              box-shadow var(--duration-fast) var(--ease-default),
+              transform var(--duration-fast) var(--ease-default);
+}
+
+.dash-stat-card:hover {
+  border-color: var(--color-primary-subdued);
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.08);
+  transform: translateY(-1px);
+}
+
+/* --- Action Button --- */
+.dash-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 12px;
+  border-radius: 16px;
+  transition: transform var(--duration-fast) var(--ease-spring),
+              box-shadow var(--duration-fast) var(--ease-default),
+              background-color var(--duration-fast) var(--ease-default);
+  cursor: pointer;
+  border: none;
+}
+
+.dash-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.dash-action-btn:active {
+  transform: translateY(0);
+}
+
+.dash-action-btn-primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.dash-action-btn-primary:hover {
+  background: var(--color-primary-deep);
+}
+
+.dash-action-btn-secondary {
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-hairline);
+  color: var(--color-ink);
+}
+
+.dash-action-btn-secondary:hover {
+  border-color: var(--color-primary-subdued);
+}
+
+.dash-action-btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* --- Transaction Row --- */
+.dash-txn-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-hairline);
+  transition: transform var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-default),
+              background-color var(--duration-fast) var(--ease-default);
+}
+
+.dash-txn-row:hover {
+  transform: translateX(3px);
+  border-color: var(--color-primary-subdued);
+}
+
+/* --- Txn Avatar --- */
+.dash-txn-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dash-txn-avatar-sent {
+  background: var(--color-surface-dark);
+}
+
+.dash-txn-avatar-received {
+  background: rgba(22, 163, 74, 0.12);
+}
+
+/* --- Filter Pill --- */
+.dash-filter-pill {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-hairline);
+  background: var(--color-surface-soft);
+  color: var(--color-charcoal);
+  cursor: pointer;
+  transition: all 150ms var(--ease-default);
+}
+
+.dash-filter-pill:hover {
+  border-color: var(--color-primary-subdued);
+}
+
+.dash-filter-pill-active {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
+}
+
+/* --- Search Bar --- */
+.dash-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-radius: 12px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-hairline);
+  transition: border-color var(--duration-fast) var(--ease-default);
+}
+
+.dash-search:focus-within {
+  border-color: var(--color-primary);
+}
+
+/* --- Workflow Stepper --- */
+.dash-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 32px;
+}
+
+.dash-stepper-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.dash-stepper-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all var(--duration-normal) var(--ease-default);
+}
+
+.dash-stepper-circle-active {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.dash-stepper-circle-done {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.dash-stepper-circle-pending {
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-hairline);
+  color: var(--color-mute);
+}
+
+.dash-stepper-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-charcoal);
+}
+
+.dash-stepper-label-active {
+  color: var(--color-ink);
+}
+
+.dash-stepper-line {
+  flex: 1;
+  height: 2px;
+  background: var(--color-hairline);
+  margin: 0 8px;
+  transition: background var(--duration-normal) var(--ease-default);
+}
+
+.dash-stepper-line-done {
+  background: var(--color-success);
+}
+
+/* --- Workflow Card --- */
+.dash-workflow-card {
+  border-radius: 20px;
+  padding: 28px;
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* --- Amount Input --- */
+.dash-amount-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-hairline);
+}
+
+.dash-amount-input:focus-within {
+  border-color: var(--color-primary);
+}
+
+.dash-amount-input-currency {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+}
+
+.dash-amount-input-field {
+  font-size: 36px;
+  font-weight: 700;
+  text-align: center;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--color-ink);
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Confirmation Check --- */
+.dash-confirm-check {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  animation: check-burst var(--duration-slow) var(--ease-spring) both;
+}
+
+/* --- Settings Section --- */
+.dash-settings-section {
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-hairline);
+}
+
+.dash-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-hairline);
+  transition: background-color var(--duration-fast) var(--ease-default);
+}
+
+.dash-settings-row:last-child {
+  border-bottom: none;
+}
+
+.dash-settings-row:hover {
+  background: var(--color-canvas);
+}
+
+.dash-settings-row-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.dash-settings-row-value {
+  font-size: 13px;
+  color: var(--color-charcoal);
+}
+
+/* --- Portfolio Chart Bar --- */
+.dash-chart-bar {
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-soft) 100%);
+  transition: height var(--duration-slow) var(--ease-out),
+              opacity var(--duration-fast) var(--ease-default);
+  min-height: 4px;
+}
+
+.dash-chart-bar:hover {
+  opacity: 0.8;
+}
+
+/* --- Badge --- */
+.dash-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.dash-badge-success {
+  background: rgba(22, 163, 74, 0.12);
+  color: var(--color-success);
+}
+
+.dash-badge-warning {
+  background: rgba(217, 119, 6, 0.12);
+  color: var(--color-warning);
+}
+
+.dash-badge-error {
+  background: rgba(220, 38, 38, 0.12);
+  color: var(--color-error);
+}
+
+.dash-badge-info {
+  background: rgba(29, 78, 216, 0.12);
+  color: var(--color-primary);
+}
+
+/* --- Slide-in animation for modals --- */
+@keyframes dash-modal-slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.dash-modal-enter {
+  animation: dash-modal-slide-up var(--duration-normal) var(--ease-spring) both;
+}
+
+@keyframes dash-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.dash-overlay {
+  animation: dash-fade-in var(--duration-fast) var(--ease-default) both;
+}
+
+/* --- Stagger animation for list items --- */
+@keyframes dash-item-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dash-item-enter {
+  animation: dash-item-enter var(--duration-normal) var(--ease-out) both;
+}
+
+.dash-item-enter:nth-child(1) { animation-delay: 0ms; }
+.dash-item-enter:nth-child(2) { animation-delay: 50ms; }
+.dash-item-enter:nth-child(3) { animation-delay: 100ms; }
+.dash-item-enter:nth-child(4) { animation-delay: 150ms; }
+.dash-item-enter:nth-child(5) { animation-delay: 200ms; }
+.dash-item-enter:nth-child(6) { animation-delay: 250ms; }
+.dash-item-enter:nth-child(7) { animation-delay: 300ms; }
+.dash-item-enter:nth-child(8) { animation-delay: 350ms; }
+.dash-item-enter:nth-child(9) { animation-delay: 400ms; }
+.dash-item-enter:nth-child(10) { animation-delay: 450ms; }
+
+/* --- Number count up --- */
+.dash-number-animate {
+  animation: count-up var(--duration-normal) var(--ease-out) both;
+  font-variant-numeric: tabular-nums;
+}

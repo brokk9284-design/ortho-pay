@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Bell, ArrowLeft, Check } from "lucide-react";
+import { Check, Bell } from "lucide-react";
 import { EmptyState, LoadingState } from "@/components/DashboardShared";
 
 interface Notification {
@@ -19,7 +18,7 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     fetch("/api/v1/notifications", { credentials: "include" })
-      .then((res) => res.ok ? res.json() : null)
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.notifications) setNotifications(data.notifications);
       })
@@ -47,32 +46,28 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--color-canvas)", color: "var(--color-ink)", fontFamily: "var(--font-body)" }}>
-      <header className="w-full" style={{ borderBottom: "1px solid var(--color-hairline)", backgroundColor: "var(--color-surface-soft)" }}>
-        <div className="mx-auto px-4 flex items-center justify-between" style={{ maxWidth: "480px", height: "56px" }}>
-          <Link href="/dashboard" className="text-sm transition flex items-center gap-1" style={{ color: "var(--color-charcoal)" }}>
-            <ArrowLeft size={16} />
-            Back
-          </Link>
-          <span className="text-lg font-bold font-display tracking-tight" style={{ color: "var(--color-ink)" }}>
-            Notifications
-          </span>
-          {notifications.some((n) => !n.read) ? (
+    <div className="min-h-screen" style={{ fontFamily: "var(--font-body)" }}>
+      <div className="mx-auto px-4 lg:px-8 py-6" style={{ maxWidth: "800px" }}>
+        <div className="flex items-center justify-between mb-6 dash-item-enter">
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 800, color: "var(--color-ink)", marginBottom: 4 }}>
+              Notifications
+            </h1>
+            <p style={{ fontSize: 14, color: "var(--color-charcoal)" }}>
+              Payment updates, KYC status, and alerts
+            </p>
+          </div>
+          {notifications.some((n) => !n.read) && (
             <button
               onClick={markAllRead}
-              className="text-xs transition flex items-center gap-1"
-              style={{ color: "var(--color-charcoal)", background: "none", border: "none", cursor: "pointer" }}
+              className="flex items-center gap-1 text-xs px-3 py-2 rounded-xl transition dash-filter-pill"
             >
-              <Check size={12} />
-              Mark all
+              <Check size={14} />
+              Mark all read
             </button>
-          ) : (
-            <div style={{ width: 48 }} />
           )}
         </div>
-      </header>
 
-      <main className="flex-1 mx-auto px-4 py-4 w-full" style={{ maxWidth: "480px" }}>
         {loading ? (
           <LoadingState message="Loading notifications..." />
         ) : notifications.length === 0 ? (
@@ -83,36 +78,39 @@ export default function NotificationsPage() {
           />
         ) : (
           <div className="flex flex-col gap-2">
-            {notifications.map((n) => (
+            {notifications.map((n, i) => (
               <div
                 key={n.notification_id}
-                className="p-4 rounded-xl"
+                className="dash-txn-row dash-item-enter"
                 style={{
-                  backgroundColor: n.read ? "var(--color-surface-soft)" : "var(--color-surface-dark)",
-                  border: `1px solid ${n.read ? "var(--color-hairline)" : "var(--color-ink)"}`,
+                  animationDelay: `${i * 40}ms`,
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 8,
+                  borderColor: n.read ? "var(--color-hairline)" : "var(--color-primary-subdued)",
                 }}
               >
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start justify-between w-full gap-3">
                   <div className="flex-1">
-                    <div className="text-sm font-medium mb-1" style={{ color: "var(--color-ink)" }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4, color: "var(--color-ink)" }}>
                       {n.title}
                     </div>
-                    <div className="text-xs" style={{ color: "var(--color-charcoal)" }}>
+                    <div style={{ fontSize: 13, color: "var(--color-charcoal)" }}>
                       {n.body}
                     </div>
                   </div>
                   {!n.read && (
-                    <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "var(--color-terminal-green)", flexShrink: 0, marginTop: 6 }} />
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "var(--color-primary)", flexShrink: 0, marginTop: 6 }} />
                   )}
                 </div>
-                <div className="text-[10px] mt-2" style={{ color: "var(--color-mute)" }}>
+                <div style={{ fontSize: 11, color: "var(--color-mute)" }}>
                   {formatTime(n.created_at)}
                 </div>
               </div>
             ))}
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

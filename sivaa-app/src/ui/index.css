@@ -51,6 +51,7 @@
 @import './components/overlays/overlays.css';
 @import './components/overlays/chat.css';
 @import './components/icons/icon-system.css';
+@import './components/dashboard/dashboard.css';
 
 /* 6. Utilities — spacing helpers, visibility, overflow */
 @import './utilities/spacing.css';
