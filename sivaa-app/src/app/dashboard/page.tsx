@@ -1,30 +1,21 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Send,
   Download,
   ArrowUpRight,
   ArrowDownLeft,
-  ShieldCheck,
-  ShieldAlert,
-  Clock,
-  CheckCircle2,
-  X,
   Upload,
   CreditCard,
   Bitcoin,
   DollarSign,
   Wallet,
-  ChevronDown,
-  ChevronUp,
-  RefreshCw,
   Search,
   Receipt,
 } from "lucide-react";
-import { DashboardHeader, EmptyState, LoadingState } from "@/components/DashboardShared";
+import { DashboardHeader, BottomNav, EmptyState, LoadingState } from "@/components/DashboardShared";
 import { useToast } from "@/components/Toast";
 
 interface PaymentMethod {
@@ -63,7 +54,6 @@ export default function UserDashboard() {
   const { toast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [sivaTag, setSivaTag] = useState("...");
-  const [isAdmin, setIsAdmin] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [unreadChats, setUnreadChats] = useState(0);
   const [totalSent, setTotalSent] = useState(0);
@@ -103,7 +93,6 @@ export default function UserDashboard() {
       .then((data) => {
         if (data?.user?.siva_tag) setSivaTag(data.user.siva_tag);
         if (data?.user?.kyc_status) setKycStatus(data.user.kyc_status);
-        if (data?.is_admin) setIsAdmin(true);
       })
       .catch(() => {});
 
@@ -152,8 +141,8 @@ export default function UserDashboard() {
             sender_id: string;
           }) => ({
             id: p.payment_id,
-            type: p.sender?.siva_tag ? "sent" : "received",
-            counterparty: p.sender?.siva_tag ? `$${p.receiver?.siva_tag || "unknown"}` : `$${p.sender?.siva_tag || "unknown"}`,
+            type: p.sender_id ? "sent" : "received",
+            counterparty: p.sender_id ? `$${p.receiver?.siva_tag || "unknown"}` : `$${p.sender?.siva_tag || "unknown"}`,
             amount: p.gross_amount,
             fee: p.fee_amount,
             status: p.status,
@@ -407,11 +396,10 @@ export default function UserDashboard() {
         sivaTag={sivaTag}
         unreadNotifications={unreadNotifications}
         unreadChats={unreadChats}
-        isAdmin={isAdmin}
       />
 
       {/* Main Content */}
-      <main className="flex-1 mx-auto px-4 py-6 w-full" style={{ maxWidth: "480px" }}>
+      <main className="flex-1 mx-auto px-4 py-6 w-full pb-20 lg:pb-6" style={{ maxWidth: "1024px" }}>
         {/* Identity Card */}
         <div className="rounded-2xl p-6 mb-6" style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}>
           <div className="flex items-center justify-between">
@@ -461,11 +449,11 @@ export default function UserDashboard() {
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           <button
             onClick={() => setShowSendForm(true)}
             className="flex items-center justify-center gap-2 py-3 rounded-xl transition"
-            style={{ backgroundColor: "var(--color-ink)", color: "var(--color-canvas)" }}
+            style={{ backgroundColor: "var(--color-primary)", color: "var(--color-on-primary)" }}
           >
             <Send size={18} />
             <span className="text-sm font-medium">Send</span>
@@ -476,6 +464,20 @@ export default function UserDashboard() {
           >
             <Download size={18} />
             <span className="text-sm font-medium">Request</span>
+          </button>
+          <button
+            className="flex items-center justify-center gap-2 py-3 rounded-xl transition"
+            style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)", color: "var(--color-ink)" }}
+          >
+            <Upload size={18} />
+            <span className="text-sm font-medium">Deposit</span>
+          </button>
+          <button
+            className="flex items-center justify-center gap-2 py-3 rounded-xl transition"
+            style={{ backgroundColor: "var(--color-surface-soft)", border: "1px solid var(--color-hairline)", color: "var(--color-ink)" }}
+          >
+            <CreditCard size={18} />
+            <span className="text-sm font-medium">Withdraw</span>
           </button>
         </div>
 
@@ -581,7 +583,7 @@ export default function UserDashboard() {
                   )}
                 </div>
                 {sendError && (
-                  <div className="text-sm rounded-lg p-3" style={{ color: "#ef4444", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
+                  <div className="text-sm rounded-lg p-3" style={{ color: "var(--color-error)", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
                     {sendError}
                   </div>
                 )}
@@ -624,7 +626,7 @@ export default function UserDashboard() {
                 autoFocus
               />
               {sendError && (
-                <div className="text-sm rounded-lg p-3 mb-4" style={{ color: "#ef4444", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
+                <div className="text-sm rounded-lg p-3 mb-4" style={{ color: "var(--color-error)", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
                   {sendError}
                 </div>
               )}
@@ -829,7 +831,7 @@ export default function UserDashboard() {
         )}
 
         {/* Transaction History */}
-        <div>
+        <div className="lg:col-span-2">
           <h3 className="text-sm font-medium uppercase tracking-wider mb-3" style={{ color: "var(--color-charcoal)" }}>
             Transaction History
           </h3>
@@ -939,6 +941,8 @@ export default function UserDashboard() {
           )}
         </div>
       </main>
+
+      <BottomNav unreadChats={unreadChats} unreadNotifications={unreadNotifications} />
     </div>
   );
 }

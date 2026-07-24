@@ -1,7 +1,36 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check, Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+
+const HERO_SLIDES = [
+  {
+    title: "Send money with confidence",
+    subtitle: "ORTHO-PAY is an escrow payment platform for buyers and sellers. Send money to any $ORTHO tag — funds are held safely until our team verifies and approves the transaction.",
+  },
+  {
+    title: "Escrow-protected every time",
+    subtitle: "Funds never move directly between users. Every payment is held in escrow and reviewed by our team before release — protecting both buyers and sellers.",
+  },
+  {
+    title: "Your $ORTHO tag is your identity",
+    subtitle: "Every ORTHO-PAY user gets a unique $ORTHO tag — like $alice or $bob. Share it to receive payments. No bank details, no phone numbers, just your tag.",
+  },
+];
 
 export default function LandingPage() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen" style={{ backgroundColor: "var(--color-canvas)" }}>
       {/* 1. Header Navigation */}
@@ -19,61 +48,94 @@ export default function LandingPage() {
         </nav>
 
         <div className="primary-nav-actions">
+          <ThemeToggle />
           <Link href="/login" className="btn btn-primary">
             Get started
           </Link>
-          <Link href="/login" className="btn btn-secondary">
-            Admin
-          </Link>
+          <button
+            className="primary-nav-hamburger"
+            onClick={() => setDrawerOpen(!drawerOpen)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={drawerOpen}
+          >
+            {drawerOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
       </header>
 
+      {/* Mobile drawer */}
+      {drawerOpen && (
+        <div className="nav-drawer nav-drawer-open" onClick={() => setDrawerOpen(false)}>
+          <Link href="#how-it-works" className="nav-drawer-link">How it works</Link>
+          <Link href="#pricing" className="nav-drawer-link">Pricing</Link>
+          <Link href="#faq" className="nav-drawer-link">FAQ</Link>
+          <Link href="/login" className="nav-drawer-link">Get started</Link>
+        </div>
+      )}
+
       {/* 2. Hero + Content */}
       <main className="flex-1 w-full">
-        {/* Hero */}
-        <section className="mx-auto px-4 text-center flex flex-col items-center justify-center" style={{ maxWidth: "var(--space-content-max-width)", paddingTop: "var(--space-section)", paddingBottom: "var(--space-section)" }}>
-          <div className="mb-8 rounded-full flex items-center justify-center" style={{ width: 80, height: 80, backgroundColor: "var(--color-ink)" }}>
-            <span className="text-3xl font-display font-bold" style={{ color: "var(--color-canvas)" }}>$</span>
-          </div>
-
-          <h1 className="text-display-xl mb-4 max-w-[600px]" style={{ color: "var(--color-ink)" }}>
-            Send money with confidence
-          </h1>
-
-          <p className="text-body-md mb-8 max-w-[500px]" style={{ color: "var(--color-body)" }}>
-            ORTHO-PAY is an escrow payment platform for buyers and sellers. Send money to any $ORTHO tag — funds are held safely until our team verifies and approves the transaction.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 mb-12">
-            <Link href="/dashboard" className="btn btn-primary btn-lg">
-              Get started
-            </Link>
-            <Link href="#how-it-works" className="btn btn-secondary btn-lg">
-              See how it works
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-6 flex-wrap justify-center">
-            <div className="flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-body)" }}>
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-              <span className="text-code-sm" style={{ color: "var(--color-body)" }}>Escrow protected</span>
+        {/* Hero with video background and rolling text */}
+        <section className="hero-video-section">
+          <video
+            className="hero-video-bg"
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster=""
+          >
+            <source src="https://res.cloudinary.com/dgz88jxiy/video/upload/v1774275213/efb22533077888224530dec240bb54bc_clwgsj.mp4" type="video/mp4" />
+          </video>
+          <div className="hero-video-overlay" />
+          <div className="hero-video-content">
+            <div className="hero-rolling-text">
+              {HERO_SLIDES.map((slide, i) => (
+                <div
+                  key={i}
+                  className={`hero-rolling-text-item${i === heroIndex ? " is-active" : ""}`}
+                >
+                  <h1 className="text-display-xl mb-4" style={{ color: "#ffffff" }}>
+                    {slide.title}
+                  </h1>
+                  <p className="text-body-md mb-8 mx-auto" style={{ color: "rgba(255, 255, 255, 0.85)", maxWidth: "500px" }}>
+                    {slide.subtitle}
+                  </p>
+                </div>
+              ))}
             </div>
-            <div className="flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-body)" }}>
-                <circle cx="12" cy="12" r="10" />
-                <path d="M2 12h20" />
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-              </svg>
-              <span className="text-code-sm" style={{ color: "var(--color-body)" }}>USA &amp; England</span>
+
+            <div className="flex flex-col sm:flex-row gap-3 mb-12 justify-center">
+              <Link href="/dashboard" className="btn btn-primary btn-lg">
+                Get started
+              </Link>
+              <Link href="#how-it-works" className="btn btn-secondary btn-lg" style={{ backgroundColor: "rgba(255,255,255,0.15)", color: "#ffffff", borderColor: "rgba(255,255,255,0.3)" }}>
+                See how it works
+              </Link>
             </div>
-            <div className="flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--color-body)" }}>
-                <line x1="12" y1="1" x2="12" y2="23" />
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
-              <span className="text-code-sm" style={{ color: "var(--color-body)" }}>USD only</span>
+
+            <div className="flex items-center gap-6 flex-wrap justify-center">
+              <div className="flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "rgba(255,255,255,0.7)" }}>
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                <span className="text-code-sm" style={{ color: "rgba(255,255,255,0.7)" }}>Escrow protected</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "rgba(255,255,255,0.7)" }}>
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+                <span className="text-code-sm" style={{ color: "rgba(255,255,255,0.7)" }}>USA &amp; England</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "rgba(255,255,255,0.7)" }}>
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+                <span className="text-code-sm" style={{ color: "rgba(255,255,255,0.7)" }}>USD only</span>
+              </div>
             </div>
           </div>
         </section>
@@ -276,7 +338,6 @@ export default function LandingPage() {
           <Link href="#pricing" className="footer-link">Pricing</Link>
           <Link href="#faq" className="footer-link">FAQ</Link>
           <Link href="/dashboard" className="footer-link">Dashboard</Link>
-          <Link href="/admin" className="footer-link">Admin</Link>
         </div>
         <p className="footer-copyright">
           &copy; 2026 ORTHO-PAY Inc. USA &amp; England. All rights reserved.

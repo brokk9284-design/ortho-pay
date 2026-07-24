@@ -3,7 +3,8 @@
 import { useState, useEffect, ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, Bell, MessageSquare, Shield, Copy, Check } from "lucide-react";
+import { LogOut, Bell, MessageSquare, Copy, Check, Home, User, Settings } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface UserProfile {
   id: string;
@@ -67,11 +68,9 @@ interface DashboardHeaderProps {
   sivaTag?: string;
   unreadNotifications?: number;
   unreadChats?: number;
-  isAdmin?: boolean;
 }
 
-export function DashboardHeader({ sivaTag, unreadNotifications = 0, unreadChats = 0, isAdmin = false }: DashboardHeaderProps) {
-  const router = useRouter();
+export function DashboardHeader({ sivaTag, unreadNotifications = 0, unreadChats = 0 }: DashboardHeaderProps) {
   const logout = useLogout();
   const { copied, copy } = useCopyToClipboard();
 
@@ -85,8 +84,8 @@ export function DashboardHeader({ sivaTag, unreadNotifications = 0, unreadChats 
       style={{ borderBottom: "1px solid var(--color-hairline)", backgroundColor: "var(--color-surface-soft)" }}
     >
       <div
-        className="mx-auto px-4 flex items-center justify-between"
-        style={{ maxWidth: "480px", height: "56px" }}
+        className="mx-auto px-4 lg:px-8 flex items-center justify-between"
+        style={{ maxWidth: "100%", height: "56px" }}
       >
         <Link
           href="/dashboard"
@@ -100,7 +99,7 @@ export function DashboardHeader({ sivaTag, unreadNotifications = 0, unreadChats 
           {sivaTag && (
             <button
               onClick={() => copy(`$${sivaTag}`)}
-              className="flex items-center gap-1 text-xs transition"
+              className="hidden sm:flex items-center gap-1 text-xs transition"
               style={{ color: "var(--color-charcoal)" }}
               title="Copy your ORTHO tag"
             >
@@ -127,7 +126,7 @@ export function DashboardHeader({ sivaTag, unreadNotifications = 0, unreadChats 
                   minWidth: 16,
                   height: 16,
                   borderRadius: 8,
-                  backgroundColor: "var(--color-terminal-red)",
+                  backgroundColor: "var(--color-error)",
                   color: "#fff",
                   display: "flex",
                   alignItems: "center",
@@ -158,7 +157,7 @@ export function DashboardHeader({ sivaTag, unreadNotifications = 0, unreadChats 
                   minWidth: 16,
                   height: 16,
                   borderRadius: 8,
-                  backgroundColor: "var(--color-terminal-red)",
+                  backgroundColor: "var(--color-error)",
                   color: "#fff",
                   display: "flex",
                   alignItems: "center",
@@ -171,16 +170,7 @@ export function DashboardHeader({ sivaTag, unreadNotifications = 0, unreadChats 
             )}
           </Link>
 
-          {isAdmin && (
-            <Link
-              href="/admin"
-              className="transition"
-              style={{ color: "var(--color-charcoal)" }}
-              title="Admin Panel"
-            >
-              <Shield size={18} />
-            </Link>
-          )}
+          <ThemeToggle />
 
           <button
             onClick={handleLogout}
@@ -193,6 +183,44 @@ export function DashboardHeader({ sivaTag, unreadNotifications = 0, unreadChats 
         </div>
       </div>
     </header>
+  );
+}
+
+interface BottomNavProps {
+  unreadChats?: number;
+  unreadNotifications?: number;
+}
+
+export function BottomNav({ unreadChats = 0, unreadNotifications = 0 }: BottomNavProps) {
+  return (
+    <nav className="bottom-nav">
+      <Link href="/dashboard" className="bottom-nav-item active">
+        <Home className="bottom-nav-item-icon" />
+        <span className="bottom-nav-item-label">Home</span>
+      </Link>
+      <Link href="/dashboard/chat" className="bottom-nav-item" style={{ position: "relative" }}>
+        <MessageSquare className="bottom-nav-item-icon" />
+        <span className="bottom-nav-item-label">Chats</span>
+        {unreadChats > 0 && (
+          <span className="bottom-nav-item-badge">{unreadChats > 99 ? "99+" : unreadChats}</span>
+        )}
+      </Link>
+      <Link href="/dashboard/notifications" className="bottom-nav-item" style={{ position: "relative" }}>
+        <Bell className="bottom-nav-item-icon" />
+        <span className="bottom-nav-item-label">Alerts</span>
+        {unreadNotifications > 0 && (
+          <span className="bottom-nav-item-badge">{unreadNotifications > 99 ? "99+" : unreadNotifications}</span>
+        )}
+      </Link>
+      <Link href="/dashboard/profile" className="bottom-nav-item">
+        <User className="bottom-nav-item-icon" />
+        <span className="bottom-nav-item-label">Profile</span>
+      </Link>
+      <Link href="/dashboard/settings" className="bottom-nav-item">
+        <Settings className="bottom-nav-item-icon" />
+        <span className="bottom-nav-item-label">Settings</span>
+      </Link>
+    </nav>
   );
 }
 

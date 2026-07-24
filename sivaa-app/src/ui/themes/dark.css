@@ -50,11 +50,11 @@
   --color-warning: #f59e0b;
   --color-info: #3b82f6;
 
-  /* --- Brand primary in dark --- */
-  --color-primary: #665efd;
-  --color-primary-deep: #533afd;
-  --color-primary-soft: #7a70fe;
-  --color-primary-subdued: rgba(102, 94, 253, 0.3);
+  /* --- Brand primary in dark (royal blue) --- */
+  --color-primary: #3b82f6;
+  --color-primary-deep: #1d4ed8;
+  --color-primary-soft: #60a5fa;
+  --color-primary-subdued: rgba(59, 130, 246, 0.3);
   --color-brand-dark: #0a0a0a;
 
   /* --- Status badges in dark --- */

@@ -170,7 +170,7 @@ function VerifyOtpContent() {
           </div>
 
           {error && (
-            <div className="text-sm rounded-lg p-3" style={{ color: "#ef4444", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
+            <div className="text-sm rounded-lg p-3" style={{ color: "var(--color-error)", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
               {error}
             </div>
           )}
@@ -197,7 +197,7 @@ function VerifyOtpContent() {
               Code expires in {formatExpiry(codeExpiry)}
             </p>
           ) : (
-            <p className="text-xs mb-3" style={{ color: "#ef4444" }}>
+            <p className="text-xs mb-3" style={{ color: "var(--color-error)" }}>
               Your code has expired. Please request a new one.
             </p>
           )}

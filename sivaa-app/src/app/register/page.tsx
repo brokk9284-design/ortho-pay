@@ -158,7 +158,7 @@ export default function RegisterPage() {
               </button>
             </div>
             {confirmPassword.length > 0 && password !== confirmPassword && (
-              <span className="text-[10px] mt-1" style={{ color: "#ef4444" }}>Passwords do not match</span>
+              <span className="text-[10px] mt-1" style={{ color: "var(--color-error)" }}>Passwords do not match</span>
             )}
           </div>
 
@@ -176,7 +176,7 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <div className="text-sm rounded-lg p-3" style={{ color: "#ef4444", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
+            <div className="text-sm rounded-lg p-3" style={{ color: "var(--color-error)", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
               {error}
             </div>
           )}

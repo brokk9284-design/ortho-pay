@@ -586,7 +586,7 @@ export default function AdminDashboard() {
         {/* Content Area */}
         <main className="flex-1 p-6 md:p-8 overflow-auto dashboard-main">
           {error && (
-            <div className="mb-4 text-sm rounded-lg p-3" style={{ color: "#ef4444", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
+            <div className="mb-4 text-sm rounded-lg p-3" style={{ color: "var(--color-error)", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
               {error}
               <button className="ml-2 underline" onClick={() => setError("")}>Dismiss</button>
             </div>
