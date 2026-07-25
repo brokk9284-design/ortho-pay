@@ -1,4 +1,5 @@
 [build]
+  base = "sivaa-app"
   command = "npm run build"
   publish = ".next"
   functions = ".netlify/functions-internal"
