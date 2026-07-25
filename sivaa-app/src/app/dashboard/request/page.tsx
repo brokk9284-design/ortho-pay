@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -10,6 +10,9 @@ import {
   Copy,
   Check,
   MessageSquare,
+  X,
+  RotateCw,
+  Clock,
 } from "lucide-react";
 import { useToast } from "@/components/Toast";
 
@@ -20,6 +23,16 @@ interface PaymentMethod {
   icon_key: string;
   fee_percentage: number;
   fee_fixed: number;
+}
+
+interface PaymentRequest {
+  request_id: string;
+  amount: number;
+  status: string;
+  message: string | null;
+  created_at: string;
+  requester: { siva_tag: string; name: string };
+  requested_from: { siva_tag: string; name: string };
 }
 
 export default function RequestPage() {
@@ -36,6 +49,9 @@ export default function RequestPage() {
   const [requestId, setRequestId] = useState("");
   const [myTag, setMyTag] = useState("");
   const [copied, setCopied] = useState(false);
+  const [myRequests, setMyRequests] = useState<PaymentRequest[]>([]);
+  const [cancelLoading, setCancelLoading] = useState<string>("");
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
     fetch("/api/v1/auth/me", { credentials: "include" })
@@ -59,7 +75,51 @@ export default function RequestPage() {
         }
       })
       .catch(() => {});
+
+    fetchMyRequests();
   }, [router]);
+
+  const fetchMyRequests = useCallback(async () => {
+    try {
+      const res = await fetch("/api/v1/payment-requests", { credentials: "include" });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data?.requests) {
+        setMyRequests(data.requests);
+      }
+    } catch {}
+  }, []);
+
+  const handleCancelRequest = async (reqId: string) => {
+    setCancelLoading(reqId);
+    try {
+      const res = await fetch(`/api/v1/payment-requests/${reqId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ action: "cancel" }),
+      });
+      if (res.ok) {
+        toast("Request cancelled", "success");
+        await fetchMyRequests();
+      } else {
+        const data = await res.json();
+        toast(data.error || "Failed to cancel", "error");
+      }
+    } catch {
+      toast("Network error", "error");
+    }
+    setCancelLoading("");
+  };
+
+  const handleResendRequest = (req: PaymentRequest) => {
+    setSivaTag(req.requested_from?.siva_tag || "");
+    setRequestAmount(req.amount.toString());
+    setRequestNote(req.message || "");
+    setStep("details");
+    setShowHistory(false);
+    setError("");
+  };
 
   const handleDetailsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,6 +166,7 @@ export default function RequestPage() {
       setRequestId(data.request_id || data.id || "");
       setStep("confirm");
       toast("Payment request sent", "success");
+      await fetchMyRequests();
     } catch {
       setError("Network error. Please try again.");
     }
@@ -163,6 +224,145 @@ export default function RequestPage() {
             <span className={`dash-stepper-label ${step === "confirm" ? "dash-stepper-label-active" : ""}`}>Done</span>
           </div>
         </div>
+
+        {/* Request History Toggle */}
+        {step === "details" && (
+          <div className="dash-item-enter" style={{ animationDelay: "75ms", marginBottom: 16 }}>
+            <button
+              onClick={() => setShowHistory(!showHistory)}
+              className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition"
+              style={{
+                backgroundColor: "var(--color-surface-soft)",
+                border: "1px solid var(--color-hairline)",
+                color: "var(--color-ink)",
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              <span className="flex items-center gap-2">
+                <Clock size={16} style={{ color: "var(--color-charcoal)" }} />
+                Request History ({myRequests.length})
+              </span>
+              <span style={{ fontSize: 12, color: "var(--color-charcoal)" }}>
+                {showHistory ? "Hide" : "Show"}
+              </span>
+            </button>
+
+            {showHistory && (
+              <div className="mt-2 flex flex-col gap-2">
+                {myRequests.length === 0 ? (
+                  <div className="text-center py-6 text-sm" style={{ color: "var(--color-mute)" }}>
+                    No payment requests yet.
+                  </div>
+                ) : (
+                  myRequests.slice(0, 20).map((req) => {
+                    const isPending = req.status === "pending";
+                    const isAccepted = req.status === "accepted";
+                    const canCancel = isPending || isAccepted;
+                    const canResend = req.status === "cancelled" || req.status === "declined" || req.status === "fulfilled";
+
+                    const statusColor =
+                      isPending ? "var(--color-warning)" :
+                      isAccepted ? "var(--color-primary)" :
+                      req.status === "fulfilled" ? "var(--color-success)" :
+                      "var(--color-error)";
+
+                    return (
+                      <div
+                        key={req.request_id}
+                        className="rounded-xl p-3 flex flex-col gap-2"
+                        style={{
+                          backgroundColor: "var(--color-canvas)",
+                          border: "1px solid var(--color-hairline)",
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex flex-col">
+                            <span style={{ fontSize: 14, fontWeight: 600, color: "var(--color-ink)" }}>
+                              ${req.requested_from?.siva_tag || "unknown"}
+                            </span>
+                            <span style={{ fontSize: 12, color: "var(--color-mute)" }}>
+                              {new Date(req.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <span style={{ fontSize: 16, fontWeight: 700, fontVariantNumeric: "tabular-nums", color: "var(--color-ink)" }}>
+                              ${req.amount.toFixed(2)}
+                            </span>
+                            <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", color: statusColor }}>
+                              {req.status}
+                            </span>
+                          </div>
+                        </div>
+
+                        {req.message && (
+                          <p style={{ fontSize: 12, color: "var(--color-charcoal)", fontStyle: "italic" }}>
+                            "{req.message}"
+                          </p>
+                        )}
+
+                        <div className="flex gap-2">
+                          {canCancel && (
+                            <button
+                              onClick={() => handleCancelRequest(req.request_id)}
+                              disabled={cancelLoading === req.request_id}
+                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg transition"
+                              style={{
+                                fontSize: 12,
+                                fontWeight: 600,
+                                backgroundColor: "rgba(239, 68, 68, 0.08)",
+                                border: "1px solid rgba(239, 68, 68, 0.2)",
+                                color: "var(--color-error)",
+                                cursor: "pointer",
+                                opacity: cancelLoading === req.request_id ? 0.5 : 1,
+                              }}
+                            >
+                              <X size={12} />
+                              {cancelLoading === req.request_id ? "Cancelling..." : "Cancel"}
+                            </button>
+                          )}
+                          {canResend && (
+                            <button
+                              onClick={() => handleResendRequest(req)}
+                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg transition"
+                              style={{
+                                fontSize: 12,
+                                fontWeight: 600,
+                                backgroundColor: "var(--color-surface-soft)",
+                                border: "1px solid var(--color-hairline)",
+                                color: "var(--color-ink)",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <RotateCw size={12} />
+                              Resend
+                            </button>
+                          )}
+                          <Link
+                            href={`/dashboard/chat`}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg transition"
+                            style={{
+                              fontSize: 12,
+                              fontWeight: 600,
+                              backgroundColor: "var(--color-surface-soft)",
+                              border: "1px solid var(--color-hairline)",
+                              color: "var(--color-charcoal)",
+                              textDecoration: "none",
+                            }}
+                          >
+                            <MessageSquare size={12} />
+                            Chat
+                          </Link>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Step: Details */}
         {step === "details" && (

@@ -13,9 +13,9 @@ export async function PATCH(
     const body = await request.json();
     const { action } = body;
 
-    if (!action || !["accept", "decline"].includes(action)) {
+    if (!action || !["accept", "decline", "cancel"].includes(action)) {
       return NextResponse.json(
-        { error: "action must be 'accept' or 'decline'" },
+        { error: "action must be 'accept', 'decline', or 'cancel'" },
         { status: 400 }
       );
     }
@@ -33,21 +33,35 @@ export async function PATCH(
       return NextResponse.json({ error: "Payment request not found" }, { status: 404 });
     }
 
-    if (paymentRequest.requested_from_id !== user.id) {
-      return NextResponse.json(
-        { error: "Only the requested user can accept or decline this request" },
-        { status: 403 }
-      );
+    if (action === "cancel") {
+      if (paymentRequest.requester_id !== user.id) {
+        return NextResponse.json(
+          { error: "Only the requester can cancel this request" },
+          { status: 403 }
+        );
+      }
+      if (paymentRequest.status !== "pending" && paymentRequest.status !== "accepted") {
+        return NextResponse.json(
+          { error: `Request is already ${paymentRequest.status}` },
+          { status: 400 }
+        );
+      }
+    } else {
+      if (paymentRequest.requested_from_id !== user.id) {
+        return NextResponse.json(
+          { error: "Only the requested user can accept or decline this request" },
+          { status: 403 }
+        );
+      }
+      if (paymentRequest.status !== "pending") {
+        return NextResponse.json(
+          { error: `Request is already ${paymentRequest.status}` },
+          { status: 400 }
+        );
+      }
     }
 
-    if (paymentRequest.status !== "pending") {
-      return NextResponse.json(
-        { error: `Request is already ${paymentRequest.status}` },
-        { status: 400 }
-      );
-    }
-
-    const newStatus = action === "accept" ? "accepted" : "declined";
+    const newStatus = action === "accept" ? "accepted" : action === "decline" ? "declined" : "cancelled";
 
     await admin
       .from("payment_requests")
@@ -88,7 +102,7 @@ export async function PATCH(
         message: `$${requestedFromProfile?.siva_tag || "User"} accepted your request for $${paymentRequest.amount.toFixed(2)}.`,
         type: "payment",
       });
-    } else {
+    } else if (action === "decline") {
       await addSystemMessage(
         chatId,
         `$${requestedFromProfile?.siva_tag || "user"} declined the payment request of $${paymentRequest.amount.toFixed(2)} from $${requesterProfile?.siva_tag || "user"}.`,
@@ -100,6 +114,20 @@ export async function PATCH(
         user_id: paymentRequest.requester_id,
         title: "Payment request declined",
         message: `$${requestedFromProfile?.siva_tag || "User"} declined your request for $${paymentRequest.amount.toFixed(2)}.`,
+        type: "payment",
+      });
+    } else {
+      await addSystemMessage(
+        chatId,
+        `$${requesterProfile?.siva_tag || "user"} cancelled the payment request of $${paymentRequest.amount.toFixed(2)} to $${requestedFromProfile?.siva_tag || "user"}.`,
+        "request_cancelled",
+        { paymentRequestId: requestId }
+      );
+
+      await admin.from("notifications").insert({
+        user_id: paymentRequest.requested_from_id,
+        title: "Payment request cancelled",
+        message: `$${requesterProfile?.siva_tag || "User"} cancelled their request for $${paymentRequest.amount.toFixed(2)}.`,
         type: "payment",
       });
     }
