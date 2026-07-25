@@ -67,3 +67,10 @@ export function warn(message: string, context?: Record<string, unknown>, error?:
 export function error(message: string, context?: Record<string, unknown>, error?: Error): void {
   log("error", message, context, error);
 }
+
+export const logger = {
+  debug,
+  info,
+  warn,
+  error,
+};

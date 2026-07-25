@@ -16,6 +16,9 @@ import {
   LogOut,
   Menu,
   X,
+  Store,
+  ShieldCheck,
+  Calculator,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLogout } from "@/components/DashboardShared";
@@ -23,9 +26,12 @@ import { useLogout } from "@/components/DashboardShared";
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Home", icon: Home },
   { href: "/dashboard/portfolio", label: "Portfolio", icon: PieChart },
+  { href: "/dashboard/marketplace", label: "Marketplace", icon: Store },
+  { href: "/dashboard/escrows", label: "Escrows", icon: ShieldCheck },
   { href: "/dashboard/deposit", label: "Deposit", icon: Upload },
   { href: "/dashboard/withdraw", label: "Withdraw", icon: ArrowDownToLine },
   { href: "/dashboard/request", label: "Request", icon: Download },
+  { href: "/dashboard/fees", label: "Fees", icon: Calculator },
   { href: "/dashboard/chat", label: "Contacts", icon: MessageSquare },
   { href: "/dashboard/notifications", label: "Alerts", icon: Bell },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
@@ -342,7 +348,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Mobile Bottom Nav */}
         <nav className="dash-bottom-nav">
-          {NAV_ITEMS.filter((_, i) => [0, 2, 4, 5, 7].includes(i)).map((item) => {
+          {NAV_ITEMS.filter((_, i) => [0, 2, 3, 5, 10].includes(i)).map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
             const badge =

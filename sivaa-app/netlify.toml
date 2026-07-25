@@ -1,24 +1,11 @@
 [build]
   command = "npm run build"
   publish = ".next"
+  functions = ".netlify/functions-internal"
 
 [build.environment]
   NEXT_VERSION = "16.2.11"
   NODE_VERSION = "20"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-
-[functions]
-  included_files = ["!node_modules/@next/**"]
-
-# Next.js App Router handles its own routing.
-# This catch-all ensures Netlify delegates to Next.js for all paths.
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  conditions = {Path = ["/_next/static/*", "/_next/image/*", "/favicon.ico", "/favicon.svg", "/orthopay-lightmode.svg", "/orthopay-darkmode.svg", "/manifest.webmanifest"]}
 
 # Security headers
 [[headers]]

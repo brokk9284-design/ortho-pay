@@ -22,8 +22,10 @@ export async function GET() {
 
   try {
     const redis = getRedis();
-    await redis.ping();
-    services.redis = "up";
+    if (redis) {
+      await redis.ping();
+      services.redis = "up";
+    }
   } catch {
     services.redis = "down";
   }

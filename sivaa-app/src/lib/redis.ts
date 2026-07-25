@@ -2,14 +2,14 @@ import { Redis } from "@upstash/redis";
 
 let redisClient: Redis | null = null;
 
-export function getRedis(): Redis {
+export function getRedis(): Redis | null {
   if (redisClient) return redisClient;
 
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   if (!url || !token) {
-    throw new Error("UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set");
+    return null;
   }
 
   redisClient = new Redis({ url, token });
@@ -19,6 +19,7 @@ export function getRedis(): Redis {
 export async function cacheGet<T>(key: string): Promise<T | null> {
   try {
     const redis = getRedis();
+    if (!redis) return null;
     const data = await redis.get<T>(key);
     return data;
   } catch (err) {
@@ -34,6 +35,7 @@ export async function cacheSet<T>(
 ): Promise<void> {
   try {
     const redis = getRedis();
+    if (!redis) return;
     await redis.set(key, value, { ex: ttlSeconds });
   } catch (err) {
     console.error(`[redis] cacheSet failed for key ${key}:`, err);
@@ -43,6 +45,7 @@ export async function cacheSet<T>(
 export async function cacheDelete(key: string): Promise<void> {
   try {
     const redis = getRedis();
+    if (!redis) return;
     await redis.del(key);
   } catch (err) {
     console.error(`[redis] cacheDelete failed for key ${key}:`, err);
@@ -52,6 +55,7 @@ export async function cacheDelete(key: string): Promise<void> {
 export async function cacheIncr(key: string, ttlSeconds?: number): Promise<number> {
   try {
     const redis = getRedis();
+    if (!redis) return 0;
     const count = await redis.incr(key);
     if (ttlSeconds && count === 1) {
       await redis.expire(key, ttlSeconds);
@@ -66,6 +70,7 @@ export async function cacheIncr(key: string, ttlSeconds?: number): Promise<numbe
 export async function cacheExpire(key: string, ttlSeconds: number): Promise<void> {
   try {
     const redis = getRedis();
+    if (!redis) return;
     await redis.expire(key, ttlSeconds);
   } catch (err) {
     console.error(`[redis] cacheExpire failed for key ${key}:`, err);
@@ -79,6 +84,7 @@ export async function rateLimit(
 ): Promise<{ allowed: boolean; remaining: number }> {
   try {
     const redis = getRedis();
+    if (!redis) return { allowed: true, remaining: limit };
     const key = `ratelimit:${identifier}`;
     const count = await redis.incr(key);
     if (count === 1) {
