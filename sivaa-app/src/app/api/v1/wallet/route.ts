@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, createSupabaseAdminClient } from "@/lib/supabase/server";
 import { generateReference } from "@/lib/utils";
 import { requireAuth } from "@/lib/auth";
 import { createHash } from "crypto";
@@ -136,8 +136,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check receiver wallet exists and is active
-    const { data: receiverWallet } = await supabase
+    // Check receiver wallet exists and is active (use admin client to bypass RLS)
+    const admin = await createSupabaseAdminClient();
+    const { data: receiverWallet } = await admin
       .from("wallets")
       .select("status")
       .eq("user_id", receiver.id)

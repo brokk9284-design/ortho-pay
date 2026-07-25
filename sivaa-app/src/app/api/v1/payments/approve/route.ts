@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, createSupabaseAdminClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
 import { sendEscrowStatusEmail } from "@/lib/email/service";
 import { getOrCreateChat, addSystemMessage } from "@/lib/chat";
@@ -18,9 +18,10 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = await createSupabaseServerClient();
+    const adminClient = await createSupabaseAdminClient();
 
     // Get payment
-    const { data: payment } = await supabase
+    const { data: payment } = await adminClient
       .from("payments")
       .select("*")
       .eq("payment_id", payment_id)
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get receiver wallet
-    const { data: receiverWallet } = await supabase
+    const { data: receiverWallet } = await adminClient
       .from("wallets")
       .select("*")
       .eq("user_id", payment.receiver_id)
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get sender wallet (to reduce locked_balance)
-    const { data: senderWallet } = await supabase
+    const { data: senderWallet } = await adminClient
       .from("wallets")
       .select("*")
       .eq("user_id", payment.sender_id)
@@ -71,12 +72,12 @@ export async function POST(request: NextRequest) {
     const newReceiverTotalReceived = Math.round((receiverWallet.total_received + payment.net_amount) * 100) / 100;
     const newSenderLocked = Math.round((senderWallet.locked_balance - payment.gross_amount) * 100) / 100;
 
-    await supabase
+    await adminClient
       .from("wallets")
       .update({ total_received: newReceiverTotalReceived })
       .eq("wallet_id", receiverWallet.wallet_id);
 
-    await supabase
+    await adminClient
       .from("wallets")
       .update({ total_sent: newSenderTotalSent, locked_balance: newSenderLocked })
       .eq("wallet_id", senderWallet.wallet_id);

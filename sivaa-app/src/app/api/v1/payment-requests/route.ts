@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, createSupabaseAdminClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/auth";
 import { sendPaymentRequestEmail } from "@/lib/email/service";
 import { getOrCreateChat, addSystemMessage } from "@/lib/chat";
@@ -117,13 +117,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check both wallets are active
-    const { data: requesterWallet } = await supabase
+    // Check both wallets are active (use admin client to bypass RLS)
+    const admin = await createSupabaseAdminClient();
+    const { data: requesterWallet } = await admin
       .from("wallets")
       .select("status")
       .eq("user_id", user.id)
       .single();
-    const { data: targetWallet } = await supabase
+    const { data: targetWallet } = await admin
       .from("wallets")
       .select("status")
       .eq("user_id", targetProfile.id)

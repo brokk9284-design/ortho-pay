@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, createSupabaseAdminClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
 import { sendEscrowStatusEmail } from "@/lib/email/service";
 import { getOrCreateChat, addSystemMessage } from "@/lib/chat";
@@ -18,9 +18,10 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = await createSupabaseServerClient();
+    const adminClient = await createSupabaseAdminClient();
 
     // Get payment
-    const { data: payment } = await supabase
+    const { data: payment } = await adminClient
       .from("payments")
       .select("*")
       .eq("payment_id", payment_id)
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get sender wallet to refund
-    const { data: senderWallet } = await supabase
+    const { data: senderWallet } = await adminClient
       .from("wallets")
       .select("*")
       .eq("user_id", payment.sender_id)
@@ -52,13 +53,13 @@ export async function POST(request: NextRequest) {
     // Unlock escrow funds (no balance to refund — ORTHO-PAY is an agent)
     const newLocked = Math.round((senderWallet.locked_balance - payment.gross_amount) * 100) / 100;
 
-    await supabase
+    await adminClient
       .from("wallets")
       .update({ locked_balance: newLocked })
       .eq("wallet_id", senderWallet.wallet_id);
 
     // Record refund transaction
-    await supabase.from("wallet_transactions").insert({
+    await adminClient.from("wallet_transactions").insert({
       wallet_id: senderWallet.wallet_id,
       amount: payment.gross_amount,
       type: "escrow_refund",
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Update payment status
-    await supabase
+    await adminClient
       .from("payments")
       .update({
         status: "reversed",
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
       .eq("payment_id", payment_id);
 
     // Log escrow review
-    await supabase.from("escrow_reviews").insert({
+    await adminClient.from("escrow_reviews").insert({
       payment_id,
       admin_id: admin.admin_id,
       action: "rejected",
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Notify sender
-    await supabase.from("notifications").insert({
+    await adminClient.from("notifications").insert({
       user_id: payment.sender_id,
       title: "Payment rejected",
       message: `Your payment of $${payment.gross_amount.toFixed(2)} has been rejected and refunded to your wallet.`,
@@ -94,12 +95,12 @@ export async function POST(request: NextRequest) {
     });
 
     // Send email notification to sender
-    const { data: senderProfile } = await supabase
+    const { data: senderProfile } = await adminClient
       .from("profiles")
       .select("name, email, siva_tag")
       .eq("id", payment.sender_id)
       .single();
-    const { data: receiverProfile } = await supabase
+    const { data: receiverProfile } = await adminClient
       .from("profiles")
       .select("siva_tag")
       .eq("id", payment.receiver_id)
