@@ -254,6 +254,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             }
             .dash-content {
               margin-left: 260px;
+              padding-bottom: var(--space-xxl) !important;
             }
             .dash-mobile-header {
               display: none !important;
@@ -341,7 +342,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div
           key={pathname}
           className="dash-content route-transition flex-1"
-          style={{ paddingBottom: "var(--space-xxl)" }}
+          style={{
+            paddingBottom: "calc(var(--mobile-nav-safe-bottom) + 24px)",
+          }}
         >
           {children}
         </div>

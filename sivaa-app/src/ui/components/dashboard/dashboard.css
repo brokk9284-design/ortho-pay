@@ -665,3 +665,14 @@
     gap: var(--space-md);
   }
 }
+
+/* Chat input bar — reserve space for fixed mobile bottom nav */
+.dash-chat-input-bar {
+  padding-bottom: calc(var(--mobile-nav-safe-bottom) + 12px);
+}
+
+@media (min-width: 1024px) {
+  .dash-chat-input-bar {
+    padding-bottom: var(--space-lg);
+  }
+}

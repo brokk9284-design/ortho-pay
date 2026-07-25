@@ -23,6 +23,8 @@
   --space-page-padding-desktop: var(--space-xxl);    /* 32px */
   --space-card-padding: var(--space-xxl);            /* 32px — pricing card interior */
   --space-nav-height: 56px;                          /* Primary nav height */
+  --mobile-nav-height: 64px;                         /* Mobile bottom nav height */
+  --mobile-nav-safe-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px));
   --space-content-max-width: 720px;                  /* Narrow reading column (home) */
   --space-pricing-max-width: 960px;                  /* 3-up pricing grid max */
 }

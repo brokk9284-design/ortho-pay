@@ -344,7 +344,7 @@ export default function ChatConversationPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="px-4 py-3" style={{ borderTop: "1px solid var(--color-hairline)", backgroundColor: "var(--color-surface-soft)" }}>
+        <div className="dash-chat-input-bar px-4 py-3" style={{ borderTop: "1px solid var(--color-hairline)", backgroundColor: "var(--color-surface-soft)" }}>
           <div className="flex items-center gap-2">
             <label className="cursor-pointer rounded-full p-2 transition" style={{ backgroundColor: "var(--color-canvas)", border: "1px solid var(--color-hairline)" }}>
               <Paperclip size={16} style={{ color: "var(--color-charcoal)" }} />
