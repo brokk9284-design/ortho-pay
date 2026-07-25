@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   Send,
@@ -77,6 +77,8 @@ export default function UserDashboard() {
   const [loadingTxns, setLoadingTxns] = useState(true);
   const [resending2fa, setResending2fa] = useState(false);
   const [sendStep, setSendStep] = useState<"details" | "review" | "confirm">("details");
+  const [pendingRequestId, setPendingRequestId] = useState<string>("");
+  const searchParams = useSearchParams();
 
   const escrowAmount = useMemo(() => {
     return transactions
@@ -232,7 +234,17 @@ export default function UserDashboard() {
         }
       })
       .catch(() => {});
-  }, [router]);
+
+    const sendTo = searchParams.get("sendTo");
+    const sendAmount = searchParams.get("amount");
+    const requestId = searchParams.get("request_id");
+    if (sendTo && sendAmount) {
+      setSendTag(sendTo);
+      setSendAmount(sendAmount);
+      if (requestId) setPendingRequestId(requestId);
+      setShowSendForm(true);
+    }
+  }, [router, searchParams]);
 
   const filteredTxns = useMemo(() => {
     return transactions.filter((t) => {
@@ -318,6 +330,7 @@ export default function UserDashboard() {
           amount: parseFloat(sendAmount),
           payment_method_id: selectedMethodId,
           two_factor_code: twoFactorCode,
+          payment_request_id: pendingRequestId || undefined,
         }),
       });
 
@@ -336,6 +349,7 @@ export default function UserDashboard() {
       setSendTag("");
       setSendAmount("");
       setTwoFactorCode("");
+      setPendingRequestId("");
     } catch {
       setSendError("Network error. Please try again.");
     }

@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { Paperclip, ArrowLeft } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { Paperclip, ArrowLeft, Check, X } from "lucide-react";
 
 interface Message {
   message_id: string;
@@ -21,6 +21,14 @@ interface Message {
   created_at: string;
 }
 
+interface PaymentRequestInfo {
+  request_id: string;
+  amount: number;
+  status: string;
+  requester_siva_tag: string;
+  requested_from_id: string;
+}
+
 export default function ChatConversationPage() {
   const params = useParams();
   const chatId = params.chat_id as string;
@@ -32,7 +40,10 @@ export default function ChatConversationPage() {
   const [otherUserName, setOtherUserName] = useState("");
   const [otherUserTag, setOtherUserTag] = useState("");
   const [currentUserId, setCurrentUserId] = useState("");
+  const [paymentRequests, setPaymentRequests] = useState<Record<string, PaymentRequestInfo>>({});
+  const [actionLoading, setActionLoading] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -46,6 +57,63 @@ export default function ChatConversationPage() {
       setLoading(false);
     }
   }, [chatId]);
+
+  useEffect(() => {
+    fetch("/api/v1/payment-requests", { credentials: "include" })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.requests) {
+          const map: Record<string, PaymentRequestInfo> = {};
+          for (const req of data.requests) {
+            map[req.request_id] = {
+              request_id: req.request_id,
+              amount: req.amount,
+              status: req.status,
+              requester_siva_tag: req.requester?.siva_tag || "unknown",
+              requested_from_id: req.requested_from_id,
+            };
+          }
+          setPaymentRequests(map);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleAcceptRequest = async (requestId: string, amount: number, requesterTag: string) => {
+    setActionLoading(requestId);
+    try {
+      const res = await fetch(`/api/v1/payment-requests/${requestId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ action: "accept" }),
+      });
+      if (res.ok) {
+        router.push(`/dashboard?sendTo=${requesterTag}&amount=${amount}&request_id=${requestId}`);
+      }
+    } catch {
+      setError("Failed to accept request");
+    }
+    setActionLoading("");
+  };
+
+  const handleDeclineRequest = async (requestId: string) => {
+    setActionLoading(requestId);
+    try {
+      const res = await fetch(`/api/v1/payment-requests/${requestId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ action: "decline" }),
+      });
+      if (res.ok) {
+        await fetchMessages();
+      }
+    } catch {
+      setError("Failed to decline request");
+    }
+    setActionLoading("");
+  };
 
   useEffect(() => {
     fetchMessages();
@@ -176,6 +244,10 @@ export default function ChatConversationPage() {
               lastDate = msgDate;
 
               if (isSystem(msg)) {
+                const isRequestCreated = msg.event_type === "request_created" && msg.payment_request_id;
+                const requestInfo = isRequestCreated ? paymentRequests[msg.payment_request_id!] : null;
+                const canActOnRequest = isRequestCreated && requestInfo && requestInfo.requested_from_id === currentUserId && requestInfo.status === "pending";
+
                 return (
                   <div key={msg.message_id}>
                     {showDateDivider && (
@@ -190,6 +262,31 @@ export default function ChatConversationPage() {
                         {msg.body}
                         {msg.event_type && (
                           <span className="block mt-1 text-[10px] uppercase tracking-wider opacity-60">{msg.event_type.replace(/_/g, " ")}</span>
+                        )}
+                        {canActOnRequest && (
+                          <div className="flex gap-2 mt-2 justify-center">
+                            <button
+                              onClick={() => handleAcceptRequest(requestInfo.request_id, requestInfo.amount, requestInfo.requester_siva_tag)}
+                              disabled={actionLoading === requestInfo.request_id}
+                              className="btn btn-primary"
+                              style={{ fontSize: 12, padding: "6px 16px", fontWeight: 600 }}
+                            >
+                              {actionLoading === requestInfo.request_id ? "..." : "Accept & Pay"}
+                            </button>
+                            <button
+                              onClick={() => handleDeclineRequest(requestInfo.request_id)}
+                              disabled={actionLoading === requestInfo.request_id}
+                              className="btn btn-secondary"
+                              style={{ fontSize: 12, padding: "6px 16px", fontWeight: 600 }}
+                            >
+                              Decline
+                            </button>
+                          </div>
+                        )}
+                        {isRequestCreated && requestInfo && requestInfo.status !== "pending" && (
+                          <span className="block mt-1 text-[10px] uppercase tracking-wider" style={{ color: requestInfo.status === "fulfilled" ? "var(--color-success)" : requestInfo.status === "accepted" ? "var(--color-primary)" : "var(--color-error)" }}>
+                            {requestInfo.status}
+                          </span>
                         )}
                       </div>
                     </div>

@@ -281,9 +281,9 @@ export async function POST(request: NextRequest) {
       { paymentId: payment.payment_id }
     );
 
-    // If this payment fulfills a request, link it
+    // If this payment fulfills a request, link it and notify
     if (payment_request_id) {
-      await supabase
+      await admin
         .from("payment_requests")
         .update({
           status: "fulfilled",
@@ -293,6 +293,13 @@ export async function POST(request: NextRequest) {
         .eq("request_id", payment_request_id)
         .eq("requested_from_id", user.id)
         .eq("status", "pending");
+
+      await addSystemMessage(
+        chatId,
+        `Payment of $${amount.toFixed(2)} sent to fulfill the request. Reference: ${reference}`,
+        "request_fulfilled",
+        { paymentRequestId: payment_request_id, paymentId: payment.payment_id }
+      );
     }
 
     // Send confirmation email to sender
