@@ -88,9 +88,9 @@ export default function RequestPage() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          from_tag: sivaTag,
+          receiver_tag: sivaTag,
           amount: parseFloat(requestAmount),
-          note: requestNote || undefined,
+          message: requestNote || undefined,
           payment_method_id: selectedMethodId || undefined,
         }),
       });

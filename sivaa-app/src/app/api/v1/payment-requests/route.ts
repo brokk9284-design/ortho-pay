@@ -49,9 +49,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { receiver_tag, amount, payment_method_id, message } = body;
 
-    if (!receiver_tag || !amount || !payment_method_id) {
+    if (!receiver_tag || !amount) {
       return NextResponse.json(
-        { error: "receiver_tag, amount, and payment_method_id are required" },
+        { error: "receiver_tag and amount are required" },
         { status: 400 }
       );
     }
@@ -136,14 +136,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Target user's wallet is not active" }, { status: 403 });
     }
 
-    const { data: method } = await supabase
-      .from("payment_methods")
-      .select("display_name, is_active")
-      .eq("method_id", payment_method_id)
-      .single();
+    let methodDisplayName = "Any method";
+    if (payment_method_id) {
+      const { data: method } = await supabase
+        .from("payment_methods")
+        .select("display_name, is_active")
+        .eq("method_id", payment_method_id)
+        .single();
 
-    if (!method || !method.is_active) {
-      return NextResponse.json({ error: "Payment method not available" }, { status: 400 });
+      if (!method || !method.is_active) {
+        return NextResponse.json({ error: "Payment method not available" }, { status: 400 });
+      }
+      methodDisplayName = method.display_name;
     }
 
     const { data: paymentRequest, error } = await supabase
@@ -166,7 +170,7 @@ export async function POST(request: NextRequest) {
     await supabase.from("notifications").insert({
       user_id: targetProfile.id,
       title: `Payment request from $${requesterProfile.siva_tag}`,
-      message: `${requesterProfile.name} is requesting $${amount.toFixed(2)} via ${method.display_name}. Tap to review and pay.`,
+      message: `${requesterProfile.name} is requesting $${amount.toFixed(2)} via ${methodDisplayName}. Tap to review and pay.`,
       type: "payment",
     });
 
@@ -177,7 +181,7 @@ export async function POST(request: NextRequest) {
         requesterProfile.siva_tag,
         requesterProfile.name || "An ORTHO-PAY user",
         amount,
-        method.display_name
+        methodDisplayName
       );
     }
 
@@ -185,7 +189,7 @@ export async function POST(request: NextRequest) {
     const chatId = await getOrCreateChat(user.id, targetProfile.id);
     await addSystemMessage(
       chatId,
-      `Payment request: $${requesterProfile.siva_tag} is requesting $${amount.toFixed(2)} via ${method.display_name}.`,
+      `Payment request: $${requesterProfile.siva_tag} is requesting $${amount.toFixed(2)} via ${methodDisplayName}.`,
       "request_created",
       { paymentRequestId: paymentRequest.request_id }
     );
