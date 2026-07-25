@@ -8,6 +8,8 @@ import {
   PieChart,
   Send,
   Download,
+  Upload,
+  ArrowDownToLine,
   MessageSquare,
   Bell,
   Settings,
@@ -21,8 +23,10 @@ import { useLogout } from "@/components/DashboardShared";
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Home", icon: Home },
   { href: "/dashboard/portfolio", label: "Portfolio", icon: PieChart },
+  { href: "/dashboard/deposit", label: "Deposit", icon: Upload },
+  { href: "/dashboard/withdraw", label: "Withdraw", icon: ArrowDownToLine },
   { href: "/dashboard/request", label: "Request", icon: Download },
-  { href: "/dashboard/chat", label: "Chats", icon: MessageSquare },
+  { href: "/dashboard/chat", label: "Contacts", icon: MessageSquare },
   { href: "/dashboard/notifications", label: "Alerts", icon: Bell },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
@@ -94,35 +98,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           borderRight: "1px solid var(--color-hairline)",
           display: "flex",
           flexDirection: "column",
-          padding: "24px 0",
+          padding: "var(--space-xl) 0",
           transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
-          transition: "transform 250ms cubic-bezier(0, 0, 0.2, 1)",
+          transition: "transform var(--duration-normal) var(--ease-out)",
         }}
       >
         {/* Logo */}
-        <div style={{ padding: "0 24px", marginBottom: 32 }}>
+        <div style={{ padding: "0 var(--space-xl)", marginBottom: "var(--space-xxl)" }}>
           <Link
             href="/dashboard"
-            className="text-xl font-bold font-display tracking-tight"
-            style={{ color: "var(--color-ink)" }}
+            className="flex items-center gap-2"
+            style={{ textDecoration: "none" }}
           >
-            ORTHO-PAY
+            <img src="/favicon.svg" alt="ORTHO-PAY" style={{ width: 28, height: 28, borderRadius: 6 }} />
+            <span className="font-display font-extrabold tracking-tight" style={{ fontSize: 18, color: "var(--color-ink)" }}>
+              ORTHO-PAY
+            </span>
           </Link>
         </div>
 
         {/* User Tag */}
         <div
           style={{
-            margin: "0 16px 24px",
-            padding: "12px 16px",
-            borderRadius: 12,
+            margin: "0 var(--space-lg) var(--space-xl)",
+            padding: "var(--space-md) var(--space-lg)",
+            borderRadius: "var(--radius-sm)",
             backgroundColor: "var(--color-canvas)",
             border: "1px solid var(--color-hairline)",
           }}
         >
           <div
             style={{
-              fontSize: 10,
+              fontSize: "var(--text-caption-sm-size)",
               textTransform: "uppercase",
               letterSpacing: "0.5px",
               color: "var(--color-mute)",
@@ -156,15 +163,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 12,
+                  gap: "var(--space-md)",
                   padding: "10px 16px",
-                  borderRadius: 10,
+                  borderRadius: "var(--radius-full)",
                   textDecoration: "none",
-                  fontSize: 14,
+                  fontSize: "var(--text-body-sm-size)",
                   fontWeight: 600,
-                  transition: "all 150ms cubic-bezier(0.4, 0, 0.2, 1)",
-                  backgroundColor: active ? "var(--color-primary)" : "transparent",
-                  color: active ? "var(--color-on-primary)" : "var(--color-body)",
+                  transition: "all var(--duration-fast) var(--ease-default)",
+                  backgroundColor: active ? "rgba(29, 78, 216, 0.1)" : "transparent",
+                  color: active ? "var(--color-primary)" : "var(--color-body)",
                 }}
               >
                 <Icon size={18} style={{ flexShrink: 0 }} />
@@ -177,9 +184,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       fontWeight: 700,
                       minWidth: 18,
                       height: 18,
-                      borderRadius: 9,
-                      backgroundColor: active ? "rgba(255,255,255,0.25)" : "var(--color-error)",
-                      color: active ? "#fff" : "#fff",
+                      borderRadius: "var(--radius-full)",
+                      backgroundColor: active ? "rgba(29,78,216,0.2)" : "var(--color-error)",
+                      color: "#fff",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -195,7 +202,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         {/* Footer */}
-        <div style={{ padding: "16px 24px", borderTop: "1px solid var(--color-hairline)" }}>
+        <div style={{ padding: "var(--space-lg) var(--space-xl)", borderTop: "1px solid var(--color-hairline)" }}>
           <div className="flex items-center justify-between mb-3">
             <ThemeToggle />
             <button
@@ -261,8 +268,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "0 16px",
-            height: 56,
+            padding: "0 var(--space-page-padding-mobile)",
+            height: "var(--space-nav-height)",
             backgroundColor: "var(--color-surface-soft)",
             borderBottom: "1px solid var(--color-hairline)",
           }}
@@ -276,42 +283,66 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </button>
           <Link
             href="/dashboard"
-            className="text-lg font-bold font-display tracking-tight"
-            style={{ color: "var(--color-ink)" }}
+            className="flex items-center gap-2"
+            style={{ textDecoration: "none" }}
           >
-            ORTHO-PAY
+            <img src="/favicon.svg" alt="ORTHO-PAY" style={{ width: 24, height: 24, borderRadius: 4 }} />
+            <span className="font-display font-extrabold tracking-tight" style={{ fontSize: 16, color: "var(--color-ink)" }}>
+              ORTHO-PAY
+            </span>
           </Link>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <Link
+              href="/dashboard/notifications"
+              style={{ position: "relative", color: "var(--color-ink)", display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: "var(--radius-full)", background: "none", border: "none", cursor: "pointer" }}
+              aria-label="Notifications"
+            >
+              <Bell size={20} />
+              {unreadNotifications > 0 && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 2,
+                    right: 2,
+                    minWidth: 16,
+                    height: 16,
+                    borderRadius: "var(--radius-full)",
+                    backgroundColor: "var(--color-error)",
+                    color: "#fff",
+                    fontSize: 9,
+                    fontWeight: 700,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0 4px",
+                  }}
+                >
+                  {unreadNotifications > 99 ? "99+" : unreadNotifications}
+                </span>
+              )}
+            </Link>
+            <Link
+              href="/dashboard/settings"
+              style={{ color: "var(--color-ink)", display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: "var(--radius-full)", background: "none", border: "none", cursor: "pointer" }}
+              aria-label="Settings"
+            >
+              <Settings size={20} />
+            </Link>
+          </div>
         </header>
 
         {/* Page Content */}
         <div
           key={pathname}
           className="dash-content route-transition flex-1"
-          style={{ paddingBottom: 72 }}
+          style={{ paddingBottom: "var(--space-xxl)" }}
         >
           {children}
         </div>
 
         {/* Mobile Bottom Nav */}
-        <nav
-          className="dash-bottom-nav"
-          style={{
-            position: "fixed",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 100,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-around",
-            height: 64,
-            backgroundColor: "var(--color-surface-soft)",
-            borderTop: "1px solid var(--color-hairline)",
-            paddingBottom: "env(safe-area-inset-bottom, 0)",
-          }}
-        >
-          {NAV_ITEMS.filter((_, i) => [0, 2, 3, 4, 5].includes(i)).map((item) => {
+        <nav className="dash-bottom-nav">
+          {NAV_ITEMS.filter((_, i) => [0, 2, 4, 5, 7].includes(i)).map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
             const badge =
@@ -324,40 +355,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Link
                 key={item.href}
                 href={item.href}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 2,
-                  flex: 1,
-                  textDecoration: "none",
-                  position: "relative",
-                  transition: "color 150ms ease",
-                  color: active ? "var(--color-primary)" : "var(--color-mute)",
-                }}
+                className={`dash-bottom-nav-item${active ? " dash-bottom-nav-item-active" : ""}`}
               >
-                <Icon size={22} />
-                <span style={{ fontSize: 10, fontWeight: 600 }}>{item.label}</span>
+                {active && <span className="dash-bottom-nav-pill" />}
+                <Icon size={22} className="dash-bottom-nav-item-icon" />
+                <span className="dash-bottom-nav-item-label">{item.label}</span>
                 {badge > 0 && (
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: 2,
-                      right: "50%",
-                      transform: "translateX(16px)",
-                      fontSize: 9,
-                      fontWeight: 700,
-                      minWidth: 16,
-                      height: 16,
-                      borderRadius: 8,
-                      backgroundColor: "var(--color-error)",
-                      color: "#fff",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: "0 4px",
-                    }}
-                  >
+                  <span className="dash-bottom-nav-badge">
                     {badge > 99 ? "99+" : badge}
                   </span>
                 )}

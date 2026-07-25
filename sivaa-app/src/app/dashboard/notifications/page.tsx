@@ -7,7 +7,7 @@ import { EmptyState, LoadingState } from "@/components/DashboardShared";
 interface Notification {
   notification_id: string;
   title: string;
-  body: string;
+  message: string;
   read: boolean;
   created_at: string;
 }
@@ -29,6 +29,16 @@ export default function NotificationsPage() {
   const markAllRead = async () => {
     await fetch("/api/v1/notifications/mark-all-read", { method: "POST", credentials: "include" });
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const markAsRead = async (id: string) => {
+    await fetch("/api/v1/notifications", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ notification_id: id }),
+    });
+    setNotifications((prev) => prev.map((n) => n.notification_id === id ? { ...n, read: true } : n));
   };
 
   const formatTime = (date: string) => {
@@ -81,6 +91,7 @@ export default function NotificationsPage() {
             {notifications.map((n, i) => (
               <div
                 key={n.notification_id}
+                onClick={() => !n.read && markAsRead(n.notification_id)}
                 className="dash-txn-row dash-item-enter"
                 style={{
                   animationDelay: `${i * 40}ms`,
@@ -88,6 +99,7 @@ export default function NotificationsPage() {
                   alignItems: "flex-start",
                   gap: 8,
                   borderColor: n.read ? "var(--color-hairline)" : "var(--color-primary-subdued)",
+                  cursor: n.read ? "default" : "pointer",
                 }}
               >
                 <div className="flex items-start justify-between w-full gap-3">
@@ -96,7 +108,7 @@ export default function NotificationsPage() {
                       {n.title}
                     </div>
                     <div style={{ fontSize: 13, color: "var(--color-charcoal)" }}>
-                      {n.body}
+                      {n.message}
                     </div>
                   </div>
                   {!n.read && (

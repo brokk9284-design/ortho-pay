@@ -2,7 +2,7 @@
 
 /* ============================================================
  * BIOS Theme Provider
- * Manages theme state (light/dark/high-contrast) via
+ * Manages theme state (light/dark) via
  * data-theme attribute on <html>.
  * Default: light for marketing, dark for app.
  * ============================================================ */
@@ -15,7 +15,7 @@ import {
   type ReactNode,
 } from 'react';
 
-type Theme = 'light' | 'dark' | 'high-contrast';
+type Theme = 'light' | 'dark';
 
 interface ThemeContextValue {
   theme: Theme;

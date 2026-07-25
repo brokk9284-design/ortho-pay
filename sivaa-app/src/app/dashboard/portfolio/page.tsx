@@ -14,11 +14,11 @@ import { EmptyState, LoadingState } from "@/components/DashboardShared";
 
 interface Transaction {
   id: string;
-  type: "sent" | "received";
+  type: "sent" | "received" | "deposit" | "withdrawal" | "adjustment_in" | "adjustment_out";
   counterparty: string;
   amount: number;
   fee: number;
-  status: "escrow_held" | "completed" | "reversed";
+  status: "escrow_held" | "completed" | "reversed" | "pending" | "approved" | "rejected";
   reference: string;
   date: string;
   created_at: string;
@@ -46,6 +46,30 @@ export default function PortfolioPage() {
         if (data?.wallet) {
           setTotalSent(data.wallet.total_sent || 0);
           setTotalReceived(data.wallet.total_received || 0);
+        }
+        if (data?.transactions) {
+          const adjustTxns: Transaction[] = data.transactions
+            .filter((t: { type: string }) => t.type === "adjust_in" || t.type === "adjust_out")
+            .map((t: {
+              transaction_id: string;
+              amount: number;
+              type: string;
+              description: string;
+              created_at: string;
+            }) => ({
+              id: t.transaction_id,
+              type: (t.type === "adjust_in" ? "adjustment_in" : "adjustment_out") as Transaction["type"],
+              counterparty: t.description || "Admin adjustment",
+              amount: Math.abs(t.amount),
+              fee: 0,
+              status: "completed" as const,
+              reference: t.description || "",
+              date: new Date(t.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+              created_at: t.created_at,
+            }));
+          if (adjustTxns.length > 0) {
+            setTransactions((prev) => [...prev, ...adjustTxns].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+          }
         }
       })
       .catch(() => {});
@@ -80,6 +104,59 @@ export default function PortfolioPage() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+
+    fetch("/api/v1/deposits", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.deposits) {
+          const depositTxns: Transaction[] = data.deposits.map((d: {
+            deposit_id: string;
+            amount: number;
+            reference: string;
+            status: string;
+            created_at: string;
+          }) => ({
+            id: d.deposit_id,
+            type: "deposit" as const,
+            counterparty: "Deposit",
+            amount: d.amount,
+            fee: 0,
+            status: d.status === "approved" ? "completed" : d.status === "rejected" ? "reversed" : "pending",
+            reference: d.reference,
+            date: new Date(d.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            created_at: d.created_at,
+          }));
+          setTransactions((prev) => [...prev, ...depositTxns].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+        }
+      })
+      .catch(() => {});
+
+    fetch("/api/v1/withdrawals", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.withdrawals) {
+          const withdrawalTxns: Transaction[] = data.withdrawals.map((w: {
+            withdrawal_id: string;
+            amount: number;
+            reference: string;
+            status: string;
+            withdrawal_type: string;
+            created_at: string;
+          }) => ({
+            id: w.withdrawal_id,
+            type: "withdrawal" as const,
+            counterparty: `${w.withdrawal_type} Withdrawal`,
+            amount: w.amount,
+            fee: 0,
+            status: w.status === "approved" ? "completed" : w.status === "rejected" ? "reversed" : "pending",
+            reference: w.reference,
+            date: new Date(w.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            created_at: w.created_at,
+          }));
+          setTransactions((prev) => [...prev, ...withdrawalTxns].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+        }
+      })
+      .catch(() => {});
   }, [router]);
 
   const netFlow = totalReceived - totalSent;
@@ -107,7 +184,7 @@ export default function PortfolioPage() {
       const key = new Date(t.created_at).toISOString().slice(0, 10);
       const day = days.find((d) => d.key === key);
       if (day) {
-        if (t.type === "sent") day.sent += t.amount;
+        if (t.type === "sent" || t.type === "withdrawal" || t.type === "adjustment_out") day.sent += t.amount;
         else day.received += t.amount;
       }
     });
@@ -125,13 +202,15 @@ export default function PortfolioPage() {
   }, [transactions, txnFilter]);
 
   const formatAmount = (amount: number, type: string) => {
-    const sign = type === "sent" ? "-" : "+";
+    const sign = type === "sent" || type === "withdrawal" || type === "adjustment_out" ? "-" : "+";
     return `${sign}$${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   const getStatusBadge = (status: string) => {
-    if (status === "completed") return <span className="dash-badge dash-badge-success">Completed</span>;
+    if (status === "completed" || status === "approved") return <span className="dash-badge dash-badge-success">Completed</span>;
     if (status === "escrow_held") return <span className="dash-badge dash-badge-warning">In Escrow</span>;
+    if (status === "pending") return <span className="dash-badge dash-badge-warning">Pending</span>;
+    if (status === "rejected") return <span className="dash-badge dash-badge-error">Rejected</span>;
     return <span className="dash-badge dash-badge-error">Reversed</span>;
   };
 
@@ -302,8 +381,8 @@ export default function PortfolioPage() {
                   style={{ animationDelay: `${i * 30}ms` }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`dash-txn-avatar ${txn.type === "received" ? "dash-txn-avatar-received" : "dash-txn-avatar-sent"}`}>
-                      {txn.type === "sent" ? (
+                    <div className={`dash-txn-avatar ${txn.type === "received" || txn.type === "deposit" || txn.type === "adjustment_in" ? "dash-txn-avatar-received" : "dash-txn-avatar-sent"}`}>
+                      {txn.type === "sent" || txn.type === "adjustment_out" ? (
                         <ArrowUpRight size={18} style={{ color: "var(--color-canvas)" }} />
                       ) : (
                         <ArrowDownLeft size={18} style={{ color: "var(--color-success)" }} />
@@ -324,7 +403,7 @@ export default function PortfolioPage() {
                         fontSize: 15,
                         fontWeight: 700,
                         fontVariantNumeric: "tabular-nums",
-                        color: txn.type === "received" ? "var(--color-success)" : "var(--color-ink)",
+                        color: txn.type === "received" || txn.type === "deposit" || txn.type === "adjustment_in" ? "var(--color-success)" : "var(--color-ink)",
                       }}
                     >
                       {formatAmount(txn.amount, txn.type)}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient, createSupabaseServerClient } from "@/lib/supabase/server";
 import { createHash } from "crypto";
+import { sendWelcomeEmail } from "@/lib/email/service";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,9 +17,18 @@ export async function POST(request: NextRequest) {
 
     const admin = await createSupabaseAdminClient();
 
-    // Find user by email
-    const { data: userList } = await admin.auth.admin.listUsers();
-    const user = userList?.users?.find((u) => u.email === email);
+    // Find user by email — paginate through all users
+    let user: { id: string; email?: string } | null = null;
+    let page = 1;
+    const perPage = 100;
+    while (!user) {
+      const { data: userList } = await admin.auth.admin.listUsers({ page, perPage });
+      const users = userList?.users || [];
+      if (users.length === 0) break;
+      user = users.find((u) => u.email === email) || null;
+      if (users.length < perPage) break;
+      page++;
+    }
 
     if (!user) {
       return NextResponse.json(
@@ -41,7 +51,16 @@ export async function POST(request: NextRequest) {
       .limit(1)
       .maybeSingle();
 
-    if (error || !record) {
+    if (error) {
+      console.error("[verify-otp] DB query error:", error.message);
+      return NextResponse.json(
+        { error: "Invalid verification code", invalid: true },
+        { status: 400 }
+      );
+    }
+
+    if (!record) {
+      console.log("[verify-otp] No matching code found for user:", user.id);
       return NextResponse.json(
         { error: "Invalid verification code", invalid: true },
         { status: 400 }
@@ -65,6 +84,17 @@ export async function POST(request: NextRequest) {
     await admin.auth.admin.updateUserById(user.id, {
       email_confirm: true,
     });
+
+    // Send welcome email now that verification is complete
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("name, siva_tag")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.siva_tag) {
+      await sendWelcomeEmail(email, profile.name || "User", profile.siva_tag);
+    }
 
     return NextResponse.json({
       verified: true,

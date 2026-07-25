@@ -1,0 +1,2067 @@
+﻿Op1. 
+ORTHO-PAY Architecture & Framework Specification v2.0
+Document 1 of 5
+---
+Purpose
+This document defines the long-term technical architecture for ORTHO-PAY.
+It is not a rewrite of the existing system.
+Instead, it provides the target architecture that the current Supabase + Vercel implementation should evolve toward while remaining serverless where practical.
+The guiding principles are:
+Scalability
+High availability
+Low infrastructure cost
+Modular services
+Easy developer onboarding
+Compliance readiness
+Minimal vendor lock-in
+---
+Core Philosophy
+ORTHO-PAY is not a wallet.
+ORTHO-PAY is a peer-to-peer liquidity exchange with intelligent escrow.
+Everything in the architecture should support:
+marketplace matching
+escrow
+trust
+liquidity
+payment routing
+rather than acting as a bank.
+---
+Target Architecture
+Internet
+│
+▼
+Vercel Edge Network
+Landing Page + Dashboard + APIs
+│
+┌────────────┴─────────────┐
+▼ ▼
+Next.js Frontend Edge Functions
+│ │
+└────────────┬─────────────┘
+▼
+Supabase Platform
+────────────────────────────────────────
+Authentication
+PostgreSQL
+Row Level Security
+Realtime
+Storage
+Edge Functions
+────────────────────────────────────────
+│
+▼
+Redis Cache Layer
+Matching Queue
+Sessions
+Rate Limiting
+Live Liquidity
+│
+▼
+External Integrations
+Banks
+Stripe
+SEPA
+ACH
+Interac
+Email
+SMS
+KYC
+AML
+FX
+---
+Technology Stack
+Frontend
+Next.js
+React
+TypeScript
+TailwindCSS
+Framer Motion
+React Query (TanStack Query)
+Zustand
+---
+Backend
+Supabase
+Primary database
+Authentication
+Storage
+Realtime
+Edge Functions
+---
+API Layer
+Use
+Supabase Edge Functions
+for
+escrow creation
+liquidity matching
+notifications
+fee calculation
+dispute workflow
+payment orchestration
+Avoid exposing SQL logic directly to the client.
+---
+Why Keep Vercel?
+Keep Vercel.
+It is an excellent fit because:
+CDN
+Edge rendering
+Preview deployments
+Analytics
+Image optimization
+Automatic HTTPS
+No reason to migrate.
+---
+Why Keep Supabase?
+Supabase provides
+Authentication
+Storage
+Postgres
+Realtime
+RLS
+Database backups
+Edge Functions
+That covers nearly everything.
+No reason to move.
+---
+Add Redis
+I strongly recommend adding Redis.
+Current architecture lacks a high-speed in-memory layer.
+Redis is useful for:
+Liquidity Queue
+Available providers
+Updated every second
+No SQL polling.
+---
+Matchmaking
+Temporary matches
+Reservation timers
+Countdowns
+Escrow locks
+---
+Session Cache
+Dashboard
+Balances
+Exchange rates
+Profile
+---
+Rate Limiting
+Prevent
+Spam
+Bot attacks
+Abuse
+---
+Live Activity
+Recent trades
+Live providers
+Notifications
+Typing indicators
+---
+Free Redis Options
+Upstash
+★★★★★
+Best choice.
+Serverless
+Very generous free tier.
+Native Vercel integration.
+Perfect.
+---
+Redis Cloud
+Good alternative.
+---
+Recommendation
+Use Upstash Redis.
+---
+File Storage
+Keep Supabase Storage.
+Folders
+avatars/
+kyc/
+receipts/
+contracts/
+attachments/
+merchant-assets/
+Never store uploads inside PostgreSQL.
+---
+Authentication
+Supabase Auth
+Supported methods
+Email
+Google
+Apple
+GitHub
+Microsoft
+Magic Links
+Passkeys
+Future
+Phone OTP
+---
+Authorization
+Never rely on frontend permissions.
+Use
+Supabase Row Level Security
+Every table should enforce
+Owner
+Admin
+Moderator
+Business
+Merchant
+Liquidity Provider
+Auditor
+Support
+---
+Background Jobs
+Some processes shouldn't execute during HTTP requests.
+Examples
+Escrow expiration
+Auto release
+Email
+Settlement
+Notifications
+Ranking
+Recommendation updates
+Use
+Supabase Scheduled Functions
+or
+Cron Jobs
+---
+Event Driven Design
+Instead of
+User clicks Withdraw
+↓
+Everything happens immediately
+Use
+Withdraw Created
+↓
+Event Queue
+↓
+Matching
+↓
+Escrow Created
+↓
+Payment Sent
+↓
+Verification
+↓
+Settlement
+Every action becomes traceable.
+---
+Internal Services
+Rather than one large backend.
+Separate logical modules.
+Identity
+Authentication
+Verification
+Roles
+---
+Wallet
+Internal balances
+Ledger
+Reserve
+---
+Matching Engine
+Liquidity
+Ranking
+Routing
+---
+Escrow
+Contracts
+Release
+Refunds
+Timers
+---
+Fee Engine
+Platform fees
+FX
+Premium discounts
+Merchant pricing
+---
+Reputation Engine
+Trust Score
+Completion
+Response Time
+Disputes
+Risk
+---
+Notification Service
+Email
+SMS
+Push
+Realtime
+---
+Compliance
+AML
+Sanctions
+Fraud
+Velocity
+Risk
+---
+Logging
+Every important action should generate an event.
+Example
+USER_REGISTERED
+ESCROW_CREATED
+MATCH_FOUND
+PAYMENT_SENT
+PAYMENT_RECEIVED
+DISPUTE_OPENED
+DISPUTE_RESOLVED
+WITHDRAWAL_COMPLETED
+Never delete logs.
+---
+Secrets
+Never place
+API keys
+inside
+React
+Use
+Vercel Environment Variables
+Supabase Secrets
+---
+Monitoring
+Add
+Sentry
+for exceptions.
+Add
+Vercel Analytics
+for frontend.
+Add
+Supabase Logs
+for backend.
+---
+API Design
+Never expose database tables.
+Frontend
+↓
+Edge Function
+↓
+Business Logic
+↓
+Database
+Not
+Frontend
+↓
+Database
+---
+Future Microservices
+Not needed today.
+But architecture should allow future extraction.
+Examples
+Matching
+Escrow
+Fraud
+FX
+Notifications
+Each can become independent later.
+---
+Security
+Every financial action should require
+Authentication
+Authorization
+Audit log
+Idempotency key
+Server validation
+Rate limiting
+Replay protection
+---
+Recommended Infrastructure
+ComponentService
+FrontendVercel
+BackendSupabase Edge Functions
+DatabasePostgreSQL (Supabase)
+AuthenticationSupabase Auth
+StorageSupabase Storage
+CacheUpstash Redis
+MonitoringSentry
+AnalyticsVercel Analytics
+EmailResend
+SMSTwilio (or MessageBird)
+Push NotificationsFirebase Cloud Messaging
+CDNVercel
+Cron JobsSupabase Scheduled Functions
+RealtimeSupabase Realtime
+SecretsVercel + Supabase Secrets
+---
+Architecture Principles
+The development agent should adhere to these principles throughout the project:
+1. API-first: All business operations must be executed through Edge Functions; clients must never interact directly with financial tables.
+2. Event-driven: Model long-running workflows (matching, escrow, settlement, notifications) as asynchronous events rather than synchronous request chains.
+3. Stateless frontend: Treat the frontend as a presentation layer. Critical state belongs in the backend or cache.
+4. Security by default: Enforce Row Level Security, server-side authorization, idempotency, and immutable audit logs.
+5. Performance: Cache frequently accessed, non-sensitive data in Redis. Avoid repetitive database polling.
+6. Modularity: Keep business domains (matching, escrow, reputation, fees, compliance) isolated so they can evolve independently.
+7. Observability: Every critical action must be logged, traceable, and monitored with alerts for failures.
+8. Scalability: Design today so services like the Matching Engine or Fraud Engine can later be extracted without major rewrites.
+9. Infrastructure simplicity: Prefer managed serverless services (Supabase, Vercel, Upstash) until scale clearly justifies additional operational complexity.
+10. Business logic over CRUD: The database stores state; Edge Functions implement financial rules. Never let database structure dictate business workflows.
+Op2. 
+ORTHO-PAY Frontend Specification v2.0
+Document 2 of 5
+---
+Purpose
+This document defines the frontend architecture and UX specification for ORTHO-PAY.
+It is intended to augment the existing frontend, not replace it. The goal is to synthesize this specification with the current implementation while creating a consistent design system across the Landing Page, Authentication, Dashboard, Marketplace, Escrow, and Settings.
+---
+Design Philosophy
+ORTHO-PAY should feel like:
+Wise → simplicity
+Revolut → polish
+Stripe → professionalism
+Linear → consistency
+Apple → whitespace and hierarchy
+Not:
+Crypto exchange
+Gaming interface
+Banking portal
+Marketplace website
+The experience should communicate trust, speed, and clarity.
+---
+Design Principles
+Every screen must satisfy these principles:
+1. One primary action per screen.
+2. Maximum readability.
+3. Consistent spacing.
+4. Consistent typography.
+5. Predictable navigation.
+6. Minimal cognitive load.
+7. Mobile-first.
+8. Accessibility first.
+9. Motion should enhance, never distract.
+10. Every component belongs to a reusable design system.
+---
+Responsive Layout
+Mobile
+375–767 px
+Single-column layout.
+---
+Tablet
+768–1199 px
+Two-column dashboard.
+Cards stack intelligently.
+---
+Desktop
+1200 px+
+12-column responsive grid.
+Maximum content width:
+1440 px
+Never allow full-width content stretching.
+---
+Layout System
+Adopt an 8-point spacing system.
+Allowed spacing values:
+4
+8
+12
+16
+24
+32
+40
+48
+64
+No arbitrary spacing.
+---
+Section Spacing
+Landing Page
+80 px between sections.
+Dashboard
+24 px between cards.
+Forms
+24 px between sections.
+Buttons
+16 px spacing.
+---
+Card System
+Every card must use one standard.
+Large
+24 px padding
+Medium
+20 px
+Small
+16 px
+No mixed padding values.
+---
+Border Radius
+Standardize.
+Cards
+20 px
+Buttons
+14 px
+Inputs
+14 px
+Chips
+999 px
+Modal
+24 px
+---
+Typography
+Use a maximum of two font families.
+Recommended:
+Headings
+Space Grotesk
+Body
+Inter
+---
+Font Scale
+Display
+56 px
+H1
+48 px
+H2
+36 px
+H3
+28 px
+H4
+22 px
+Body Large
+18 px
+Body
+16 px
+Caption
+14 px
+Small
+12 px
+---
+Colour System
+Primary
+Deep Navy
+Brand Blue
+Accent Green
+---
+Semantic Colours
+Success
+Green
+Warning
+Amber
+Danger
+Red
+Information
+Blue
+Neutral
+Grey
+Never use colour alone to communicate state.
+Always pair with an icon or label.
+---
+Dashboard Layout
+The dashboard should consist of:
+Hero Balance
+↓
+Quick Actions
+↓
+Liquidity Status
+↓
+Recent Activity
+↓
+Pending Escrows
+↓
+Marketplace
+↓
+Insights
+↓
+Notifications
+↓
+Footer
+The current dashboard stops too early and feels incomplete.
+---
+Navigation
+Bottom navigation on mobile.
+Sidebar on desktop.
+Never mix both simultaneously.
+---
+Landing Page
+Maintain the animated backgrounds.
+Do not remove them.
+Instead:
+Add gradient overlays.
+Improve typography.
+Reduce competing colours.
+Improve contrast.
+Increase whitespace.
+Simplify CTA hierarchy.
+---
+Motion
+Motion should serve a purpose.
+Allowed:
+Fade
+Slide
+Scale
+Progress
+Skeleton loading
+Avoid:
+Constant floating
+Excessive glow
+Infinite movement on UI controls
+The animated background remains the hero element.
+---
+Motion Performance
+The hero animation must begin within approximately the first second after the page becomes interactive.
+Investigate:
+Lazy loading
+Video encoding
+Codec
+Preload strategy
+JavaScript blocking
+Image sequence optimisation
+Network waterfall
+Background media should never wait many seconds before playback.
+---
+Components
+Create reusable components.
+Examples:
+Button
+Input
+Card
+Modal
+Avatar
+Notification
+Balance Card
+Escrow Card
+Marketplace Card
+Provider Card
+Transaction Card
+Search
+Tabs
+Badge
+Tag
+Empty State
+Skeleton
+Toast
+Every screen must reuse these components.
+---
+Forms
+Requirements:
+Inline validation.
+Helpful error messages.
+Progress indicators.
+Autosave where appropriate.
+Keyboard accessibility.
+---
+Empty States
+Never leave blank screens.
+Example:
+"No transactions yet."
+Include:
+Illustration
+Explanation
+CTA
+---
+Loading States
+Never use blank white pages.
+Use:
+Skeleton cards.
+Skeleton tables.
+Animated placeholders.
+---
+Search
+Global search should support:
+Transaction ID
+Reference
+Payment Tag
+User
+Business
+Amount
+Currency
+Escrow ID
+Merchant
+---
+Accessibility
+Minimum contrast:
+WCAG AA.
+Touch targets:
+Minimum 44×44 px.
+Keyboard navigation:
+Supported everywhere.
+Screen readers:
+All interactive controls labelled.
+---
+Dark Mode
+The landing page and dashboard must share the same colour system.
+Dark mode is not a colour inversion.
+It should be designed intentionally.
+---
+Dashboard Widgets
+Balance
+Pending Escrow
+Marketplace Activity
+Liquidity Availability
+Trust Score
+Recent Transactions
+Notifications
+Verification Status
+---
+Charts
+Use only where they add value.
+Examples:
+Settlement volume.
+Monthly activity.
+Escrow completion.
+Provider performance.
+Avoid decorative charts.
+---
+Notifications
+Unified notification centre.
+Categories:
+Escrow
+Marketplace
+Payments
+Verification
+Security
+System
+---
+Icons
+Use one icon family.
+Recommended:
+Lucide
+or
+Heroicons
+Do not mix icon libraries.
+---
+Images
+Optimise all images.
+Use responsive sizing.
+Prefer WebP or AVIF where supported.
+Implement lazy loading for below-the-fold images only.
+---
+Animation Guidelines
+Maximum duration:
+300 ms
+Page transitions:
+200–250 ms
+Button feedback:
+100–150 ms
+Avoid long easing curves.
+---
+Error States
+Friendly language.
+Explain:
+What happened.
+Why it happened (when known).
+What the user can do next.
+Never expose stack traces.
+---
+User Roles
+The frontend must adapt based on role.
+Consumer
+Business
+Merchant
+Liquidity Provider
+Administrator
+Support
+Compliance
+Each role should see only relevant navigation and actions.
+---
+Internationalisation
+Support:
+Currencies
+Dates
+Time zones
+Number formatting
+Languages (future-ready)
+Never hard-code formatting.
+---
+Frontend Folder Structure
+/app
+/components
+/buttons
+/cards
+/forms
+/layout
+/navigation
+/marketplace
+/escrow
+/transactions
+/charts
+/hooks
+/lib
+/services
+/styles
+/types
+/utils
+Feature-specific logic should live close to the feature, while shared utilities remain centralized.
+---
+Technical Standards
+TypeScript only (avoid any).
+Strict ESLint and Prettier configuration.
+Reusable hooks for API interactions.
+TanStack Query for server state.
+Zustand for lightweight client state.
+Avoid prop drilling by using appropriate context or stores.
+All API calls should go through a dedicated service layer.
+---
+Success Criteria
+The frontend should feel like one cohesive product from the marketing site through onboarding, dashboard, escrow, and marketplace.
+Users should never feel they have left one application and entered another. Every screen must share the same typography, spacing, interaction patterns, colours, motion language, and component library while remaining fast, accessible, and easy to understand.
+Op3
+ORTHO-PAY Backend Specification v2.0
+Document 3 of 5
+---
+Purpose
+This document defines the backend architecture, service boundaries, API design, security model, and execution flow for ORTHO-PAY.
+The backend should be treated as the source of truth for all financial operations. No client-side logic should be trusted to make business decisions.
+The backend is responsible for:
+Escrow lifecycle
+Liquidity marketplace
+Matching engine
+Fee calculation
+Risk assessment
+Settlement orchestration
+Notifications
+Audit logging
+---
+Core Backend Philosophy
+The backend is not CRUD.
+It is a financial transaction orchestration engine.
+Every request should pass through:
+Request
+↓
+Authentication
+↓
+Authorization
+↓
+Validation
+↓
+Business Rules
+↓
+Risk Assessment
+↓
+Fee Engine
+↓
+Matching Engine
+↓
+Ledger
+↓
+Database
+↓
+Audit Log
+↓
+Notification
+No financial table should be modified directly by the frontend.
+---
+Service Domains
+Split the backend into logical domains.
+Identity Service
+Responsibilities
+Authentication
+Session validation
+MFA
+Passkeys
+Email verification
+Phone verification
+User roles
+User status
+---
+User Service
+Responsibilities
+Profiles
+Payment tags
+Preferences
+Limits
+Verification status
+Reputation summary
+---
+Wallet Service
+Responsible for
+Internal balances
+Available balance
+Reserved balance
+Pending balance
+Ledger entries
+Balance reconciliation
+Wallets never execute external payments directly.
+---
+Liquidity Marketplace Service
+Responsibilities
+Provider listings
+Buy requests
+Sell requests
+Liquidity pools
+Market depth
+Availability
+Reservation
+This is the core marketplace.
+---
+Matching Engine
+This is one of the most important services.
+Input
+Buyer request
+↓
+Available providers
+↓
+Scoring
+↓
+Ranking
+↓
+Reservation
+↓
+Escrow creation
+↓
+Settlement
+Matching should consider:
+Currency
+Country
+Payment rail
+Provider trust score
+Available liquidity
+Completion rate
+Historical response time
+Dispute rate
+Fee competitiveness
+Preferred counterparties
+Daily limits
+Never simply match the first provider.
+---
+Escrow Engine
+Responsible for
+Escrow creation
+Escrow state transitions
+Timer management
+Expiration
+Refunds
+Releases
+Multi-party approvals
+Milestone escrow
+Escrow is its own domain.
+---
+Settlement Engine
+Handles
+Internal transfers
+Release conditions
+Provider settlement
+Buyer confirmation
+Merchant confirmation
+Automatic release
+Manual release
+Settlement should be idempotent.
+---
+Fee Engine
+Fees should never be hardcoded.
+Fee calculation should consider:
+Transaction size
+Currency
+Country
+Liquidity availability
+Provider tier
+User tier
+Merchant discounts
+Promotions
+Referral status
+Payment rail
+Settlement speed
+The Fee Engine returns a detailed fee breakdown before confirmation.
+---
+Reputation Engine
+Calculates:
+Trust Score
+Completion Rate
+Average Response Time
+Cancellation Rate
+Dispute Rate
+Transaction Volume
+Lifetime Value
+Verification Level
+This influences marketplace ranking.
+---
+Risk Engine
+Every financial request receives a risk score.
+Inputs include:
+Velocity
+Device fingerprint
+IP changes
+Geolocation
+Browser integrity
+Payment behaviour
+Failed attempts
+New device
+Sanctions screening
+Historical disputes
+Risk determines whether the request proceeds automatically or requires additional verification.
+---
+Notification Service
+Supports:
+Email
+SMS
+Push notifications
+In-app notifications
+Realtime updates
+Notifications are asynchronous and should not block financial operations.
+---
+Audit Service
+Every action generates immutable audit records.
+Examples:
+Login
+Profile update
+Escrow created
+Escrow released
+Withdrawal initiated
+Withdrawal completed
+Provider accepted
+Provider declined
+Fee adjusted
+Administrator action
+Audit records are append-only.
+---
+API Design
+Use REST for transactional APIs.
+Suggested structure:
+/api/v1/auth
+/api/v1/users
+/api/v1/wallet
+/api/v1/marketplace
+/api/v1/providers
+/api/v1/escrows
+/api/v1/transactions
+/api/v1/reputation
+/api/v1/notifications
+/api/v1/settings
+/api/v1/admin
+Keep versioning from day one.
+---
+Edge Functions
+Each business capability should have its own Edge Function.
+Examples:
+createEscrow()
+acceptMarketplaceOffer()
+calculateFees()
+findLiquidity()
+releaseEscrow()
+cancelEscrow()
+createWithdrawal()
+verifyPayment()
+resolveDispute()
+updateTrustScore()
+Avoid giant functions that perform unrelated work.
+---
+Event-Driven Processing
+Long-running workflows should publish events.
+Example:
+Escrow Created
+↓
+Liquidity Reserved
+↓
+Provider Accepted
+↓
+Payment Submitted
+↓
+Buyer Confirmed
+↓
+Settlement Completed
+↓
+Ledger Updated
+↓
+Notification Sent
+Each step should be independently retryable.
+---
+Idempotency
+Every financial endpoint must accept an idempotency key.
+This prevents:
+Double payments
+Duplicate withdrawals
+Repeated escrow creation
+Network retry issues
+The same request must never execute twice.
+---
+Concurrency Control
+Prevent race conditions.
+Examples:
+Reserve liquidity atomically.
+Prevent double reservation.
+Prevent double release.
+Prevent double refunds.
+Use PostgreSQL transactions and row locking where appropriate.
+---
+Rate Limiting
+Protect:
+Login
+OTP
+Password reset
+Escrow creation
+Marketplace posting
+Withdrawal requests
+API abuse
+Implement with Upstash Redis.
+---
+Background Processing
+Use scheduled jobs for:
+Escrow expiry
+Auto-release
+Reputation recalculation
+Daily limits reset
+Notification retries
+Settlement reconciliation
+Exchange rate refresh
+These should not execute during user requests.
+---
+Caching Strategy
+Redis should cache:
+User sessions
+Exchange rates
+Liquidity pools
+Provider rankings
+Marketplace summaries
+Frequently accessed settings
+Never cache authoritative balances.
+---
+External Integrations
+Design provider adapters instead of tightly coupling integrations.
+Examples:
+PaymentRailAdapter
+ACHAdapter
+SEPAdapter
+FasterPaymentsAdapter
+InteracAdapter
+EmailAdapter
+SMSAdapter
+KYCAdapter
+This allows providers to be swapped without changing business logic.
+---
+Security Requirements
+Every financial endpoint requires:
+Authentication
+Authorization
+CSRF protection (where applicable)
+Input validation
+Server-side ownership checks
+Audit logging
+Idempotency
+Rate limiting
+Never trust client-provided financial values.
+---
+Error Handling
+Return structured errors.
+Example:
+{
+"code": "INSUFFICIENT_LIQUIDITY",
+"message": "No matching providers are currently available.",
+"retryable": true
+}
+Avoid generic 500 errors whenever possible.
+---
+Performance Targets
+Suggested service-level objectives:
+Authentication: <300 ms
+Dashboard data: <500 ms
+Marketplace search: <700 ms
+Escrow creation: <1 second
+Notification dispatch: asynchronous
+Liquidity matching: <2 seconds
+---
+Monitoring
+Track:
+API latency
+Error rates
+Failed settlements
+Escrow completion rate
+Match success rate
+Provider acceptance rate
+Queue depth
+Redis health
+Database performance
+Set alerts for abnormal patterns.
+---
+Disaster Recovery
+Plan for:
+Database backups
+Point-in-time recovery
+Failed settlement replay
+Event replay
+Queue recovery
+Service degradation modes
+Financial systems should degrade gracefully rather than fail unpredictably.
+---
+Backend Development Standards
+Business logic belongs in services, not controllers.
+Controllers validate requests and orchestrate services.
+Database access should be encapsulated behind repositories or data-access modules.
+Every financial operation must have automated tests.
+Every state transition must be explicit and auditable.
+Use feature flags for experimental capabilities.
+Keep services small, cohesive, and independently testable.
+---
+Success Criteria
+The backend should evolve into a modular financial orchestration platform rather than a collection of CRUD endpoints.
+Every transaction must be:
+Authenticated
+Authorized
+Validated
+Risk assessed
+Fee calculated
+Executed atomically
+Logged immutably
+Observable
+Recoverable
+Scalable
+The backend should be capable of supporting future expansion into business payments, merchant services, API integrations, additional payment rails, and new liquidity models without requiring fundamental architectural changes.
+Op4.
+ORTHO-PAY Database Management & Schema Specification v2.0
+Document 4 of 5
+---
+Purpose
+This document defines the database architecture, schema philosophy, indexing strategy, security model, and data lifecycle for ORTHO-PAY.
+The database is not the business logic layer.
+Its purpose is to:
+Store authoritative data
+Maintain financial integrity
+Provide auditability
+Support high-performance queries
+Enable regulatory compliance
+Preserve transactional history
+Business rules belong in Edge Functions—not SQL triggers (except for data integrity).
+---
+Database Platform
+Primary Database
+PostgreSQL 16 (Supabase)
+Features to use:
+Row Level Security (RLS)
+JSONB
+UUIDs
+Generated Columns
+Views
+Materialized Views
+Full Text Search
+PostGIS (future)
+Logical Replication (future)
+---
+Database Philosophy
+Every financial movement must be traceable.
+Never update balances directly.
+Instead:
+Wallet
+↓
+Ledger Entry
+↓
+Balance Recalculated
+↓
+Audit Event
+Balances are derived from ledger transactions whenever reconciliation is required.
+---
+Core Database Domains
+Identity
+Users
+Wallets
+Ledger
+Marketplace
+Liquidity
+Escrow
+Transactions
+Fees
+Settlement
+Disputes
+Notifications
+Compliance
+Analytics
+Administration
+Audit
+Each domain owns its own tables.
+---
+Identity Tables
+users
+profiles
+roles
+permissions
+sessions
+devices
+mfa
+verification_requests
+Users authenticate through Supabase Auth.
+Profiles extend authentication data.
+---
+Wallet Domain
+wallets
+wallet_balances
+ledger_entries
+ledger_categories
+wallet_limits
+wallet_reservations
+Every wallet has:
+Available Balance
+Reserved Balance
+Pending Balance
+Lifetime Volume
+Never store only one balance field.
+---
+Ledger
+The ledger is immutable.
+Never edit.
+Never delete.
+Schema concept:
+ledger_entries
+id
+wallet_id
+transaction_id
+direction
+credit
+debit
+balance_before
+balance_after
+currency
+category
+reference
+created_at
+Every financial action produces ledger entries.
+---
+Marketplace
+marketplace_orders
+provider_offers
+market_depth
+matching_queue
+provider_rankings
+provider_availability
+The marketplace exists independently of escrow.
+---
+Escrow
+escrows
+escrow_participants
+escrow_events
+escrow_documents
+escrow_timers
+escrow_releases
+Escrow should maintain a complete lifecycle.
+---
+Transaction Tables
+Separate logical transactions from ledger entries.
+transactions
+transaction_items
+transaction_status_history
+transaction_metadata
+One transaction can produce multiple ledger entries.
+---
+Liquidity
+liquidity_pools
+liquidity_providers
+provider_balances
+provider_limits
+provider_statistics
+These tables power the matching engine.
+---
+Settlement
+settlements
+settlement_batches
+settlement_attempts
+settlement_failures
+payment_routes
+Supports retries and reconciliation.
+---
+Fee Engine
+fee_rules
+fee_tiers
+fee_calculations
+fee_history
+promotions
+Fees must never be hardcoded.
+---
+Reputation
+trust_scores
+user_statistics
+provider_statistics
+performance_history
+Keep historical snapshots.
+Don't overwrite scores.
+---
+Disputes
+disputes
+dispute_messages
+dispute_evidence
+dispute_decisions
+dispute_actions
+Everything should remain auditable.
+---
+Notifications
+notifications
+notification_templates
+notification_preferences
+notification_delivery
+Track delivery status.
+---
+Compliance
+kyc_profiles
+aml_checks
+sanctions_checks
+risk_events
+device_history
+ip_history
+Compliance data should be logically isolated.
+---
+Administration
+admin_actions
+feature_flags
+system_settings
+maintenance_windows
+---
+Audit
+Every important action creates an immutable audit record.
+audit_logs
+id
+user_id
+actor_type
+entity
+entity_id
+action
+ip
+device
+metadata
+created_at
+Audit data should never be edited.
+---
+Naming Standards
+Tables
+Plural
+users
+wallets
+transactions
+Primary Keys
+id UUID
+Foreign Keys
+user_id
+wallet_id
+escrow_id
+Timestamps
+created_at
+updated_at
+deleted_at
+Soft deletes only where appropriate.
+---
+UUIDs
+Use UUIDv7 (preferred) or UUIDv4.
+Avoid integer IDs for public entities.
+---
+Soft Deletes
+Allowed for:
+Profiles
+Notifications
+Preferences
+Not allowed for:
+Ledger
+Transactions
+Escrows
+Audit Logs
+Settlement
+Financial history should never disappear.
+---
+Row Level Security
+Every table should enforce RLS.
+Example:
+User can only view:
+Own wallet
+Own escrows
+Own notifications
+Own disputes
+Admins require separate policies.
+Never disable RLS.
+---
+Index Strategy
+Index frequently queried fields.
+Examples
+user_id
+wallet_id
+payment_tag
+email
+created_at
+status
+currency
+country
+provider_id
+escrow_id
+transaction_id
+Composite indexes for common filters.
+---
+Search
+Enable PostgreSQL Full Text Search for:
+Users
+Payment Tags
+Businesses
+Merchants
+Escrow References
+Transaction References
+---
+JSONB Usage
+Use JSONB sparingly.
+Good candidates:
+Metadata
+Webhook payloads
+Risk engine results
+Provider capabilities
+Bad candidates:
+Balances
+Transactions
+Relationships
+Structured financial data belongs in relational tables.
+---
+Materialized Views
+Use for analytics.
+Examples:
+Daily volume
+Top providers
+Market liquidity
+Settlement statistics
+Revenue dashboard
+Refresh periodically.
+Never use for transactional operations.
+---
+Database Constraints
+Every financial table should use:
+Foreign Keys
+NOT NULL
+CHECK constraints
+Unique constraints
+Enum types where appropriate
+Avoid relying solely on application validation.
+---
+Transactions
+Every financial workflow should execute inside PostgreSQL transactions.
+Example
+Reserve liquidity
+↓
+Create escrow
+↓
+Update balances
+↓
+Insert ledger
+↓
+Commit
+If any step fails:
+Rollback everything.
+---
+Database Functions
+Allowed:
+Simple utilities
+Generated values
+Validation helpers
+Not allowed:
+Complex business logic
+Matching algorithms
+Fee calculations
+Risk scoring
+Those belong in Edge Functions.
+---
+Archiving
+Move old records periodically.
+Archive:
+Notifications
+Completed disputes
+Expired sessions
+Analytics snapshots
+Never archive:
+Ledger
+Audit
+Settlement
+---
+Backup Strategy
+Supabase automated backups.
+Additionally:
+Daily logical backup.
+Weekly full backup.
+Monthly archive snapshot.
+Test restoration regularly.
+---
+Data Retention
+Suggested minimums:
+Ledger: Permanent
+Audit: Permanent
+Transactions: Permanent
+Escrows: Permanent
+Notifications: 2 years
+Sessions: 90 days
+Logs: 1 year
+Analytics cache: 90 days
+---
+Performance Targets
+Dashboard
+<500 ms
+Marketplace search
+<700 ms
+Wallet lookup
+<100 ms
+Escrow retrieval
+<300 ms
+User lookup
+<100 ms
+---
+Schema Evolution
+Never modify production tables directly.
+Use:
+Versioned migrations.
+Forward-only migrations.
+Rollback plans.
+Migration testing.
+---
+Development Standards
+No SELECT * in production queries.
+Always paginate collections.
+Use explicit column selection.
+Prefer database views for read-heavy dashboards.
+Use optimistic locking where concurrent edits are possible.
+Regularly analyze slow queries.
+Keep schemas normalized for transactional data and denormalize only for reporting when justified.
+---
+Future Expansion
+The schema should support future modules without redesign:
+Multi-currency wallets
+Merchant APIs
+Invoice financing
+Recurring escrow
+Digital goods escrow
+Subscription billing
+Cross-border FX routing
+Institutional liquidity providers
+AI fraud scoring
+Marketplace analytics
+---
+Success Criteria
+The ORTHO-PAY database should function as a financial system of record, not simply an application database.
+It must guarantee:
+Referential integrity
+Transactional consistency
+Complete auditability
+Strong security through RLS
+High-performance queries
+Reliable reconciliation
+Long-term scalability
+Every balance, escrow, settlement, fee, and reputation change should be reconstructable from immutable historical records, enabling trust, compliance, and operational resilience.
+Op5. 
+ORTHO-PAY Business Logic Specification v2.0
+Document 5 of 5
+---
+Purpose
+This document defines the complete business logic that powers ORTHO-PAY.
+This specification replaces the mindset of building a payment app.
+Instead, ORTHO-PAY is defined as:
+> A Peer-to-Peer Liquidity Exchange with Intelligent Escrow and Multi-Rail Settlement.
+The platform does not primarily move money itself.
+Instead, it coordinates trusted settlement between verified participants while protecting both sides through escrow, reputation, intelligent routing, and dynamic matching.
+---
+Core Business Philosophy
+Traditional payment platforms operate like this:
+Sender
+↓
+Platform
+↓
+Recipient
+ORTHO-PAY operates differently.
+Buyer
+↓
+Liquidity Marketplace
+↓
+Best Matched Provider
+↓
+Escrow
+↓
+Settlement
+↓
+Completion
+ORTHO-PAY is the marketplace and trust layer—not necessarily the liquidity provider.
+---
+User Types
+The platform supports multiple participant roles.
+Consumer
+Personal transfers
+Escrow
+Withdrawals
+Deposits
+Marketplace
+---
+Liquidity Provider
+Supplies payment liquidity.
+Competes with other providers.
+Builds reputation.
+Earns fees.
+---
+Merchant
+Receives customer payments.
+Uses delivery-based escrow.
+Supports milestone releases.
+---
+Business
+Payroll
+Supplier payments
+Invoice settlement
+Bulk payouts
+API integrations
+---
+Enterprise
+Large-volume settlement.
+Dedicated pricing.
+Priority routing.
+Dedicated support.
+---
+Marketplace Model
+Liquidity providers compete for transactions.
+Instead of:
+First available provider
+Use:
+Best ranked provider
+Ranking depends on:
+Trust Score
+Response time
+Liquidity available
+Settlement history
+Cancellation rate
+Completion rate
+Country
+Currency
+Payment rail compatibility
+Competitive pricing
+---
+Marketplace Pools
+Create independent liquidity pools.
+Instant
+Highest fees.
+Instant acceptance.
+---
+Standard
+Balanced pricing.
+Normal settlement.
+---
+Business
+High limits.
+Verified businesses only.
+---
+Merchant
+Optimized for commercial transactions.
+---
+Premium
+Highest trust providers.
+Fastest routing.
+---
+Institutional
+Future support.
+OTC providers.
+Large settlements.
+---
+Matching Engine
+The matching engine calculates a score.
+Example:
+Score =
+Liquidity
++ Trust
++ Speed
++ Success Rate
++ Geographic Match
++ Currency Match
++ Payment Rail Match
++ Competitive Pricing
+-
+Dispute Rate
+Cancellation Rate
+Risk Score
+Highest score wins.
+Never use FIFO matching.
+---
+Partial Fulfilment
+One provider should not be required.
+Example:
+Buyer requests:
+€5,000
+Provider A
+€2,000
+Provider B
+€1,500
+Provider C
+€1,500
+System combines providers.
+Escrow manages each provider independently.
+This greatly increases liquidity.
+---
+Reverse Marketplace
+Instead of ORTHO-PAY fixing prices.
+Buyer posts request.
+Providers compete.
+Example:
+Buyer wants
+£750 Faster Payments.
+Provider A
+0.8%
+Provider B
+0.6%
+Provider C
+0.5%
+Buyer accepts preferred offer.
+---
+Smart Routing
+If no peer exists.
+System automatically checks:
+Premium providers
+Business providers
+Merchant partners
+Internal reserve
+Banking partners (future)
+User experiences one seamless workflow.
+---
+Dynamic Fees
+Flat fees should not exist.
+Fees depend on:
+Transaction amount
+Country
+Currency
+Settlement speed
+Provider tier
+Buyer tier
+Marketplace demand
+Liquidity availability
+Payment rail
+Risk level
+Promotions
+Referral status
+Business subscription
+Merchant subscription
+Example:
+High liquidity
+↓
+Lower fee
+Low liquidity
+↓
+Higher fee
+---
+Revenue Streams
+Revenue should come from multiple sources.
+Marketplace Matching Fee
+Charged when a successful match occurs.
+---
+Escrow Fee
+Charged for trust protection.
+---
+Instant Settlement Fee
+Optional.
+---
+Premium Subscription
+Advanced features.
+---
+Merchant Subscription
+Commercial tools.
+---
+Business Subscription
+Bulk payments.
+Reporting.
+API.
+---
+API Usage
+Enterprise integrations.
+---
+FX Spread
+Cross-border transactions.
+---
+Priority Matching
+Higher ranking.
+Faster execution.
+---
+White-label Platform
+Future revenue stream.
+---
+Trust Score
+Every user receives a dynamic Trust Score.
+Factors:
+Identity verification
+Transaction volume
+Completion rate
+Response time
+Disputes
+Chargebacks
+Cancellation rate
+Account age
+Community feedback
+Trust Score affects:
+Marketplace visibility
+Transaction limits
+Fees
+Priority
+Matching probability
+---
+Liquidity Score
+Separate from Trust Score.
+Measures:
+Available liquidity
+Reliability
+Settlement history
+Acceptance rate
+Availability
+Response speed
+Large providers receive higher rankings.
+---
+Escrow Types
+Support multiple escrow models.
+Manual Release
+Buyer confirms.
+---
+Automatic Release
+Time expires.
+---
+Delivery Confirmation
+Carrier confirms delivery.
+Funds release automatically.
+---
+Digital Goods
+Buyer confirms download.
+---
+Service Milestones
+Example:
+Project
+30%
+↓
+60%
+↓
+100%
+---
+Subscription Escrow
+Recurring releases.
+---
+Multi-party Escrow
+Several approvers.
+---
+Payment Rails
+Support routing through domestic payment rails rather than treating every transfer identically.
+Examples:
+UK
+Faster Payments
+Europe
+SEPA
+SEPA Instant
+United States
+ACH
+RTP (future)
+Canada
+Interac e-Transfer
+The matching engine should prioritise providers capable of settling through the requested domestic payment rail.
+---
+Merchant Workflow
+Customer pays.
+↓
+Escrow created.
+↓
+Merchant notified.
+↓
+Shipment.
+↓
+Tracking verified.
+↓
+Buyer receives goods.
+↓
+Escrow released.
+---
+Service Workflow
+Client pays.
+↓
+Escrow created.
+↓
+Work begins.
+↓
+Milestone approved.
+↓
+Partial release.
+↓
+Completion.
+↓
+Final release.
+---
+Marketplace Workflow
+Buyer requests funds.
+↓
+Marketplace receives request.
+↓
+Matching Engine evaluates providers.
+↓
+Top providers notified.
+↓
+Provider accepts.
+↓
+Liquidity reserved.
+↓
+Escrow created.
+↓
+External payment made.
+↓
+Buyer confirms.
+↓
+Provider receives funds.
+↓
+Marketplace fees distributed.
+↓
+Trust scores updated.
+---
+Dispute Engine
+Disputes can be initiated by:
+Buyer
+Provider
+Merchant
+Business
+Administrator
+Evidence types:
+Images
+PDF
+Receipts
+Tracking
+Messages
+Video
+System logs
+Every dispute progresses through:
+Open
+↓
+Review
+↓
+Evidence
+↓
+Decision
+↓
+Appeal (optional)
+↓
+Closed
+---
+Reputation Rewards
+Encourage positive behaviour.
+Benefits include:
+Reduced fees
+Higher limits
+Priority matching
+Premium badge
+Marketplace visibility
+Instant settlement eligibility
+---
+Fraud Prevention
+Continuously monitor:
+Rapid account creation
+Multiple device changes
+IP anomalies
+Velocity spikes
+Repeated cancellations
+Abnormal settlement patterns
+High-risk corridors
+Risk scoring should influence approval, limits, and verification requirements rather than automatically blocking every transaction.
+---
+Marketplace Analytics
+Track:
+Marketplace liquidity
+Average settlement time
+Average fee
+Completion rate
+Dispute rate
+Top providers
+Regional liquidity
+Currency demand
+Payment rail usage
+These metrics guide pricing and liquidity incentives.
+---
+Future Expansion
+The business model should support future products without redesigning the platform.
+Potential additions include:
+Merchant checkout plugins
+Escrow APIs
+Marketplace APIs
+Payroll services
+Invoice settlement
+Cross-border B2B payments
+Treasury tools
+Institutional liquidity marketplace
+AI-assisted fraud prevention
+White-label escrow infrastructure
+---
+Business Rules
+The following rules apply throughout the platform:
+1. The platform is a marketplace, not the default counterparty.
+2. Every financial action must pass through escrow or an equivalent trust mechanism.
+3. Trust and liquidity scores directly influence marketplace outcomes.
+4. Fees are dynamic and transparent before confirmation.
+5. Matching prioritises overall quality, not simply arrival order.
+6. Partial fulfilment is supported where practical.
+7. Every financial action is fully auditable.
+8. Every settlement updates reputation, liquidity metrics, and marketplace analytics.
+9. External payment rails are abstracted behind a unified settlement experience.
+10. The system should continuously optimise matching, routing, and pricing using historical performance data while maintaining fairness and transparency.
+---
+Vision Statement
+ORTHO-PAY should evolve beyond a simple peer-to-peer payment application into a global liquidity marketplace that connects consumers, businesses, merchants, and liquidity providers through intelligent matching, escrow-backed trust, dynamic pricing, and multi-rail settlement.
+The long-term objective is to become the trusted orchestration layer for peer-to-peer and business payments across the UK, Europe, the United States, Canada, and future markets, where reputation, reliability, and efficient liquidity allocation create a strong and defensible network effect.

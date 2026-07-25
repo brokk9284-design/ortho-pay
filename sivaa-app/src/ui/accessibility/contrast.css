@@ -1,6 +1,6 @@
 /* ============================================================
  * BIOS Accessibility — Contrast
- * High-contrast overrides and contrast helpers.
+ * Contrast helpers for text on various surfaces.
  * ============================================================ */
 
 /* Ensure minimum contrast on dark surfaces */
@@ -9,8 +9,7 @@
   --color-mute: #9499a3;
 }
 
-/* High-contrast mode is handled via themes/high-contrast.css
-   This file provides utility classes for contrast control. */
+/* Utility classes for contrast control */
 
 .contrast-high {
   color: var(--color-ink);

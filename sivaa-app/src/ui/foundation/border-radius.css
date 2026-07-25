@@ -13,9 +13,9 @@
  * ============================================================ */
 
 :root {
-  --radius-none: 0px;    /* Nav, footer, FAQ row dividers — flat structural lines */
-  --radius-sm: 6px;      /* Inline code chips, command tags */
-  --radius-md: 8px;      /* Rare medium-radius surfaces (e.g. dropdown panels) */
-  --radius-lg: 12px;     /* Pricing cards, terminal mockup card */
-  --radius-full: 9999px; /* Every button, pill input, install-snippet, search pill, dots */
+  --radius-none: 0px;     /* Nav, footer, FAQ row dividers — flat structural lines */
+  --radius-sm: 10px;      /* Inputs, chips, small interactive elements */
+  --radius-md: 16px;      /* Buttons, small cards, transaction rows */
+  --radius-lg: 24px;      /* Hero cards, balance card, large surfaces */
+  --radius-full: 9999px;  /* Every pill, badge, avatar, dot */
 }

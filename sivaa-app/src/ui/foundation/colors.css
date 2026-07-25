@@ -8,7 +8,6 @@
 
 :root {
   /* --- Brand & Primary --- */
-  --color-primary: #000000;        /* Every primary CTA, black pill, nav link */
   --color-ink-deep: #090909;       /* Pressed / active state for primary pill */
 
   /* --- Text --- */

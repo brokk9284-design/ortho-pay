@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORTHO-PAY — P2P Business Logic & Workflow Document</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --card: #1a1a1a;
+    --border: #262626;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.6);
+    --dim: rgba(255,255,255,0.4);
+    --primary: #3b82f6;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #eab300;
+    --purple: #a855f7;
+    --orange: #f97316;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.7;
+    padding: 0;
+  }
+  .container { max-width: 1000px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 36px; font-weight: 900; margin-bottom: 8px; }
+  h2 {
+    font-size: 26px; font-weight: 800; margin-top: 48px; margin-bottom: 16px;
+    padding-bottom: 12px; border-bottom: 2px solid var(--border);
+  }
+  h3 { font-size: 20px; font-weight: 700; margin-top: 32px; margin-bottom: 12px; color: var(--primary); }
+  h4 { font-size: 16px; font-weight: 700; margin-top: 24px; margin-bottom: 8px; }
+  p { margin-bottom: 12px; color: var(--text); }
+  ul, ol { margin-left: 24px; margin-bottom: 16px; }
+  li { margin-bottom: 6px; }
+  code {
+    background: var(--card); border: 1px solid var(--border);
+    padding: 2px 8px; border-radius: 6px; font-size: 13px;
+    font-family: 'SF Mono', 'Fira Code', monospace; color: var(--primary);
+  }
+  pre {
+    background: var(--card); border: 1px solid var(--border);
+    padding: 16px 20px; border-radius: 12px; overflow-x: auto;
+    margin-bottom: 16px; font-size: 13px; line-height: 1.5;
+  }
+  pre code { background: none; border: none; padding: 0; color: var(--text); }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; margin-bottom: 20px;
+  }
+  .card-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .badge-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .badge-yellow { background: rgba(234,179,0,0.15); color: var(--yellow); border: 1px solid rgba(234,179,0,0.3); }
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--primary); border: 1px solid rgba(59,130,246,0.3); }
+  .badge-purple { background: rgba(168,85,247,0.15); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+  .flow-diagram {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; margin-bottom: 20px;
+  }
+  .flow-step {
+    display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px;
+  }
+  .flow-step:last-child { margin-bottom: 0; }
+  .flow-number {
+    flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
+  }
+  .flow-number-blue { background: rgba(59,130,246,0.15); color: var(--primary); border: 1px solid rgba(59,130,246,0.3); }
+  .flow-number-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .flow-number-yellow { background: rgba(234,179,0,0.15); color: var(--yellow); border: 1px solid rgba(234,179,0,0.3); }
+  .flow-number-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .flow-number-purple { background: rgba(168,85,247,0.15); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+  .flow-content { flex: 1; }
+  .flow-content h4 { margin-top: 0; }
+  .flow-content p { font-size: 14px; color: var(--muted); margin-bottom: 4px; }
+  .actor {
+    display: inline-block; padding: 2px 10px; border-radius: 6px;
+    font-size: 12px; font-weight: 600; margin-right: 6px;
+  }
+  .actor-user { background: rgba(59,130,246,0.1); color: var(--primary); }
+  .actor-peer { background: rgba(168,85,247,0.1); color: var(--purple); }
+  .actor-admin { background: rgba(234,179,0,0.1); color: var(--yellow); }
+  .actor-escrow { background: rgba(34,197,94,0.1); color: var(--green); }
+  .actor-system { background: rgba(255,255,255,0.08); color: var(--muted); }
+  .table-wrap { overflow-x: auto; margin-bottom: 20px; }
+  table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden;
+  }
+  th { background: rgba(255,255,255,0.05); padding: 12px 16px; text-align: left; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+  td { padding: 12px 16px; border-top: 1px solid var(--border); color: var(--text); }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .toc {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; margin-bottom: 40px;
+  }
+  .toc h3 { margin-top: 0; color: var(--text); }
+  .toc ol { margin-left: 20px; }
+  .toc a { color: var(--primary); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .highlight { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 8px; padding: 2px 8px; }
+  .warning { background: rgba(234,179,0,0.08); border: 1px solid rgba(234,179,0,0.2); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; }
+  .warning h4 { color: var(--yellow); margin-top: 0; }
+  .warning p { color: var(--muted); font-size: 14px; }
+  .info { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; }
+  .info h4 { color: var(--primary); margin-top: 0; }
+  .info p { color: var(--muted); font-size: 14px; }
+  .divider { height: 1px; background: var(--border); margin: 40px 0; }
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .stat { text-align: center; padding: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+  .stat-num { font-size: 28px; font-weight: 900; color: var(--primary); }
+  .stat-label { font-size: 11px; text-transform: uppercase; color: var(--dim); letter-spacing: 0.5px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+  .ascii-art {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; overflow-x: auto;
+    font-family: 'SF Mono', monospace; font-size: 12px; line-height: 1.4;
+    color: var(--muted); margin-bottom: 20px; white-space: pre;
+  }
+  .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .comparison > div { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .comparison h4 { margin-top: 0; }
+  @media (max-width: 768px) { .comparison { grid-template-columns: 1fr; } }
+  .footer { text-align: center; padding: 40px 0; color: var(--dim); font-size: 12px; border-top: 1px solid var(--border); margin-top: 40px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>ORTHO-PAY — P2P Business Logic & Workflow Document</h1>
+  <p style="color: var(--muted); font-size: 16px;">Complete business logic for restructuring ORTHO-PAY as a peer-to-peer escrow platform</p>
+  <div class="pill-row" style="margin-top: 12px;">
+    <span class="badge badge-blue">Draft v1.0</span>
+    <span class="badge badge-purple">For Consultant Review</span>
+    <span class="badge badge-green">Date: July 2026</span>
+  </div>
+
+  <div class="toc">
+    <h3>Table of Contents</h3>
+    <ol>
+      <li><a href="#overview">Executive Overview — The P2P Model</a></li>
+      <li><a href="#core-concept">Core Concept: How P2P Matching Works</a></li>
+      <li><a href="#actors">System Actors & Roles</a></li>
+      <li><a href="#current-vs-p2p">Current Architecture vs Proposed P2P Architecture</a></li>
+      <li><a href="#deposit">Workflow: Deposit (P2P Inflow)</a></li>
+      <li><a href="#withdraw">Workflow: Withdrawal (P2P Outflow)</a></li>
+      <li><a href="#send">Workflow: Send Money (P2P Transfer)</a></li>
+      <li><a href="#request">Workflow: Request Money</a></li>
+      <li><a href="#matching">P2P Matching Engine — Algorithm & Logic</a></li>
+      <li><a href="#escrow">Escrow & Admin Review Process</a></li>
+      <li><a href="#fees">Fee Structure & Revenue Model</a></li>
+      <li><a href="#kyc">KYC & Compliance</a></li>
+      <li><a href="#edge-cases">Edge Cases & Conflict Resolution</a></li>
+      <li><a href="#database">Proposed Database Schema Changes</a></li>
+      <li><a href="#api-changes">Proposed API Changes</a></li>
+      <li><a href="#architecture">App Architecture — How ORTHO-PAY Works</a></li>
+      <li><a href="#complete-schema">Complete Database Schema (Current)</a></li>
+      <li><a href="#open-questions">Open Questions for Consultant</a></li>
+    </ol>
+  </div>
+
+  <!-- ===================== 1. OVERVIEW ===================== -->
+  <h2 id="overview">1. Executive Overview — The P2P Model</h2>
+  <div class="card">
+    <p>ORTHO-PAY is being restructured from a <span class="highlight">traditional payment platform</span> to a <span class="highlight">peer-to-peer (P2P) escrow matching platform</span>. In the traditional model, the platform holds funds and processes deposits/withdrawals directly. In the P2P model, users fund and defund their ORTHO-PAY wallets by exchanging value with <strong>other users</strong>, not with the platform itself.</p>
+
+    <h4>The key insight:</h4>
+    <ul>
+      <li><strong>Depositing</strong> = A user with external money (e.g., Cash App balance) sends it to a peer who wants to exit ORTHO-PAY. In return, the depositor receives ORTHO-PAY wallet balance from the peer.</li>
+      <li><strong>Withdrawing</strong> = A user with ORTHO-PAY balance sends it to a peer who wants to deposit. In return, the withdrawer receives external money (e.g., Cash App, Bitcoin) from the peer.</li>
+      <li><strong>Sending</strong> = User-to-user transfer within ORTHO-PAY, held in escrow and admin-reviewed before release.</li>
+    </ul>
+
+    <p>The platform <strong>never holds external funds directly</strong>. Instead, it facilitates matching between users with complementary needs and holds ORTHO-PAY balance in escrow during the matching process.</p>
+  </div>
+
+  <div class="grid-3">
+    <div class="stat"><div class="stat-num">P2P</div><div class="stat-label">Matching Model</div></div>
+    <div class="stat"><div class="stat-num">Escrow</div><div class="stat-label">Admin-Reviewed</div></div>
+    <div class="stat"><div class="stat-num">USD</div><div class="stat-label">Single Currency</div></div>
+  </div>
+
+  <!-- ===================== 2. CORE CONCEPT ===================== -->
+  <h2 id="core-concept">2. Core Concept: How P2P Matching Works</h2>
+  <div class="card">
+    <div class="card-title">The Liquidity Matching Principle</div>
+    <p>Think of ORTHO-PAY as a <strong>liquidity matching engine</strong>. Every deposit creates a "need" and every withdrawal creates a "supply" — or vice versa. The platform matches them.</p>
+
+    <div class="ascii-art">
+  USER A (Depositor)                    USER B (Withdrawer)
+  ┌─────────────────────┐               ┌─────────────────────┐
+  │ Has: Cash App $100  │               │ Has: ORTHO-PAY $100 │
+  │ Wants: ORTHO-PAY $  │               │ Wants: Cash App $   │
+  └─────────┬───────────┘               └───────────┬─────────┘
+            │                                       │
+            │         ┌─────────────────┐           │
+            └────────►│  P2P MATCHING   │◄──────────┘
+                      │     ENGINE      │
+                      │  (Escrow Hold)  │
+                      └────────┬────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    │                     │
+                    ▼                     ▼
+  USER A receives               USER B receives
+  ORTHO-PAY $100                Cash App $100
+  (wallet credited)             (external payment)
+
+  PLATFORM: Facilitates match, holds escrow, takes fee
+    </div>
+
+    <h4>What happens step by step:</h4>
+    <ol>
+      <li>User A wants to deposit $100 via Cash App → they have $100 in Cash App and want ORTHO-PAY balance.</li>
+      <li>User B wants to withdraw $100 to Cash App → they have $100 in ORTHO-PAY and want Cash App balance.</li>
+      <li>The platform <strong>matches</strong> A and B based on: amount, payment method, and availability.</li>
+      <li>User B's $100 ORTHO-PAY balance is <strong>locked in escrow</strong>.</li>
+      <li>User A sends $100 via Cash App to User B's Cash App handle (provided by the platform).</li>
+      <li>User A confirms payment → admin reviews → approves.</li>
+      <li>On approval: User A's ORTHO-PAY wallet is credited $100 (from escrow, previously User B's balance). User B has already received $100 externally via Cash App.</li>
+      <li>Platform charges a fee (e.g., 2% = $2) — deducted from the transfer.</li>
+    </ol>
+  </div>
+
+  <!-- ===================== 3. ACTORS ===================== -->
+  <h2 id="actors">3. System Actors & Roles</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Actor</th>
+          <th>Description</th>
+          <th>Key Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="actor actor-user">User (Depositor)</span></td>
+          <td>A user who has external funds (Cash App, Venmo, BTC, etc.) and wants to add ORTHO-PAY wallet balance.</td>
+          <td>Selects payment method, enters amount, sends external payment to matched peer, confirms payment</td>
+        </tr>
+        <tr>
+          <td><span class="actor actor-peer">User (Withdrawer/Peer)</span></td>
+          <td>A user who has ORTHO-PAY balance and wants to convert it to external funds (Cash App, Venmo, BTC, etc.).</td>
+          <td>Creates withdrawal request, provides external payment details, receives external payment from depositor</td>
+        </tr>
+        <tr>
+          <td><span class="actor actor-user">User (Sender)</span></td>
+          <td>A user sending ORTHO-PAY balance to another ORTHO-PAY user via $paytag.</td>
+          <td>Enters recipient $tag + amount, funds locked in escrow, awaits admin approval</td>
+        </tr>
+        <tr>
+          <td><span class="actor actor-user">User (Receiver)</span></td>
+          <td>A user receiving ORTHO-PAY balance from another user.</td>
+          <td>Receives funds to wallet after escrow approval</td>
+        </tr>
+        <tr>
+          <td><span class="actor actor-admin">Admin</span></td>
+          <td>Platform staff who review and approve/reject transactions.</td>
+          <td>Reviews escrow transactions, approves/rejects, manages users, manages payment methods, manages fees</td>
+        </tr>
+        <tr>
+          <td><span class="actor actor-escrow">Escrow System</span></td>
+          <td>The automated system that locks funds during transactions.</td>
+          <td>Locks sender balance, releases to receiver on approval, refunds on rejection</td>
+        </tr>
+        <tr>
+          <td><span class="actor actor-system">Matching Engine</span></td>
+          <td>The automated system that matches depositors with withdrawers (new in P2P model).</td>
+          <td>Matches based on amount, payment method, limits, KYC status; creates match orders</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===================== 4. CURRENT VS P2P ===================== -->
+  <h2 id="current-vs-p2p">4. Current Architecture vs Proposed P2P Architecture</h2>
+  <div class="comparison">
+    <div>
+      <h4 style="color: var(--red);">Current Model (Centralized)</h4>
+      <ul>
+        <li>User deposits → sends money to <strong>platform's</strong> Cash App/PayPal/BTC address</li>
+        <li>Admin manually verifies receipt → credits wallet</li>
+        <li>User withdraws → admin sends money from <strong>platform's</strong> accounts to user</li>
+        <li>Platform must maintain balances across all payment methods</li>
+        <li>Platform is the counterparty in every deposit/withdrawal</li>
+        <li>Scaling requires more platform liquidity</li>
+        <li>Risk: platform holds user funds externally</li>
+      </ul>
+    </div>
+    <div>
+      <h4 style="color: var(--green);">Proposed P2P Model</h4>
+      <ul>
+        <li>User deposits → matched with a <strong>peer</strong> who wants to withdraw</li>
+        <li>Depositor sends external payment directly to peer's Cash App/PayPal/BTC</li>
+        <li>Peer's ORTHO-PAY balance transfers to depositor (via escrow)</li>
+        <li>Platform <strong>never holds external funds</strong></li>
+        <li>Users are the counterparties — platform is matchmaker + escrow agent</li>
+        <li>Scaling = more users = more liquidity (network effect)</li>
+        <li>Risk: peer doesn't send external payment (mitigated by escrow + admin review)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info">
+    <h4>Why P2P is Better for ORTHO-PAY</h4>
+    <p>The P2P model eliminates the need for ORTHO-PAY to maintain external balances across Cash App, Venmo, PayPal, Bitcoin, etc. The platform becomes a pure matchmaker and escrow agent. Revenue comes from matching fees, not from float or spread. This is more capital-efficient and scales with user growth.</p>
+  </div>
+
+  <!-- ===================== 5. DEPOSIT ===================== -->
+  <h2 id="deposit">5. Workflow: Deposit (P2P Inflow)</h2>
+  <p>A "deposit" in the P2P model means: <strong>"I have external money and want ORTHO-PAY balance."</strong></p>
+
+  <div class="flow-diagram">
+    <div class="card-title">Deposit Flow — Step by Step</div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-blue">1</div>
+      <div class="flow-content">
+        <h4>User Creates Deposit Request</h4>
+        <p><span class="actor actor-user">Depositor</span> selects payment method (e.g., Cash App) and enters amount (e.g., $100). The system creates a <code>deposit_order</code> with status <span class="badge badge-yellow">pending_match</span>.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-purple">2</div>
+      <div class="flow-content">
+        <h4>Matching Engine Finds a Peer</h4>
+        <p><span class="actor actor-system">Matching Engine</span> searches for a <code>withdrawal_order</code> with: same payment method, same or higher amount, status <span class="badge badge-yellow">pending_match</span>. If found, creates a <code>p2p_match</code> linking the two orders. Both orders move to <span class="badge badge-blue">matched</span> status.</p>
+        <p>If no match found: deposit order stays in <span class="badge badge-yellow">pending_match</span> and is queued. User can cancel.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-green">3</div>
+      <div class="flow-content">
+        <h4>Escrow Lock</h4>
+        <p><span class="actor actor-escrow">Escrow System</span> locks the withdrawer's ORTHO-PAY balance (e.g., $100 from User B's wallet). This ensures the peer can't spend or withdraw it elsewhere. Both users see the match details and each other's payment handle (Cash App $tag, PayPal email, BTC address, etc.).</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-blue">4</div>
+      <div class="flow-content">
+        <h4>Depositor Sends External Payment</h4>
+        <p><span class="actor actor-user">Depositor</span> sends $100 via Cash App to the withdrawer's Cash App $tag (shown in the app). The depositor then clicks "I have made payment" and optionally uploads a receipt/screenshot.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-yellow">5</div>
+      <div class="flow-content">
+        <h4>Withdrawer Confirms Receipt</h4>
+        <p><span class="actor actor-peer">Withdrawer</span> checks their Cash App, confirms they received the $100. Clicks "Payment received." If the withdrawer disputes (says they didn't receive), it goes to admin review.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-yellow">6</div>
+      <div class="flow-content">
+        <h4>Admin Review & Approval</h4>
+        <p><span class="actor actor-admin">Admin</span> reviews the match: verifies the depositor's payment screenshot, checks the withdrawer's confirmation, and approves or rejects.</p>
+        <p>If approved: escrow releases $100 (minus fee) to depositor's wallet. Withdrawer already has the external $100.</p>
+        <p>If rejected: escrow refunds $100 to withdrawer's wallet. Depositor must resolve externally.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-green">7</div>
+      <div class="flow-content">
+        <h4>Completion</h4>
+        <p>Depositor's wallet is credited. Withdrawer's wallet is debited (already locked). Fee is split or charged to one party. Both parties notified. Transaction chat is available for dispute resolution.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="warning">
+    <h4>Key Risk: Depositor Doesn't Send External Payment</h4>
+    <p>If the depositor claims they sent payment but didn't, the withdrawer disputes. Admin reviews evidence (receipt screenshot, Cash App transaction ID). If no payment was sent, escrow refunds the withdrawer. The depositor may be flagged/banned.</p>
+  </div>
+
+  <div class="warning">
+    <h4>Key Risk: Withdrawer Claims Not Received (But Actually Received)</h4>
+    <p>If the withdrawer lies about not receiving the external payment, admin reviews the depositor's receipt. If evidence shows payment was sent, admin can force-approve. The withdrawer may be flagged/banned.</p>
+  </div>
+
+  <!-- ===================== 6. WITHDRAW ===================== -->
+  <h2 id="withdraw">6. Workflow: Withdrawal (P2P Outflow)</h2>
+  <p>A "withdrawal" in the P2P model means: <strong>"I have ORTHO-PAY balance and want external money."</strong></p>
+
+  <div class="flow-diagram">
+    <div class="card-title">Withdrawal Flow — Step by Step</div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-blue">1</div>
+      <div class="flow-content">
+        <h4>User Creates Withdrawal Request</h4>
+        <p><span class="actor actor-peer">Withdrawer</span> selects desired payment method (e.g., "I want to receive via Cash App") and enters amount (e.g., $100). Provides their Cash App $tag for receiving. System creates a <code>withdrawal_order</code> with status <span class="badge badge-yellow">pending_match</span>.</p>
+        <p>KYC must be verified. 2FA code required. Available balance is checked.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-purple">2</div>
+      <div class="flow-content">
+        <h4>Matching Engine Finds a Depositor</h4>
+        <p><span class="actor actor-system">Matching Engine</span> searches for a <code>deposit_order</code> with: same payment method, same or lower amount, status <span class="badge badge-yellow">pending_match</span>. If found, creates a <code>p2p_match</code>. Both orders move to <span class="badge badge-blue">matched</span> status.</p>
+        <p>If no match found: withdrawal order stays queued. User can cancel (funds remain in wallet, not locked until matched).</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-green">3</div>
+      <div class="flow-content">
+        <h4>Escrow Lock</h4>
+        <p><span class="actor actor-escrow">Escrow System</span> locks the withdrawer's ORTHO-PAY balance ($100 + fee). The withdrawer's available balance decreases. Both users can now see the match and each other's payment details.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-blue">4</div>
+      <div class="flow-content">
+        <h4>Depositor Sends External Payment to Withdrawer</h4>
+        <p><span class="actor actor-user">Depositor</span> sends $100 via Cash App to the withdrawer's $tag. Clicks "I have made payment" and uploads receipt.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-yellow">5</div>
+      <div class="flow-content">
+        <h4>Withdrawer Confirms Receipt</h4>
+        <p><span class="actor actor-peer">Withdrawer</span> verifies $100 received in their Cash App. Clicks "Payment received."</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-yellow">6</div>
+      <div class="flow-content">
+        <h4>Admin Review & Approval</h4>
+        <p><span class="actor actor-admin">Admin</span> reviews evidence and approves. Escrow releases: withdrawer's locked balance is debited (sent to depositor's wallet). Withdrawer has already received external funds.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-green">7</div>
+      <div class="flow-content">
+        <h4>Completion</h4>
+        <p>Withdrawer's wallet debited. Depositor's wallet credited. Fee deducted. Both notified. Chat available for disputes.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info">
+    <h4>Important: Partial Matches</h4>
+    <p>A $500 withdrawal can be matched with multiple smaller deposits (e.g., $200 + $300). The matching engine should support partial matching to improve liquidity. Each partial match is a separate escrow transaction.</p>
+  </div>
+
+  <!-- ===================== 7. SEND ===================== -->
+  <h2 id="send">7. Workflow: Send Money (P2P Transfer)</h2>
+  <p>Sending money is a direct user-to-user transfer within ORTHO-PAY. This is the core escrow-protected payment flow.</p>
+
+  <div class="flow-diagram">
+    <div class="card-title">Send Money Flow — Step by Step</div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-blue">1</div>
+      <div class="flow-content">
+        <h4>Sender Initiates Payment</h4>
+        <p><span class="actor actor-user">Sender</span> enters recipient's $ORTHO tag (e.g., $alice) and amount (e.g., $50). System verifies recipient exists, both wallets are active, sender has sufficient balance, both users are KYC verified.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-green">2</div>
+      <div class="flow-content">
+        <h4>Fee Calculation & Escrow Lock</h4>
+        <p>System calculates fee based on fee rules (e.g., 3% for &lt;$50, 2% for $50–$499, 1% for $500+). Sender's gross amount ($50) is locked in escrow. Sender's available balance decreases. Payment status: <span class="badge badge-yellow">escrow_held</span>.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-yellow">3</div>
+      <div class="flow-content">
+        <h4>Admin Review</h4>
+        <p><span class="actor actor-admin">Admin</span> reviews the transaction for fraud, suspicious patterns, or policy violations. Admin can approve or reject.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-green">4</div>
+      <div class="flow-content">
+        <h4>Approval → Release</h4>
+        <p>If approved: $50 gross is debited from sender (total_sent increases), $48.50 net (after $1.50 fee) is credited to receiver (total_received increases). Escrow lock released. Payment status: <span class="badge badge-green">completed</span>.</p>
+        <p>Both parties notified via in-app notification + email. Transaction chat created/updated with system message.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-red">5</div>
+      <div class="flow-content">
+        <h4>Rejection → Refund</h4>
+        <p>If rejected: $50 is refunded to sender (locked_balance decreases). Payment status: <span class="badge badge-red">reversed</span>. Sender notified. No fee charged.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 8. REQUEST ===================== -->
+  <h2 id="request">8. Workflow: Request Money</h2>
+  <p>A user can request money from another ORTHO-PAY user. This is a notification + optional payment method selection.</p>
+
+  <div class="flow-diagram">
+    <div class="card-title">Request Money Flow — Step by Step</div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-blue">1</div>
+      <div class="flow-content">
+        <h4>Requester Creates Payment Request</h4>
+        <p><span class="actor actor-user">Requester</span> enters recipient's $tag, amount, and optional message. System verifies both users exist, are KYC verified, and have active wallets. Prevents duplicate pending requests between same pair.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-purple">2</div>
+      <div class="flow-content">
+        <h4>Recipient Notified</h4>
+        <p><span class="actor actor-system">System</span> sends in-app notification + email to the recipient. A transaction chat is auto-created with a system message about the request.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-yellow">3</div>
+      <div class="flow-content">
+        <h4>Recipient Reviews & Pays</h4>
+        <p><span class="actor actor-user">Recipient</span> sees the request in their dashboard. They can accept (triggers the Send Money flow — step 1 of Send) or decline.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-green">4</div>
+      <div class="flow-content">
+        <h4>Payment Processed</h4>
+        <p>If recipient accepts: the standard Send Money flow executes (escrow lock → admin review → release). Request status updates to <span class="badge badge-green">paid</span>.</p>
+        <p>If recipient declines: request status → <span class="badge badge-red">declined</span>. Requester notified.</p>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number flow-number-red">5</div>
+      <div class="flow-content">
+        <h4>Expiration</h4>
+        <p>If no action within 7 days, request auto-expires. Status → <span class="badge badge-red">expired</span>. Requester can create a new one.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 9. MATCHING ENGINE ===================== -->
+  <h2 id="matching">9. P2P Matching Engine — Algorithm & Logic</h2>
+  <div class="card">
+    <div class="card-title">Matching Algorithm (Proposed)</div>
+
+    <h4>Inputs:</h4>
+    <ul>
+      <li><strong>Deposit orders</strong> (pending_match): { user_id, amount, payment_method, created_at }</li>
+      <li><strong>Withdrawal orders</strong> (pending_match): { user_id, amount, payment_method, external_details, created_at }</li>
+    </ul>
+
+    <h4>Matching Rules (Priority Order):</h4>
+    <ol>
+      <li><strong>Exact match</strong> — Same payment method + same amount. Highest priority. Instant match.</li>
+      <li><strong>Partial match (withdrawer ≥ depositor)</strong> — Same payment method, withdrawer's amount ≥ depositor's amount. The withdrawal is partially fulfilled. Remaining withdrawal amount stays in queue.</li>
+      <li><strong>Partial match (depositor ≥ withdrawer)</strong> — Same payment method, depositor's amount ≥ withdrawer's amount. The deposit is partially fulfilled. Remaining deposit amount stays in queue.</li>
+      <li><strong>FIFO tiebreaker</strong> — If multiple candidates, match with the oldest order first (fairness).</li>
+    </ol>
+
+    <h4>Constraints:</h4>
+    <ul>
+      <li>Both users must be KYC verified</li>
+      <li>Both wallets must be active</li>
+      <li>Users cannot be matched with themselves</li>
+      <li>Payment method must match exactly (Cash App ↔ Cash App, BTC ↔ BTC, etc.)</li>
+      <li>Amount must be within payment method min/max limits</li>
+      <li>Withdrawer's available balance must cover the amount + fee</li>
+    </ul>
+
+    <h4>Matching Modes:</h4>
+    <div class="grid-2">
+      <div class="card" style="margin: 0;">
+        <h4 style="color: var(--green);">Auto-Match (Default)</h4>
+        <p style="font-size: 14px; color: var(--muted);">System automatically matches orders as they come in. Fastest liquidity. Admin still reviews each match before escrow release.</p>
+      </div>
+      <div class="card" style="margin: 0;">
+        <h4 style="color: var(--yellow);">Manual Match (Optional)</h4>
+        <p style="font-size: 14px; color: var(--muted);">User sees a list of available counterparties and picks one. More control, slower. Could be a premium feature.</p>
+      </div>
+    </div>
+
+    <h4>Pseudocode:</h4>
+    <pre><code>function findMatch(depositOrder):
+  candidates = SELECT * FROM withdrawal_orders
+    WHERE status = 'pending_match'
+    AND payment_method = depositOrder.payment_method
+    AND user_id != depositOrder.user_id
+    AND kyc_status = 'verified'
+    AND wallet_status = 'active'
+    ORDER BY created_at ASC
+
+  // 1. Try exact match
+  for candidate in candidates:
+    if candidate.amount == depositOrder.amount:
+      return createMatch(depositOrder, candidate, candidate.amount)
+
+  // 2. Try partial match (withdrawer has more)
+  for candidate in candidates:
+    if candidate.amount >= depositOrder.amount:
+      return createMatch(depositOrder, candidate, depositOrder.amount)
+      // candidate.remaining = candidate.amount - depositOrder.amount
+
+  // 3. Try partial match (depositor has more)
+  for candidate in candidates:
+    if candidate.amount <= depositOrder.amount:
+      return createMatch(depositOrder, candidate, candidate.amount)
+      // depositOrder.remaining = depositOrder.amount - candidate.amount
+
+  return null // No match found, queue the order</code></pre>
+  </div>
+
+  <!-- ===================== 10. ESCROW ===================== -->
+  <h2 id="escrow">10. Escrow & Admin Review Process</h2>
+  <div class="card">
+    <div class="card-title">Escrow Lifecycle</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Status</th>
+            <th>Funds State</th>
+            <th>Who Acts Next</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Order created</td>
+            <td><span class="badge badge-yellow">pending_match</span></td>
+            <td>Not locked</td>
+            <td>Matching engine</td>
+          </tr>
+          <tr>
+            <td>Matched</td>
+            <td><span class="badge badge-blue">matched</span></td>
+            <td>Withdrawer's balance locked</td>
+            <td>Depositor (send external payment)</td>
+          </tr>
+          <tr>
+            <td>Payment sent</td>
+            <td><span class="badge badge-blue">payment_sent</span></td>
+            <td>Still locked</td>
+            <td>Withdrawer (confirm receipt)</td>
+          </tr>
+          <tr>
+            <td>Receipt confirmed</td>
+            <td><span class="badge badge-yellow">under_review</span></td>
+            <td>Still locked</td>
+            <td>Admin (review & approve)</td>
+          </tr>
+          <tr>
+            <td>Approved</td>
+            <td><span class="badge badge-green">completed</span></td>
+            <td>Released to depositor</td>
+            <td>— (done)</td>
+          </tr>
+          <tr>
+            <td>Rejected</td>
+            <td><span class="badge badge-red">reversed</span></td>
+            <td>Refunded to withdrawer</td>
+            <td>— (done)</td>
+          </tr>
+          <tr>
+            <td>Disputed</td>
+            <td><span class="badge badge-red">disputed</span></td>
+            <td>Still locked</td>
+            <td>Admin (investigate)</td>
+          </tr>
+          <tr>
+            <td>Cancelled (pre-match)</td>
+            <td><span class="badge badge-red">cancelled</span></td>
+            <td>Never locked</td>
+            <td>— (done)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Admin Review Checklist:</h4>
+    <ul>
+      <li>Verify depositor's payment screenshot/receipt is legitimate</li>
+      <li>Check withdrawer confirmed receipt</li>
+      <li>Check for suspicious patterns (new account, large amount, repeated disputes)</li>
+      <li>Verify both users' KYC status</li>
+      <li>Check transaction chat for any dispute messages</li>
+      <li>Approve or reject with optional notes</li>
+    </ul>
+  </div>
+
+  <!-- ===================== 11. FEES ===================== -->
+  <h2 id="fees">11. Fee Structure & Revenue Model</h2>
+  <div class="card">
+    <div class="card-title">Current Fee Rules (Configurable by Admin)</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Min Amount</th>
+            <th>Max Amount</th>
+            <th>Fee %</th>
+            <th>Fixed Fee</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Micro</td><td>$0.01</td><td>$49.99</td><td>3%</td><td>$0.00</td></tr>
+          <tr><td>Standard</td><td>$50.00</td><td>$499.99</td><td>2%</td><td>$0.00</td></tr>
+          <tr><td>Premium</td><td>$500.00</td><td>∞</td><td>1%</td><td>$0.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Proposed P2P Fee Model:</h4>
+    <ul>
+      <li><strong>Send Money (user-to-user):</strong> Fee charged to sender (deducted from gross amount). Receiver gets net. Same as current.</li>
+      <li><strong>Deposit (P2P match):</strong> Fee charged to depositor (e.g., 1-2%). The depositor pays $100 externally but receives $98-$99 in ORTHO-PAY wallet. The difference is the platform fee.</li>
+      <li><strong>Withdrawal (P2P match):</strong> Fee charged to withdrawer (e.g., 1-2%). The withdrawer gives up $100 ORTHO-PAY but receives $98-$99 externally. The difference is the platform fee.</li>
+      <li><strong>Subscription tiers (existing):</strong> Personal ($0/mo, 3%), Business ($29/mo, 2%), Enterprise ($199/mo, 1%). These reduce the per-transaction fee.</li>
+    </ul>
+
+    <div class="info">
+      <h4>Revenue Sources</h4>
+      <p>1. Per-transaction fees (send, deposit match, withdrawal match) · 2. Subscription plans (Business, Enterprise) · 3. Premium features (priority matching, instant match)</p>
+    </div>
+  </div>
+
+  <!-- ===================== 12. KYC ===================== -->
+  <h2 id="kyc">12. KYC & Compliance</h2>
+  <div class="card">
+    <h4>Current KYC Flow:</h4>
+    <ol>
+      <li>User uploads ID document (passport, driver's license, state ID) in Settings → KYC</li>
+      <li>Document stored in GitHub-based storage, record in <code>kyc_documents</code> table</li>
+      <li>Profile <code>kyc_status</code> set to <span class="badge badge-yellow">pending</span></li>
+      <li>Admin reviews document in Admin Dashboard → KYC tab</li>
+      <li>Admin approves → <code>kyc_status</code> = <span class="badge badge-green">verified</span></li>
+      <li>Admin rejects → <code>kyc_status</code> = <span class="badge badge-red">rejected</span> (user can re-upload)</li>
+    </ol>
+
+    <h4>KYC Requirements (P2P Model):</h4>
+    <ul>
+      <li><strong>Must be verified before:</strong> sending money, requesting money, creating deposit/withdrawal orders</li>
+      <li><strong>Both parties in a P2P match must be KYC verified</strong> — this is critical for AML compliance</li>
+      <li><strong>Admin can freeze wallet</strong> if suspicious activity detected (wallet status → frozen/suspended)</li>
+      <li>GDPR/NDPR compliant data handling (legal pages already created at /terms, /privacy, /cookies)</li>
+    </ul>
+  </div>
+
+  <!-- ===================== 13. EDGE CASES ===================== -->
+  <h2 id="edge-cases">13. Edge Cases & Conflict Resolution</h2>
+  <div class="card">
+    <div class="card-title">Edge Case Handling</div>
+
+    <h4>1. Depositor claims payment sent but withdrawer says not received</h4>
+    <ul>
+      <li>Admin reviews depositor's receipt/screenshot</li>
+      <li>Admin requests transaction ID from both parties</li>
+      <li>If evidence supports depositor: admin force-approves, withdrawer's locked balance is debited</li>
+      <li>If evidence supports withdrawer: admin rejects, depositor's order cancelled, withdrawer refunded</li>
+      <li>Repeat offenders are banned</li>
+    </ul>
+
+    <h4>2. Partial match — withdrawal $500 matched with deposit $200</h4>
+    <ul>
+      <li>$200 escrow transaction created and processed</li>
+      <li>Remaining $300 withdrawal stays in pending_match queue</li>
+      <li>Withdrawer sees two transactions: one completed ($200), one pending ($300)</li>
+    </ul>
+
+    <h4>3. User cancels deposit/withdrawal after match but before payment</h4>
+    <ul>
+      <li>If depositor cancels: match cancelled, withdrawer's balance unlocked, withdrawal re-queued</li>
+      <li>If withdrawer cancels: match cancelled, depositor's order re-queued</li>
+      <li>Cancellation penalty: possible fee or cooldown period for repeat cancellers</li>
+    </ul>
+
+    <h4>4. External payment fails (e.g., Cash App payment bounced)</h4>
+    <ul>
+      <li>Depositor reports failed payment → match status → disputed</li>
+      <li>Admin reviews, cancels match, both orders re-queued</li>
+      <li>No fee charged</li>
+    </ul>
+
+    <h4>5. User tries to match with themselves</h4>
+    <ul>
+      <li>System prevents: <code>user_id != depositOrder.user_id</code> in matching query</li>
+    </ul>
+
+    <h4>6. Wallet frozen during escrow</h4>
+    <ul>
+      <li>If withdrawer's wallet is frozen by admin during escrow: match is cancelled, depositor's order re-queued</li>
+      <li>If depositor's wallet is frozen: match cancelled, withdrawer's balance unlocked, withdrawal re-queued</li>
+    </ul>
+
+    <h4>7. No matching counterparty available</h4>
+    <ul>
+      <li>Order stays in pending_match queue</li>
+      <li>User sees "Searching for match..." status</li>
+      <li>User can cancel at any time (no penalty for first 3 cancellations per month)</li>
+      <li>System can notify user when a match becomes available</li>
+    </ul>
+
+    <h4>8. Rate limits and anti-fraud</h4>
+    <ul>
+      <li>Max 5 pending deposit/withdrawal orders per user</li>
+      <li>Max $10,000 daily deposit/withdrawal per user (configurable by admin)</li>
+      <li>New accounts (&lt;7 days) limited to $500 per transaction</li>
+      <li>Admin can override limits per user</li>
+    </ul>
+  </div>
+
+  <!-- ===================== 14. DATABASE ===================== -->
+  <h2 id="database">14. Proposed Database Schema Changes</h2>
+  <div class="card">
+    <div class="card-title">New Tables for P2P Matching</div>
+
+    <h4>Table: <code>deposit_orders</code></h4>
+    <pre><code>CREATE TABLE deposit_orders (
+  order_id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id         UUID REFERENCES profiles(id),
+  payment_method_id UUID REFERENCES payment_methods(method_id),
+  amount          DECIMAL(12,2) NOT NULL,
+  matched_amount  DECIMAL(12,2) DEFAULT 0,      -- how much has been matched so far
+  status          TEXT DEFAULT 'pending_match',  -- pending_match, matched, payment_sent, under_review, completed, cancelled, disputed
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now(),
+  expires_at      TIMESTAMPTZ DEFAULT now() + INTERVAL '24 hours'
+);</code></pre>
+
+    <h4>Table: <code>withdrawal_orders</code></h4>
+    <pre><code>CREATE TABLE withdrawal_orders (
+  order_id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id         UUID REFERENCES profiles(id),
+  payment_method_id UUID REFERENCES payment_methods(method_id),
+  amount          DECIMAL(12,2) NOT NULL,
+  matched_amount  DECIMAL(12,2) DEFAULT 0,
+  external_details JSONB NOT NULL,              -- { cashtag: "$alice", btc_address: "...", etc. }
+  status          TEXT DEFAULT 'pending_match',
+  two_fa_verified BOOLEAN DEFAULT false,
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now(),
+  expires_at      TIMESTAMPTZ DEFAULT now() + INTERVAL '24 hours'
+);</code></pre>
+
+    <h4>Table: <code>p2p_matches</code></h4>
+    <pre><code>CREATE TABLE p2p_matches (
+  match_id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  deposit_order_id  UUID REFERENCES deposit_orders(order_id),
+  withdrawal_order_id UUID REFERENCES withdrawal_orders(order_id),
+  depositor_id    UUID REFERENCES profiles(id),
+  withdrawer_id   UUID REFERENCES profiles(id),
+  payment_method_id UUID REFERENCES payment_methods(method_id),
+  amount          DECIMAL(12,2) NOT NULL,       -- the matched amount
+  fee_amount      DECIMAL(12,2) DEFAULT 0,
+  status          TEXT DEFAULT 'matched',       -- matched, payment_sent, under_review, completed, reversed, disputed, cancelled
+  depositor_confirmed BOOLEAN DEFAULT false,    -- depositor clicked "I have made payment"
+  withdrawer_confirmed BOOLEAN DEFAULT false,   -- withdrawer clicked "Payment received"
+  receipt_url     TEXT,                          -- depositor's payment screenshot
+  escrow_wallet_tx_id UUID,                      -- reference to wallet_transactions for escrow hold
+  admin_id        UUID,                           -- who approved/rejected
+  admin_notes     TEXT,
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  approved_at     TIMESTAMPTZ,
+  expires_at      TIMESTAMPTZ DEFAULT now() + INTERVAL '2 hours'  -- time limit for payment
+);</code></pre>
+
+    <h4>Existing Tables — Modifications:</h4>
+    <ul>
+      <li><code>deposits</code> table: add <code>order_id</code> FK to <code>deposit_orders</code>, add <code>match_id</code> FK to <code>p2p_matches</code>. Keep existing columns for backward compatibility.</li>
+      <li><code>withdrawals</code> table: add <code>order_id</code> FK to <code>withdrawal_orders</code>, add <code>match_id</code> FK to <code>p2p_matches</code>. Keep existing columns.</li>
+      <li><code>wallet_transactions</code>: add new type <code>p2p_match_hold</code> and <code>p2p_match_release</code>.</li>
+      <li><code>payment_methods</code>: add <code>supports_p2p</code> boolean column (some methods may be platform-only, not P2P).</li>
+    </ul>
+  </div>
+
+  <!-- ===================== 15. API CHANGES ===================== -->
+  <h2 id="api-changes">15. Proposed API Changes</h2>
+  <div class="card">
+    <div class="card-title">New API Endpoints</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Endpoint</th>
+            <th>Method</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/api/v1/deposit-orders</code></td>
+            <td>GET, POST, DELETE</td>
+            <td>Create/list/cancel deposit orders. POST triggers matching engine.</td>
+          </tr>
+          <tr>
+            <td><code>/api/v1/withdrawal-orders</code></td>
+            <td>GET, POST, DELETE</td>
+            <td>Create/list/cancel withdrawal orders. POST triggers matching engine.</td>
+          </tr>
+          <tr>
+            <td><code>/api/v1/p2p-matches</code></td>
+            <td>GET</td>
+            <td>List user's P2P matches (as depositor or withdrawer).</td>
+          </tr>
+          <tr>
+            <td><code>/api/v1/p2p-matches/[id]/confirm-payment</code></td>
+            <td>POST</td>
+            <td>Depositor confirms external payment sent. Upload receipt.</td>
+          </tr>
+          <tr>
+            <td><code>/api/v1/p2p-matches/[id]/confirm-receipt</code></td>
+            <td>POST</td>
+            <td>Withdrawer confirms external payment received.</td>
+          </tr>
+          <tr>
+            <td><code>/api/v1/p2p-matches/[id]/dispute</code></td>
+            <td>POST</td>
+            <td>Either party raises a dispute. Goes to admin review.</td>
+          </tr>
+          <tr>
+            <td><code>/api/v1/p2p-matches/[id]/cancel</code></td>
+            <td>POST</td>
+            <td>Cancel a match before payment is sent. Funds unlocked.</td>
+          </tr>
+          <tr>
+            <td><code>/api/v1/admin/p2p-matches</code></td>
+            <td>GET, PATCH</td>
+            <td>Admin lists all P2P matches, approves/rejects.</td>
+          </tr>
+          <tr>
+            <td><code>/api/v1/admin/p2p-matches/[id]/approve</code></td>
+            <td>POST</td>
+            <td>Admin approves match → escrow release.</td>
+          </tr>
+          <tr>
+            <td><code>/api/v1/admin/p2p-matches/[id]/reject</code></td>
+            <td>POST</td>
+            <td>Admin rejects match → escrow refund.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Modified Existing Endpoints:</h4>
+    <ul>
+      <li><code>/api/v1/deposits</code> POST → now creates a <code>deposit_order</code> instead of a direct deposit. Matching happens automatically.</li>
+      <li><code>/api/v1/withdrawals</code> POST → now creates a <code>withdrawal_order</code> instead of a direct withdrawal. Matching happens automatically.</li>
+      <li><code>/api/v1/deposits</code> PATCH (admin approve/reject) → now operates on <code>p2p_matches</code> instead.</li>
+      <li><code>/api/v1/withdrawals</code> PATCH (admin approve/reject) → now operates on <code>p2p_matches</code> instead.</li>
+    </ul>
+  </div>
+
+  <!-- ===================== 16. ARCHITECTURE ===================== -->
+  <h2 id="architecture">16. App Architecture — How ORTHO-PAY Works</h2>
+
+  <div class="card">
+    <div class="card-title">Technology Stack</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Layer</th><th>Technology</th><th>Details</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Framework</td><td>Next.js 16.2.11</td><td>App Router, Turbopack, React Server Components</td></tr>
+          <tr><td>Language</td><td>TypeScript</td><td>Strict mode, typed database definitions</td></tr>
+          <tr><td>Database</td><td>Supabase (PostgreSQL)</td><td>Row Level Security (RLS) enabled on all tables</td></tr>
+          <tr><td>Auth</td><td>Custom JWT + Supabase Auth</td><td>Cookie-based sessions, requireAuth / requireAdmin / requireSuperAdmin guards</td></tr>
+          <tr><td>File Storage</td><td>GitHub-based</td><td>KYC documents stored via GitHub API (src/lib/github-storage.ts). 10MB max, jpg/png/pdf/webp</td></tr>
+          <tr><td>Email</td><td>Resend / SMTP</td><td>2FA codes, escrow status, payment request notifications</td></tr>
+          <tr><td>Deployment</td><td>Vercel</td><td>Production at https://www.ortho-m8.com</td></tr>
+          <tr><td>Styling</td><td>Custom CSS-only design system</td><td>CSS variables in src/ui/, light/dark themes via data-theme attribute</td></tr>
+          <tr><td>Fonts</td><td>Nunito (display) + system-ui (body)</td><td>Loaded via next/font/google</td></tr>
+          <tr><td>Icons</td><td>lucide-react</td><td>UI icons + custom BrandIcon component for payment methods</td></tr>
+          <tr><td>Animations</td><td>motion (v12+)</td><td>Imported from motion/react</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">System Architecture Diagram</div>
+    <div class="ascii-art">
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │                         USER (Browser)                               │
+  │  Landing Page · Login · Register · Verify OTP · Forgot Password      │
+  │  Dashboard · Deposit · Withdraw · Send · Request · Settings · Chat   │
+  │  Admin Dashboard (KYC · Payments · Deposits · Withdrawals · Methods) │
+  └──────────────────────────────┬───────────────────────────────────────┘
+                                 │ HTTPS
+                                 ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │                      VERCEL (Next.js 16)                             │
+  │                                                                      │
+  │  ┌─────────────┐  ┌─────────────┐  ┌──────────────┐  ┌───────────┐  │
+  │  │  Middleware  │  │  App Router  │  │  API Routes  │  │  Server   │  │
+  │  │  (auth gate) │  │  (pages)     │  │  (/api/v1/*) │  │ Components│  │
+  │  └──────┬──────┘  └──────┬──────┘  └──────┬───────┘  └─────┬─────┘  │
+  │         │                │                │                 │        │
+  │  ┌──────┴────────────────┴────────────────┴─────────────────┴─────┐  │
+  │  │                    src/lib/ (business logic)                   │  │
+  │  │  auth.ts · chat.ts · email/service.ts · github-storage.ts     │  │
+  │  │  supabase/server.ts · utils.ts                                 │  │
+  │  └──────────────────────────┬─────────────────────────────────────┘  │
+  └─────────────────────────────┼────────────────────────────────────────┘
+                                │
+           ┌────────────────────┼────────────────────┐
+           ▼                    ▼                    ▼
+  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────────┐
+  │   SUPABASE      │  │   GITHUB API    │  │   EMAIL SERVICE  │
+  │   (PostgreSQL)  │  │   (file storage)│  │   (Resend/SMTP)  │
+  │                 │  │                 │  │                  │
+  │ - profiles      │  │ - KYC docs      │  │ - 2FA codes      │
+  │ - wallets       │  │ - Avatars       │  │ - Escrow emails  │
+  │ - payments      │  │ - Receipts      │  │ - Request emails │
+  │ - deposits      │  │                 │  │                  │
+  │ - withdrawals   │  │                 │  │                  │
+  │ - kyc_documents │  │                 │  │                  │
+  │ - notifications │  │                 │  │                  │
+  │ - audit_logs    │  │                 │  │                  │
+  │ - fee_rules     │  │                 │  │                  │
+  │ - payment_methods│ │                 │  │                  │
+  │ - chats/messages│  │                 │  │                  │
+  │ - 2fa codes     │  │                 │  │                  │
+  │ - support tix   │  │                 │  │                  │
+  │                 │  │                 │  │                  │
+  │  RLS enabled    │  │  Token auth     │  │  API key auth    │
+  └─────────────────┘  └─────────────────┘  └──────────────────┘
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Request Flow — How a Transaction Works End-to-End</div>
+    <div class="ascii-art">
+  1. USER ACTION (browser)
+     │
+     ▼
+  2. MIDDLEWARE (src/middleware.ts)
+     │  Checks: is user authenticated?
+     │  Routes: /dashboard/* and /admin/* require auth
+     │  Admin routes: checks admins table for is_active
+     │
+     ▼
+  3. PAGE / API ROUTE (src/app/...)
+     │  Server Component or API route handler
+     │  Calls requireAuth() or requireAdmin()
+     │
+     ▼
+  4. AUTH LAYER (src/lib/auth.ts)
+     │  getAuthenticatedUser() → supabase.auth.getUser()
+     │  requireAuth() → throws 401 if no user
+     │  requireAdmin() → checks admins table
+     │  requireSuperAdmin() → checks role = 'super_admin'
+     │
+     ▼
+  5. SUPABASE CLIENT (src/lib/supabase/server.ts)
+     │  createSupabaseServerClient() → cookie-based (RLS enforced)
+     │  createSupabaseAdminClient() → service role (bypasses RLS)
+     │
+     ▼
+  6. DATABASE OPERATION
+     │  SELECT / INSERT / UPDATE on PostgreSQL tables
+     │  RLS policies enforce: users see own data, admins see all
+     │
+     ▼
+  7. SIDE EFFECTS
+     │  - Insert notification (in-app)
+     │  - Send email (src/lib/email/service.ts)
+     │  - Create/update transaction chat (src/lib/chat.ts)
+     │  - Upload file to GitHub (src/lib/github-storage.ts)
+     │  - Insert audit log
+     │
+     ▼
+  8. RESPONSE → USER (JSON or rendered page)
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Authentication & Authorization</div>
+    <h4>Auth Flow:</h4>
+    <ol>
+      <li>User registers with email + password + $ORTHO tag → profile created in Supabase Auth + <code>profiles</code> table</li>
+      <li>OTP verification via email (6-digit code)</li>
+      <li>Wallet auto-created on first login (status: active, balance: 0)</li>
+      <li>Session managed via Supabase cookies (JWT-based)</li>
+      <li>Middleware checks every request to <code>/dashboard/*</code> and <code>/admin/*</code></li>
+    </ol>
+
+    <h4>Authorization Levels:</h4>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Level</th><th>Function</th><th>Who</th><th>Access</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Public</td><td>—</td><td>Anyone</td><td>Landing, login, register, legal pages</td></tr>
+          <tr><td>Authenticated</td><td><code>requireAuth()</code></td><td>Logged-in user</td><td>Dashboard, send, request, deposit, withdraw, chat, settings</td></tr>
+          <tr><td>Admin</td><td><code>requireAdmin()</code></td><td>User with active admin record</td><td>Admin dashboard: approve/reject payments, deposits, withdrawals, KYC, manage payment methods</td></tr>
+          <tr><td>Super Admin</td><td><code>requireSuperAdmin()</code></td><td>Admin with role='super_admin'</td><td>All admin powers + manage other admins</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>2FA (Two-Factor Authentication):</h4>
+    <ul>
+      <li>Required for: sending payments, fulfilling payment requests, withdrawals</li>
+      <li>Flow: user requests 2FA code → 6-digit code generated, hashed (SHA-256), stored in <code>payment_2fa_codes</code> table → emailed to user → user enters code → verified against hash → marked used</li>
+      <li>Code expires after 10 minutes</li>
+      <li>Only one unused code per purpose at a time (previous unused codes are invalidated)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">File Structure</div>
+    <pre><code>sivaa-app/
+├── src/
+│   ├── app/                          # Next.js App Router
+│   │   ├── page.tsx                  # Landing page
+│   │   ├── layout.tsx                # Root layout (fonts, metadata, ThemeProvider)
+│   │   ├── globals.css               # Global CSS imports
+│   │   ├── login/                    # Login page
+│   │   ├── register/                 # Registration page (with T&C checkbox)
+│   │   ├── verify-otp/               # OTP verification
+│   │   ├── forgot-password/          # Password reset
+│   │   ├── terms/                    # Terms & Conditions (legal)
+│   │   ├── privacy/                  # Privacy Policy (legal)
+│   │   ├── cookies/                  # Cookie Policy (legal)
+│   │   ├── dashboard/                # User dashboard
+│   │   │   ├── layout.tsx            # Dashboard layout (nav, user state, notifications)
+│   │   │   ├── page.tsx              # Dashboard home (balance, transactions, KYC status)
+│   │   │   ├── deposit/              # Deposit flow (method → amount → instructions → confirm)
+│   │   │   ├── withdraw/             # Withdrawal flow (2FA, crypto/cash)
+│   │   │   ├── send/                 # Send money (2FA, escrow)
+│   │   │   ├── request/              # Payment requests
+│   │   │   ├── settings/             # Profile, KYC upload, preferences, logout
+│   │   │   └── chat/                 # Transaction chat
+│   │   ├── admin/                    # Admin dashboard
+│   │   │   └── page.tsx              # All admin functions (payments, KYC, deposits, withdrawals, methods, audit)
+│   │   └── api/v1/                   # API routes
+│   │       ├── auth/                 # me, login, register, verify-otp, forgot-password
+│   │       ├── payments/             # GET, POST (send), approve/, reject/, 2fa/
+│   │       ├── deposits/             # GET, POST (create), PATCH (admin approve/reject)
+│   │       ├── withdrawals/          # GET, POST (create), PATCH (admin approve/reject)
+│   │       ├── payment-requests/     # GET, POST (create request)
+│   │       ├── payment-methods/      # GET, POST (admin create), PATCH (admin update), DELETE (admin delete)
+│   │       ├── kyc/                  # GET, POST (upload), manage/ (admin)
+│   │       ├── chats/                # GET, POST + messages/ sub-route
+│   │       ├── notifications/        # GET, PATCH (mark read)
+│   │       └── audit-logs/           # GET (admin only)
+│   ├── components/                   # React components
+│   │   ├── ThemeProvider.tsx         # Dark/light theme context
+│   │   ├── ThemeToggle.tsx           # Theme switch button (dashboard only)
+│   │   ├── BrandIcon.tsx             # Payment method icons
+│   │   ├── Toast.tsx                 # Toast notifications
+│   │   └── LazyVideo.tsx             # Lazy-loaded video (IntersectionObserver)
+│   ├── lib/                          # Business logic
+│   │   ├── auth.ts                   # requireAuth, requireAdmin, requireSuperAdmin
+│   │   ├── supabase/server.ts        # createSupabaseServerClient, createSupabaseAdminClient
+│   │   ├── chat.ts                   # getOrCreateChat, addSystemMessage, resolveSivaTag
+│   │   ├── email/service.ts          # sendEscrowStatusEmail, send2FACodeEmail, sendPaymentRequestEmail
+│   │   ├── github-storage.ts         # uploadFile, deleteFile (GitHub API)
+│   │   └── utils.ts                  # generateReference, formatting helpers
+│   ├── types/database.ts             # TypeScript database type definitions
+│   ├── ui/                           # CSS design system
+│   │   ├── foundation/colors.css     # Color variables (brand, text, surfaces, semantic)
+│   │   ├── foundation/typography.css # Font scales, families, utility classes
+│   │   ├── themes/dark.css           # Dark theme variable overrides
+│   │   └── themes/light.css          # Light theme variable overrides
+│   └── middleware.ts                 # Route protection (auth gate for /dashboard, /admin)
+├── sql/                              # SQL migration files
+│   ├── deposits_withdrawals.sql      # Deposits & withdrawals tables + RLS
+│   ├── seed_payment_methods.sql      # Mock payment method data (11 methods)
+│   ├── add_avatar_url.sql            # Add avatar_url to profiles
+│   └── add_marketing_consent.sql     # Add marketing_consent to profiles
+├── next.config.ts                    # Turbopack root config
+├── package.json                      # Dependencies
+└── AGENT_HANDOFF.md                  # Development handoff document</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">API Routes — Complete Inventory</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Endpoint</th><th>Methods</th><th>Auth</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>/api/v1/auth/register</code></td><td>POST</td><td>Public</td><td>Create account (email, password, $tag, name, country)</td></tr>
+          <tr><td><code>/api/v1/auth/login</code></td><td>POST</td><td>Public</td><td>Login with email + password</td></tr>
+          <tr><td><code>/api/v1/auth/verify-otp</code></td><td>POST</td><td>Public</td><td>Verify 6-digit OTP code</td></tr>
+          <tr><td><code>/api/v1/auth/forgot-password</code></td><td>POST</td><td>Public</td><td>Send password reset email</td></tr>
+          <tr><td><code>/api/v1/auth/me</code></td><td>GET</td><td>Auth</td><td>Get current user profile + wallet</td></tr>
+          <tr><td><code>/api/v1/payments</code></td><td>GET</td><td>Auth</td><td>List user's payments (admin sees all)</td></tr>
+          <tr><td><code>/api/v1/payments</code></td><td>POST</td><td>Auth + 2FA</td><td>Send money to another user via $tag</td></tr>
+          <tr><td><code>/api/v1/payments/approve</code></td><td>POST</td><td>Admin</td><td>Approve escrow payment → release funds</td></tr>
+          <tr><td><code>/api/v1/payments/reject</code></td><td>POST</td><td>Admin</td><td>Reject escrow payment → refund sender</td></tr>
+          <tr><td><code>/api/v1/payments/2fa</code></td><td>POST, PUT</td><td>Auth</td><td>Generate / verify 2FA code for payments</td></tr>
+          <tr><td><code>/api/v1/deposits</code></td><td>GET, POST</td><td>Auth</td><td>List own deposits / Create deposit request</td></tr>
+          <tr><td><code>/api/v1/deposits</code></td><td>PATCH</td><td>Admin</td><td>Approve or reject deposit</td></tr>
+          <tr><td><code>/api/v1/withdrawals</code></td><td>GET, POST</td><td>Auth + 2FA</td><td>List own withdrawals / Create withdrawal (crypto/cash)</td></tr>
+          <tr><td><code>/api/v1/withdrawals</code></td><td>PATCH</td><td>Admin</td><td>Approve or reject withdrawal</td></tr>
+          <tr><td><code>/api/v1/payment-requests</code></td><td>GET, POST</td><td>Auth</td><td>List / create payment requests to other users</td></tr>
+          <tr><td><code>/api/v1/payment-methods</code></td><td>GET</td><td>Auth</td><td>List active payment methods</td></tr>
+          <tr><td><code>/api/v1/payment-methods</code></td><td>POST, PATCH, DELETE</td><td>Admin</td><td>CRUD payment methods (fees, limits, config)</td></tr>
+          <tr><td><code>/api/v1/kyc</code></td><td>GET, POST</td><td>Auth</td><td>Get KYC status / Upload KYC document</td></tr>
+          <tr><td><code>/api/v1/kyc/manage</code></td><td>GET, PATCH</td><td>Admin</td><td>List all KYC docs / Approve or reject</td></tr>
+          <tr><td><code>/api/v1/chats</code></td><td>GET, POST</td><td>Auth</td><td>List transaction chats / Create chat by $tag</td></tr>
+          <tr><td><code>/api/v1/chats/messages</code></td><td>GET, POST</td><td>Auth</td><td>Get messages / Send message in chat</td></tr>
+          <tr><td><code>/api/v1/notifications</code></td><td>GET, PATCH</td><td>Auth</td><td>List notifications / Mark as read</td></tr>
+          <tr><td><code>/api/v1/audit-logs</code></td><td>GET</td><td>Admin</td><td>List audit logs (all admin actions)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Wallet & Balance System</div>
+    <h4>Balance Formula:</h4>
+    <pre><code>available_balance = wallets.total_received - wallets.total_sent - wallets.locked_balance</code></pre>
+
+    <h4>Wallet Fields:</h4>
+    <ul>
+      <li><code>total_received</code> — cumulative amount received (deposits approved, payments received)</li>
+      <li><code>total_sent</code> — cumulative amount sent (withdrawals approved, payments sent)</li>
+      <li><code>locked_balance</code> — funds held in escrow (pending payments, pending withdrawals)</li>
+      <li><code>status</code> — active, frozen, suspended (admin can freeze)</li>
+      <li><code>currency</code> — USD (single currency)</li>
+    </ul>
+
+    <h4>Transaction Types (wallet_transactions):</h4>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>When</th><th>Amount Sign</th></tr></thead>
+        <tbody>
+          <tr><td><code>adjust_in</code></td><td>Deposit approved</td><td>Positive</td></tr>
+          <tr><td><code>adjust_out</code></td><td>Manual admin adjustment out</td><td>Negative</td></tr>
+          <tr><td><code>escrow_hold</code></td><td>Payment sent / withdrawal created</td><td>Negative</td></tr>
+          <tr><td><code>escrow_release</code></td><td>Payment approved → receiver credited</td><td>Positive</td></tr>
+          <tr><td><code>escrow_refund</code></td><td>Payment rejected / withdrawal rejected</td><td>Positive</td></tr>
+          <tr><td><code>transfer_in</code></td><td>Funds received</td><td>Positive</td></tr>
+          <tr><td><code>transfer_out</code></td><td>Withdrawal approved</td><td>Negative</td></tr>
+          <tr><td><code>fee</code></td><td>Platform fee deducted</td><td>Negative</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Escrow System — How It Works Today</div>
+    <h4>Current Flow (Centralized):</h4>
+    <ol>
+      <li><strong>Sender initiates payment</strong> → system calculates fee (gross, fee, net amounts)</li>
+      <li><strong>Escrow lock</strong> → sender's <code>locked_balance</code> increased by gross amount. Payment status: <code>escrow_held</code></li>
+      <li><strong>Admin reviews</strong> → checks for fraud, verifies both parties</li>
+      <li><strong>Admin approves</strong> → sender's <code>total_sent</code> += gross, <code>locked_balance</code> -= gross. Receiver's <code>total_received</code> += net. Payment status: <code>completed</code></li>
+      <li><strong>Admin rejects</strong> → sender's <code>locked_balance</code> -= gross (refunded). Payment status: <code>reversed</code></li>
+      <li><strong>Escrow review logged</strong> → <code>escrow_reviews</code> table records admin action + notes</li>
+      <li><strong>Both parties notified</strong> → in-app notification + email</li>
+      <li><strong>Transaction chat updated</strong> → system message posted with escrow status</li>
+    </ol>
+
+    <h4>What Changes in P2P Model:</h4>
+    <p>The escrow mechanism stays the same for send money. For deposits and withdrawals, the escrow now locks the <strong>withdrawer's</strong> ORTHO-PAY balance (instead of the platform crediting from its own funds). The matching engine creates the link, and admin review confirms the external payment happened before releasing escrow.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Notification System</div>
+    <p>Every significant action generates notifications:</p>
+    <ul>
+      <li><strong>Payment sent</strong> → receiver notified "You received $X from $tag"</li>
+      <li><strong>Escrow approved</strong> → both parties notified with amounts</li>
+      <li><strong>Escrow rejected</strong> → sender notified "Payment refunded"</li>
+      <li><strong>Deposit approved/rejected</strong> → user notified</li>
+      <li><strong>Withdrawal approved/rejected</strong> → user notified</li>
+      <li><strong>Payment request received</strong> → target user notified + emailed</li>
+      <li><strong>KYC approved/rejected</strong> → user notified</li>
+      <li><strong>New chat message</strong> → other party notified</li>
+    </ul>
+    <p>Notifications have types: <code>payment</code>, <code>escrow</code>, <code>deposit</code>, <code>withdrawal</code>, <code>general</code>. Each notification has a <code>read</code> boolean for unread tracking.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Transaction Chat System</div>
+    <p>Every payment or payment request auto-creates a 1:1 chat between the two users:</p>
+    <ul>
+      <li><code>transaction_chats</code> — one chat per unique user pair (user_a_id is always the lower UUID for deduplication)</li>
+      <li><code>transaction_messages</code> — messages with types: <code>user</code> (text), <code>system</code> (auto-generated events)</li>
+      <li>System messages include event types: <code>request_created</code>, <code>escrow_approved</code>, <code>escrow_rejected</code></li>
+      <li>Read receipts: <code>read_by_a</code> and <code>read_by_b</code> booleans per message</li>
+      <li>File attachments supported: <code>file_url</code>, <code>file_name</code>, <code>file_size</code></li>
+      <li>Messages limited to 2000 characters</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Audit Logging</div>
+    <p>Every admin action is logged in <code>audit_logs</code>:</p>
+    <ul>
+      <li><strong>Actor</strong>: admin_id, actor_type (user/admin/system)</li>
+      <li><strong>Action</strong>: "Approve deposit", "Reject withdrawal", "Create payment method", "Update payment method", "Delete payment method", "Approve KYC", "Reject KYC", "Approve payment", "Reject payment"</li>
+      <li><strong>Target</strong>: table_name, record_id</li>
+      <li><strong>Before/After</strong>: old_value, new_value (JSON)</li>
+      <li><strong>Timestamp</strong>: when action occurred</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Design System</div>
+    <h4>Theme Architecture:</h4>
+    <ul>
+      <li>CSS variables defined in <code>src/ui/foundation/colors.css</code> and <code>typography.css</code></li>
+      <li>Dark theme overrides in <code>src/ui/themes/dark.css</code>, light in <code>src/ui/themes/light.css</code></li>
+      <li>Theme applied via <code>data-theme="dark|light"</code> attribute on <code>&lt;html&gt;</code></li>
+      <li>ThemeProvider component manages state, persists to <code>localStorage</code> as <code>ortho-pay-theme</code></li>
+      <li>Theme toggle only on dashboard (removed from landing page)</li>
+    </ul>
+
+    <h4>Current Color Palette (Dark Theme):</h4>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Variable</th><th>Value</th><th>Usage</th></tr></thead>
+        <tbody>
+          <tr><td><code>--color-canvas</code></td><td>#0a0a0a</td><td>Page background</td></tr>
+          <tr><td><code>--color-surface-soft</code></td><td>#1a1a1a</td><td>Cards, panels</td></tr>
+          <tr><td><code>--color-hairline</code></td><td>#262626</td><td>Borders, dividers</td></tr>
+          <tr><td><code>--color-ink</code></td><td>#ffffff</td><td>Primary text</td></tr>
+          <tr><td><code>--color-body</code></td><td>rgba(255,255,255,0.8)</td><td>Body text</td></tr>
+          <tr><td><code>--color-mute</code></td><td>rgba(255,255,255,0.5)</td><td>Muted text</td></tr>
+          <tr><td><code>--color-primary</code></td><td>#3b82f6</td><td>Blue accent (buttons, links)</td></tr>
+          <tr><td><code>--color-success</code></td><td>#22c55e</td><td>Success states</td></tr>
+          <tr><td><code>--color-error</code></td><td>#ef4444</td><td>Error states</td></tr>
+          <tr><td><code>--color-warning</code></td><td>#eab300</td><td>Warning states</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Fonts:</h4>
+    <ul>
+      <li><strong>Display</strong>: Nunito (headings, branding, amounts) — <code>var(--font-display)</code></li>
+      <li><strong>Body</strong>: system-ui (paragraphs, UI text) — <code>var(--font-body)</code></li>
+      <li><strong>Mono</strong>: monospace (references, codes, numbers) — <code>var(--font-mono)</code></li>
+    </ul>
+  </div>
+
+  <!-- ===================== 17. COMPLETE SCHEMA ===================== -->
+  <h2 id="complete-schema">17. Complete Database Schema (Current)</h2>
+  <p>Below is the full database schema as it exists today, derived from <code>src/types/database.ts</code> and SQL migration files. All tables use UUID primary keys with <code>gen_random_uuid()</code>. Row Level Security (RLS) is enabled on transactional tables.</p>
+
+  <div class="card">
+    <div class="card-title">Table: profiles</div>
+    <pre><code>CREATE TABLE public.profiles (
+  id           UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  siva_tag     VARCHAR(50) UNIQUE NOT NULL,        -- User's $ORTHO tag (e.g. "alice")
+  name         VARCHAR(100) NOT NULL,
+  phone        VARCHAR(20),
+  email        VARCHAR(255),
+  country      VARCHAR(100) DEFAULT 'Global',
+  kyc_status   VARCHAR(20) DEFAULT 'unverified'
+               CHECK (kyc_status IN ('unverified','pending','verified','rejected')),
+  pin_hash     VARCHAR(255),                       -- Hashed transaction PIN
+  avatar_url   TEXT,                                -- Profile avatar URL
+  marketing_consent BOOLEAN DEFAULT true,           -- GDPR/NDPR marketing opt-in
+  created_at   TIMESTAMPTZ DEFAULT now(),
+  updated_at   TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+    <p><strong>RLS:</strong> Users can view/update own profile. Admins can view all.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: admins</div>
+    <pre><code>CREATE TABLE public.admins (
+  admin_id    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  profile_id  UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  role        VARCHAR(20) DEFAULT 'reviewer'
+              CHECK (role IN ('reviewer','super_admin')),
+  is_active   BOOLEAN DEFAULT true,
+  created_at  TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+    <p><strong>RLS:</strong> Users can check if they are admin (via <code>is_admin()</code> function). Only super_admins can manage other admins.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: wallets</div>
+    <pre><code>CREATE TABLE public.wallets (
+  wallet_id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id          UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  total_sent       NUMERIC(15,2) DEFAULT 0.00,      -- Cumulative sent
+  total_received   NUMERIC(15,2) DEFAULT 0.00,      -- Cumulative received
+  locked_balance   NUMERIC(15,2) DEFAULT 0.00,      -- Escrow holds
+  currency         VARCHAR(3) DEFAULT 'USD',
+  status           VARCHAR(20) DEFAULT 'active'
+                   CHECK (status IN ('active','frozen','suspended')),
+  created_at       TIMESTAMPTZ DEFAULT now()
+);
+
+-- Available balance = total_received - total_sent - locked_balance</code></pre>
+    <p><strong>RLS:</strong> Users can view own wallet. Admins can view/update all wallets.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: wallet_transactions</div>
+    <pre><code>CREATE TABLE public.wallet_transactions (
+  transaction_id  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  wallet_id       UUID REFERENCES public.wallets(wallet_id) NOT NULL,
+  amount          NUMERIC(15,2) NOT NULL,            -- Positive=in, Negative=out
+  type            VARCHAR(20) NOT NULL
+                  CHECK (type IN ('transfer_in','transfer_out','fee',
+                                  'escrow_hold','escrow_release','escrow_refund',
+                                  'adjust_in','adjust_out')),
+  payment_id      UUID,                               -- FK to payments (if applicable)
+  description     TEXT,
+  created_at      TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: payment_methods</div>
+    <pre><code>CREATE TABLE public.payment_methods (
+  method_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code            VARCHAR(50) UNIQUE NOT NULL,       -- e.g. 'cashapp', 'venmo'
+  display_name    VARCHAR(100) NOT NULL,             -- e.g. 'Cash App'
+  icon_key        VARCHAR(50) NOT NULL,              -- BrandIcon key
+  fee_percentage  NUMERIC(5,2) DEFAULT 0.00,         -- e.g. 2.90%
+  fee_fixed       NUMERIC(10,2) DEFAULT 0.00,        -- e.g. $0.30
+  min_amount      NUMERIC(15,2) DEFAULT 0.00,
+  max_amount      NUMERIC(15,2),                     -- NULL = no limit
+  daily_limit     NUMERIC(15,2),
+  monthly_limit   NUMERIC(15,2),
+  config          JSONB DEFAULT '{}'::jsonb,         -- Payment details (handles, addresses, QR codes, instructions)
+  is_active       BOOLEAN DEFAULT true,
+  sort_order      INTEGER DEFAULT 0,
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+    <p><strong>config</strong> contains payment instructions shown to users (e.g. <code>{"cashtag":"$orthopay-deposits","instructions":"Send payment to..."}</code>). Admin can CRUD via <code>/api/v1/payment-methods</code>.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: fee_rules</div>
+    <pre><code>CREATE TABLE public.fee_rules (
+  rule_id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  minimum_amount  NUMERIC(15,2) NOT NULL,            -- Tier minimum
+  maximum_amount  NUMERIC(15,2),                     -- NULL = no cap
+  percentage      NUMERIC(5,2) NOT NULL,             -- Fee %
+  active          BOOLEAN DEFAULT true
+);
+
+-- Example tiers:
+--   $0.01 - $49.99  → 3%
+--   $50.00 - $499.99 → 2%
+--   $500.00+        → 1%</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: payments</div>
+    <pre><code>CREATE TABLE public.payments (
+  payment_id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  sender_id          UUID REFERENCES public.profiles(id) NOT NULL,
+  receiver_id        UUID REFERENCES public.profiles(id) NOT NULL,
+  gross_amount       NUMERIC(15,2) NOT NULL,         -- Amount sender pays
+  fee_amount         NUMERIC(15,2) NOT NULL,         -- Platform fee
+  net_amount         NUMERIC(15,2) NOT NULL,         -- Amount receiver gets (gross - fee)
+  payment_method_id  UUID REFERENCES public.payment_methods(method_id) NOT NULL,
+  reference          VARCHAR(100) UNIQUE NOT NULL,   -- e.g. "PAY-ABC123XYZ"
+  status             VARCHAR(20) DEFAULT 'escrow_held'
+                     CHECK (status IN ('pending','under_review','escrow_held',
+                                       'completed','reversed','refunded',
+                                       'failed','cancelled')),
+  escrow_notes       TEXT,                            -- Admin notes on review
+  created_at         TIMESTAMPTZ DEFAULT now(),
+  approved_at        TIMESTAMPTZ,                     -- When admin approved
+  approved_by        UUID REFERENCES public.admins(admin_id)
+);</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: escrow_reviews</div>
+    <pre><code>CREATE TABLE public.escrow_reviews (
+  review_id    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  payment_id   UUID REFERENCES public.payments(payment_id) NOT NULL,
+  admin_id     UUID REFERENCES public.admins(admin_id) NOT NULL,
+  action       VARCHAR(20) NOT NULL
+               CHECK (action IN ('approved','rejected','held','released')),
+  notes        TEXT,
+  created_at   TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+    <p>One payment can have multiple reviews (e.g. held first, then approved).</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: payment_verifications</div>
+    <pre><code>CREATE TABLE public.payment_verifications (
+  verification_id      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  payment_id           UUID REFERENCES public.payments(payment_id) NOT NULL,
+  verification_method  VARCHAR(50),                  -- e.g. 'receipt', 'manual'
+  receipt_url          TEXT,                          -- Uploaded receipt screenshot
+  verified             BOOLEAN DEFAULT false,
+  verified_by          UUID REFERENCES public.admins(admin_id),
+  verified_at          TIMESTAMPTZ,
+  created_at           TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: deposits</div>
+    <pre><code>CREATE TABLE public.deposits (
+  deposit_id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id             UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  wallet_id           UUID REFERENCES public.wallets(wallet_id) NOT NULL,
+  payment_method_id   UUID REFERENCES public.payment_methods(method_id) NOT NULL,
+  amount              NUMERIC(15,2) NOT NULL CHECK (amount > 0.00),
+  reference           VARCHAR(100) UNIQUE NOT NULL,  -- e.g. "DEP-ABC123XYZ"
+  status              VARCHAR(20) DEFAULT 'pending' NOT NULL
+                      CHECK (status IN ('pending','approved','rejected')),
+  payment_details     JSONB DEFAULT '{}'::jsonb,     -- Method config at time of deposit
+  reviewed_by         UUID REFERENCES public.admins(admin_id),
+  reviewed_at         TIMESTAMPTZ,
+  created_at          TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+    <p><strong>RLS:</strong> Users view own deposits. Admins view/update all.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: withdrawals</div>
+    <pre><code>CREATE TABLE public.withdrawals (
+  withdrawal_id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id         UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  wallet_id       UUID REFERENCES public.wallets(wallet_id) NOT NULL,
+  withdrawal_type VARCHAR(10) NOT NULL
+                  CHECK (withdrawal_type IN ('crypto','cash')),
+  amount          NUMERIC(15,2) NOT NULL CHECK (amount > 0.00),
+  reference       VARCHAR(100) UNIQUE NOT NULL,     -- e.g. "WD-ABC123XYZ"
+  status          VARCHAR(20) DEFAULT 'pending' NOT NULL
+                  CHECK (status IN ('pending','approved','rejected')),
+  details         JSONB DEFAULT '{}'::jsonb,        -- { crypto_currency, wallet_address } or { country, account_details }
+  reviewed_by     UUID REFERENCES public.admins(admin_id),
+  reviewed_at     TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+    <p><strong>RLS:</strong> Users view own withdrawals. Admins view/update all. Requires 2FA + KYC verified.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: payment_requests</div>
+    <pre><code>CREATE TABLE public.payment_requests (
+  request_id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  requester_id        UUID REFERENCES public.profiles(id) NOT NULL,
+  requested_from_id   UUID REFERENCES public.profiles(id) NOT NULL,
+  amount              NUMERIC(15,2) NOT NULL CHECK (amount > 0.00),
+  payment_method_id   UUID REFERENCES public.payment_methods(method_id) NOT NULL,
+  message             TEXT,                          -- Optional note from requester
+  status              VARCHAR(20) DEFAULT 'pending'
+                      CHECK (status IN ('pending','paid','declined','expired','cancelled')),
+  created_at          TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+    <p>One pending request allowed per user pair. Auto-expires after 7 days. Accepting triggers the Send Money flow.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: payment_2fa_codes</div>
+    <pre><code>CREATE TABLE public.payment_2fa_codes (
+  code_id     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  code_hash   VARCHAR(255) NOT NULL,                -- SHA-256 hash of 6-digit code
+  purpose     VARCHAR(20) NOT NULL
+              CHECK (purpose IN ('payment_send','payment_fulfill','withdrawal')),
+  expires_at  TIMESTAMPTZ NOT NULL,                  -- 10 minutes from creation
+  used        BOOLEAN DEFAULT false,
+  created_at  TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+    <p>Codes are hashed (never stored in plaintext). Previous unused codes for same purpose are invalidated when a new one is generated.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: kyc_documents</div>
+    <pre><code>CREATE TABLE public.kyc_documents (
+  document_id     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id         UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  document_type   VARCHAR(50) NOT NULL,             -- 'passport','drivers_license','state_id'
+  file_url        TEXT NOT NULL,                     -- GitHub storage URL
+  status          VARCHAR(20) DEFAULT 'pending'
+                  CHECK (status IN ('pending','approved','rejected')),
+  reviewed_by     UUID REFERENCES public.admins(admin_id),
+  reviewed_at     TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+    <p>When admin approves KYC, <code>profiles.kyc_status</code> is updated to <code>verified</code> via admin client (bypasses RLS).</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: transaction_chats</div>
+    <pre><code>CREATE TABLE public.transaction_chats (
+  chat_id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_a_id        UUID REFERENCES public.profiles(id) NOT NULL,  -- Lower UUID
+  user_b_id        UUID REFERENCES public.profiles(id) NOT NULL,  -- Higher UUID
+  last_message_at  TIMESTAMPTZ DEFAULT now(),
+  created_at       TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(user_a_id, user_b_id)
+);</code></pre>
+    <p>One chat per unique user pair. <code>user_a_id</code> is always the lexicographically smaller UUID for deduplication.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: transaction_messages</div>
+    <pre><code>CREATE TABLE public.transaction_messages (
+  message_id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  chat_id             UUID REFERENCES public.transaction_chats(chat_id) NOT NULL,
+  sender_id           UUID REFERENCES public.profiles(id),       -- NULL for system messages
+  message_type        VARCHAR(10) DEFAULT 'user'
+                      CHECK (message_type IN ('user','system')),
+  body                TEXT NOT NULL,                              -- Max 2000 chars
+  file_url            TEXT,                                       -- Attachment URL
+  file_name           VARCHAR(255),
+  file_size           INTEGER,
+  payment_id          UUID,                                       -- Linked payment
+  payment_request_id  UUID,                                       -- Linked request
+  event_type          VARCHAR(50),                                -- 'request_created','escrow_approved','escrow_rejected'
+  read_by_a           BOOLEAN DEFAULT false,
+  read_by_b           BOOLEAN DEFAULT false,
+  created_at          TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: notifications</div>
+    <pre><code>CREATE TABLE public.notifications (
+  notification_id  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id          UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  title            VARCHAR(200) NOT NULL,
+  message          TEXT NOT NULL,
+  type             VARCHAR(50) DEFAULT 'general',   -- 'payment','escrow','deposit','withdrawal','general'
+  read             BOOLEAN DEFAULT false,
+  created_at       TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: audit_logs</div>
+    <pre><code>CREATE TABLE public.audit_logs (
+  log_id      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  actor_id    UUID NOT NULL,                        -- admin_id or user_id
+  actor_type  VARCHAR(10) NOT NULL CHECK (actor_type IN ('user','admin','system')),
+  action      VARCHAR(100) NOT NULL,                -- e.g. 'Approve deposit', 'Update payment method'
+  table_name  VARCHAR(50) NOT NULL,                 -- Affected table
+  record_id   UUID,                                  -- Affected record
+  old_value   JSONB,                                 -- Before change
+  new_value   JSONB,                                 -- After change
+  timestamp   TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: support_tickets</div>
+    <pre><code>CREATE TABLE public.support_tickets (
+  ticket_id    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  category     VARCHAR(100) NOT NULL,               -- 'payment','deposit','withdrawal','kyc','other'
+  priority     VARCHAR(10) DEFAULT 'medium'
+               CHECK (priority IN ('low','medium','high','critical')),
+  status       VARCHAR(20) DEFAULT 'open'
+               CHECK (status IN ('open','in_progress','resolved','closed')),
+  assigned_to  UUID REFERENCES public.admins(admin_id),
+  payment_id   UUID,                                  -- Linked payment (if applicable)
+  created_at   TIMESTAMPTZ DEFAULT now(),
+  updated_at   TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Table: ticket_messages</div>
+    <pre><code>CREATE TABLE public.ticket_messages (
+  message_id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ticket_id    UUID REFERENCES public.support_tickets(ticket_id) NOT NULL,
+  sender_id    UUID NOT NULL,
+  sender_type  VARCHAR(10) NOT NULL CHECK (sender_type IN ('user','admin')),
+  message      TEXT NOT NULL,
+  created_at   TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Database Enums</div>
+    <pre><code>-- Enum types used across tables:
+
+kyc_status_type:     'unverified' | 'pending' | 'verified' | 'rejected'
+payment_status_type: 'pending' | 'under_review' | 'escrow_held' | 'completed'
+                     | 'reversed' | 'refunded' | 'failed' | 'cancelled'
+admin_role_type:     'reviewer' | 'super_admin'
+wallet_status_type:  'active' | 'frozen' | 'suspended'
+txn_type:            'transfer_in' | 'transfer_out' | 'fee' | 'escrow_hold'
+                     | 'escrow_release' | 'escrow_refund' | 'adjust_in' | 'adjust_out'</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Database Functions</div>
+    <pre><code>-- is_admin(): Returns true if current user has an active admin record
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.admins
+    WHERE profile_id = auth.uid()
+    AND is_active = true
+  );
+$$ LANGUAGE sql STABLE;</code></pre>
+    <p>Used in RLS policies to grant admins access to all records in deposits, withdrawals, payments, KYC documents, etc.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Entity Relationship Summary</div>
+    <div class="ascii-art">
+  profiles (1) ──── (1) wallets
+      │                  │
+      │                  │ (1:N)
+      │                  ├── wallet_transactions
+      │                  ├── deposits
+      │                  └── withdrawals
+      │
+      │ (1:N)
+      ├── payments (as sender or receiver)
+      ├── payment_requests (as requester or requested_from)
+      ├── kyc_documents
+      ├── notifications
+      ├── transaction_chats (as user_a or user_b)
+      │       └── transaction_messages (1:N)
+      ├── support_tickets
+      │       └── ticket_messages (1:N)
+      └── admins (1:1 optional)
+              │
+              ├── escrow_reviews (1:N)
+              ├── audit_logs (1:N)
+              └── kyc_documents.reviewed_by
+
+  payment_methods (1) ──── (N) deposits
+  payment_methods (1) ──── (N) payments
+  payment_methods (1) ──── (N) payment_requests
+
+  fee_rules (standalone, queried by amount tier)
+    </div>
+  </div>
+
+  <!-- ===================== 18. OPEN QUESTIONS ===================== -->
+  <h2 id="open-questions">18. Open Questions for Consultant</h2>
+  <div class="card">
+    <ol>
+      <li><strong>Fee on P2P matches:</strong> Should the fee be charged to the depositor, the withdrawer, or split between both? Currently proposed: depositor pays on deposit match, withdrawer pays on withdrawal match. Is this fair?</li>
+      <li><strong>Partial matching:</strong> Should we support partial matches (e.g., $500 withdrawal matched with $200 + $300 deposits)? This improves liquidity but adds complexity. Recommended: yes, but phase 2.</li>
+      <li><strong>Auto-match vs manual match:</strong> Should auto-match be the default? Or should users see a list of available counterparties and choose? Auto-match is simpler and faster.</li>
+      <li><strong>Time limits:</strong> How long should a depositor have to send the external payment after a match? Currently proposed: 2 hours. Too short? Too long?</li>
+      <li><strong>Receipt requirement:</strong> Should uploading a payment receipt/screenshot be mandatory or optional? Mandatory reduces disputes but may frustrate users.</li>
+      <li><strong>Dispute resolution:</strong> Should there be a formal dispute process with evidence submission, or should admin just review and decide? Currently: admin reviews evidence and decides.</li>
+      <li><strong>Rating system:</strong> Should we add a user rating system (like Uber/Lyft) after each P2P match? This builds trust and helps identify bad actors.</li>
+      <li><strong>Liquidity provider role:</strong> Should there be "liquidity providers" — users who maintain large ORTHO-PAY balances specifically to match with depositors? They could earn a small premium. This is similar to market makers in trading.</li>
+      <li><strong>Regulatory concerns:</strong> Does the P2P model change our regulatory obligations? We're not holding external funds, but we're facilitating transfers. Does this make us a money transmitter? MSB registration needed?</li>
+      <li><strong>Crypto matching:</strong> For crypto deposits/withdrawals, the "external payment" is on-chain. Should we verify on-chain transactions automatically (via blockchain API) instead of relying on screenshots?</li>
+      <li><strong>Migration plan:</strong> Should we migrate existing deposits/withdrawals to the new P2P model, or run both in parallel? Recommended: new orders use P2P, existing pending orders processed under old model.</li>
+      <li><strong>Payment method details privacy:</strong> When users are matched, they see each other's Cash App $tag, PayPal email, or BTC address. Is this acceptable? Should we use a proxy/intermediary address instead?</li>
+    </ol>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">Summary</div>
+    <p>The P2P restructure transforms ORTHO-PAY from a centralized payment processor to a <strong>decentralized liquidity matching platform with escrow protection</strong>. The platform's role shifts from holding funds to matching users and ensuring safe transactions through escrow + admin review.</p>
+
+    <h4>Key Benefits:</h4>
+    <ul>
+      <li>No need to maintain external balances across payment platforms</li>
+      <li>Scales with user growth (network effect — more users = more liquidity)</li>
+      <li>Lower operational risk (platform doesn't hold external funds)</li>
+      <li>Revenue from matching fees + subscriptions</li>
+      <li>Users get more payment options (any method another user supports)</li>
+    </ul>
+
+    <h4>Key Risks:</h4>
+    <ul>
+      <li>Disputes between matched users (mitigated by escrow + admin review + receipt upload)</li>
+      <li>Liquidity shortage (not enough counterparties) — mitigated by partial matching + liquidity providers</li>
+      <li>Regulatory uncertainty (need legal opinion on P2P model)</li>
+      <li>Bad actors (mitigated by KYC, ratings, admin review, wallet freezing)</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    ORTHO-PAY — P2P Business Logic Document · Draft v1.0 · July 2026<br>
+    Prepared for consultant review · Generated from codebase analysis
+  </div>
+
+</div>
+</body>
+</html>

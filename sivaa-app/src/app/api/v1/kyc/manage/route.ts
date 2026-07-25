@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, createSupabaseAdminClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
 import { sendKycApprovedEmail, sendKycRejectedEmail } from "@/lib/email/service";
 
@@ -77,22 +77,36 @@ export async function PATCH(request: NextRequest) {
     }
 
     if (status === "approved") {
-      await supabase
+      const admin = await createSupabaseAdminClient();
+      const { error: profileUpdateError } = await admin
         .from("profiles")
         .update({ kyc_status: "verified" })
         .eq("id", doc.user_id);
+
+      if (profileUpdateError) {
+        console.error("[kyc-manage] Failed to update profile kyc_status:", profileUpdateError.message);
+        return NextResponse.json(
+          { error: "Failed to verify user profile: " + profileUpdateError.message },
+          { status: 500 }
+        );
+      }
     } else if (status === "rejected") {
-      const { data: remainingDocs } = await supabase
+      const admin = await createSupabaseAdminClient();
+      const { data: remainingDocs } = await admin
         .from("kyc_documents")
         .select("document_id")
         .eq("user_id", doc.user_id)
         .eq("status", "pending");
 
       if (!remainingDocs || remainingDocs.length === 0) {
-        await supabase
+        const { error: profileUpdateError } = await admin
           .from("profiles")
           .update({ kyc_status: "rejected" })
           .eq("id", doc.user_id);
+
+        if (profileUpdateError) {
+          console.error("[kyc-manage] Failed to update profile kyc_status:", profileUpdateError.message);
+        }
       }
     }
 

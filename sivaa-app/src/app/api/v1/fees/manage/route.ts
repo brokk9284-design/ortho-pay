@@ -54,7 +54,7 @@ export async function PATCH(request: NextRequest) {
   try {
     const { admin } = await requireSuperAdmin();
     const body = await request.json();
-    const { rule_id, percentage, active } = body;
+    const { rule_id, percentage, active, minimum_amount, maximum_amount } = body;
 
     if (!rule_id) {
       return NextResponse.json({ error: "rule_id is required" }, { status: 400 });
@@ -63,6 +63,8 @@ export async function PATCH(request: NextRequest) {
     const updates: Record<string, unknown> = {};
     if (percentage !== undefined) updates.percentage = percentage;
     if (active !== undefined) updates.active = active;
+    if (minimum_amount !== undefined) updates.minimum_amount = minimum_amount;
+    if (maximum_amount !== undefined) updates.maximum_amount = maximum_amount;
 
     const supabase = await createSupabaseServerClient();
 
@@ -87,6 +89,44 @@ export async function PATCH(request: NextRequest) {
     });
 
     return NextResponse.json({ rule });
+  } catch (err) {
+    if (err instanceof Response) {
+      return NextResponse.json({ error: "Super admin access required" }, { status: err.status });
+    }
+    return NextResponse.json({ error: "Super admin access required" }, { status: 403 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { admin } = await requireSuperAdmin();
+    const { searchParams } = new URL(request.url);
+    const ruleId = searchParams.get("rule_id");
+
+    if (!ruleId) {
+      return NextResponse.json({ error: "rule_id is required" }, { status: 400 });
+    }
+
+    const supabase = await createSupabaseServerClient();
+
+    const { error } = await supabase
+      .from("fee_rules")
+      .delete()
+      .eq("rule_id", ruleId);
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    await supabase.from("audit_logs").insert({
+      actor_id: admin.admin_id,
+      actor_type: "admin",
+      action: "Delete fee rule",
+      table_name: "fee_rules",
+      record_id: ruleId,
+    });
+
+    return NextResponse.json({ message: "Fee rule deleted" });
   } catch (err) {
     if (err instanceof Response) {
       return NextResponse.json({ error: "Super admin access required" }, { status: err.status });

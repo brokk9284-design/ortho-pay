@@ -9,7 +9,7 @@ export async function GET() {
 
     const { data: wallet } = await supabase
       .from("wallets")
-      .select("wallet_id")
+      .select("wallet_id, total_received, total_sent, locked_balance, status")
       .eq("user_id", user.id)
       .single();
 
@@ -28,7 +28,7 @@ export async function GET() {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ transactions });
+    return NextResponse.json({ wallet, transactions });
   } catch (err) {
     if (err instanceof Response) {
       return NextResponse.json({ error: "Unauthorized" }, { status: err.status });

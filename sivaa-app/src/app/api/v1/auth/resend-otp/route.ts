@@ -17,9 +17,18 @@ export async function POST(request: NextRequest) {
 
     const admin = await createSupabaseAdminClient();
 
-    // Find user by email
-    const { data: userList } = await admin.auth.admin.listUsers();
-    const user = userList?.users?.find((u) => u.email === email);
+    // Find user by email — paginate through all users
+    let user: { id: string; email?: string } | null = null;
+    let page = 1;
+    const perPage = 100;
+    while (!user) {
+      const { data: userList } = await admin.auth.admin.listUsers({ page, perPage });
+      const users = userList?.users || [];
+      if (users.length === 0) break;
+      user = users.find((u) => u.email === email) || null;
+      if (users.length < perPage) break;
+      page++;
+    }
 
     if (!user) {
       return NextResponse.json(
@@ -41,13 +50,21 @@ export async function POST(request: NextRequest) {
     const codeHash = createHash("sha256").update(code).digest("hex");
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-    await admin.from("payment_2fa_codes").insert({
+    const { error: otpInsertError } = await admin.from("payment_2fa_codes").insert({
       user_id: user.id,
       code_hash: codeHash,
       purpose: "registration",
       expires_at: expiresAt,
       used: false,
     });
+
+    if (otpInsertError) {
+      console.error("[resend-otp] Code insert error:", otpInsertError.message);
+      return NextResponse.json(
+        { error: "Failed to generate verification code. Please try again." },
+        { status: 500 }
+      );
+    }
 
     // Get profile name
     const { data: profile } = await admin

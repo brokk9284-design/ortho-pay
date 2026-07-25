@@ -87,13 +87,14 @@
 
   /* --------------------------------------------------------
    * Cards & Containers
-   * Cards use --radius-lg (12px). No pills, no sharp corners.
+   * Landing page cards use fixed 12px radius.
+   * Dashboard hero cards use --radius-lg (24px).
    * -------------------------------------------------------- */
 
   /* terminal-card — home page product preview */
   --component-terminal-card-bg: var(--color-canvas);
   --component-terminal-card-text: var(--color-ink);
-  --component-terminal-card-radius: var(--radius-lg);
+  --component-terminal-card-radius: 12px;
   --component-terminal-card-padding: var(--space-lg);
   --component-terminal-card-border: 1px solid var(--color-hairline);
 
@@ -105,14 +106,14 @@
   /* pricing-card — Free / Pro tiers (light) */
   --component-pricing-card-bg: var(--color-canvas);
   --component-pricing-card-text: var(--color-ink);
-  --component-pricing-card-radius: var(--radius-lg);
+  --component-pricing-card-radius: 12px;
   --component-pricing-card-padding: var(--space-card-padding);
   --component-pricing-card-border: 1px solid var(--color-hairline);
 
   /* pricing-card-dark — Max tier (inverted). One per page. */
   --component-pricing-card-dark-bg: var(--color-surface-dark);
   --component-pricing-card-dark-text: var(--color-on-dark);
-  --component-pricing-card-dark-radius: var(--radius-lg);
+  --component-pricing-card-dark-radius: 12px;
   --component-pricing-card-dark-padding: var(--space-card-padding);
 
   /* feature-bullet — pricing card list item */
@@ -127,7 +128,7 @@
   /* cta-strip-dark — rare dark CTA band between sections */
   --component-cta-strip-dark-bg: var(--color-surface-dark);
   --component-cta-strip-dark-text: var(--color-on-dark);
-  --component-cta-strip-dark-radius: var(--radius-lg);
+  --component-cta-strip-dark-radius: 12px;
   --component-cta-strip-dark-padding: 24px 32px;
 
   /* --------------------------------------------------------
@@ -151,7 +152,7 @@
   /* amount-input — currency entry field */
   --component-amount-input-bg: var(--color-canvas);
   --component-amount-input-text: var(--color-ink);
-  --component-amount-input-radius: var(--radius-lg);
+  --component-amount-input-radius: var(--radius-md);
   --component-amount-input-padding: 16px 20px;
   --component-amount-input-border: 1px solid var(--color-hairline);
   --component-amount-input-focus-border: 1px solid var(--color-primary);
@@ -161,7 +162,7 @@
   /* otp-input — one-time password digit boxes */
   --component-otp-input-bg: var(--color-canvas);
   --component-otp-input-text: var(--color-ink);
-  --component-otp-input-radius: var(--radius-md);
+  --component-otp-input-radius: var(--radius-sm);
   --component-otp-input-size: 48px;
   --component-otp-input-border: 1px solid var(--color-hairline);
   --component-otp-input-focus-border: 1px solid var(--color-primary);
@@ -179,7 +180,7 @@
   /* stat-card — small metric card (gain/loss/volume) */
   --component-stat-card-bg: var(--color-canvas);
   --component-stat-card-text: var(--color-ink);
-  --component-stat-card-radius: var(--radius-lg);
+  --component-stat-card-radius: var(--radius-md);
   --component-stat-card-padding: var(--space-lg);
   --component-stat-card-border: 1px solid var(--color-hairline);
 
@@ -197,7 +198,7 @@
 
   /* fee-preview — fee breakdown card */
   --component-fee-preview-bg: var(--color-canvas-soft);
-  --component-fee-preview-radius: var(--radius-md);
+  --component-fee-preview-radius: var(--radius-sm);
   --component-fee-preview-padding: var(--space-md) var(--space-lg);
 
   /* stepper — deposit/withdrawal flow progress */

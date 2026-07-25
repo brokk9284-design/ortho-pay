@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Sun, Moon, Eye } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
 export function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, mounted } = useTheme();
   const [animating, setAnimating] = useState(false);
 
   const handleClick = () => {
@@ -17,9 +17,7 @@ export function ThemeToggle() {
   const label =
     theme === 'light'
       ? 'Switch to dark mode'
-      : theme === 'dark'
-        ? 'Switch to high contrast mode'
-        : 'Switch to light mode';
+      : 'Switch to light mode';
 
   return (
     <button
@@ -29,9 +27,8 @@ export function ThemeToggle() {
       aria-label={label}
       title={label}
     >
-      {theme === 'light' && <Sun className="icon-sun" aria-hidden />}
-      {theme === 'dark' && <Moon className="icon-moon" aria-hidden />}
-      {theme === 'high-contrast' && <Eye className="icon-moon" aria-hidden />}
+      {mounted && theme === 'light' && <Sun className="icon-sun" aria-hidden />}
+      {mounted && theme === 'dark' && <Moon className="icon-moon" aria-hidden />}
     </button>
   );
 }

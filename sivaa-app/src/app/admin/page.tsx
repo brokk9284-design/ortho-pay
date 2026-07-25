@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import { BrandIcon } from "@/components/BrandIcon";
 
-type View = "overview" | "escrow" | "users" | "fees" | "payment-methods" | "kyc" | "receipts" | "audit";
+type View = "overview" | "escrow" | "users" | "fees" | "payment-methods" | "kyc" | "receipts" | "audit" | "deposits" | "withdrawals";
 
 interface Payment {
   payment_id: string;
@@ -70,6 +71,12 @@ interface UserProfile {
   country: string;
   kyc_status: string;
   created_at: string;
+  wallet_id?: string;
+  wallet_status?: string;
+  balance?: number;
+  total_sent?: number;
+  total_received?: number;
+  locked_balance?: number;
 }
 
 interface FeeRule {
@@ -107,6 +114,8 @@ export default function AdminDashboard() {
   const [userSearch, setUserSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [feeRules, setFeeRules] = useState<FeeRule[]>([]);
+  const [editingFeeRule, setEditingFeeRule] = useState<FeeRule | null>(null);
+  const [showCreateFeeRule, setShowCreateFeeRule] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [editingMethod, setEditingMethod] = useState<PaymentMethod | null>(null);
   const [showCreateMethod, setShowCreateMethod] = useState(false);
@@ -119,6 +128,11 @@ export default function AdminDashboard() {
   const [error, setError] = useState("");
   const [kycRejectDoc, setKycRejectDoc] = useState<string | null>(null);
   const [kycRejectReason, setKycRejectReason] = useState("");
+  const [adjustAmount, setAdjustAmount] = useState("");
+  const [adjustReason, setAdjustReason] = useState("");
+  const [adjusting, setAdjusting] = useState(false);
+  const [deposits, setDeposits] = useState<Array<{ deposit_id: string; user_id: string; amount: number; reference: string; status: string; created_at: string; payment_details: Record<string, unknown> }>>([]);
+  const [withdrawals, setWithdrawals] = useState<Array<{ withdrawal_id: string; user_id: string; amount: number; reference: string; status: string; withdrawal_type: string; created_at: string; details: Record<string, unknown> }>>([]);
 
   const router = useRouter();
   const handleLogout = async () => {
@@ -153,7 +167,20 @@ export default function AdminDashboard() {
       const res = await fetch(url);
       if (!res.ok) throw new Error("Failed to fetch users");
       const data = await res.json();
-      setUsers(data.users || []);
+      const mapped = (data.users || []).map((u: Record<string, unknown>) => {
+        const wallets = u.wallets as Array<{ wallet_id: string; status: string; total_sent: number; total_received: number; locked_balance: number }> | null;
+        const w = wallets?.[0];
+        return {
+          ...u,
+          wallet_id: w?.wallet_id,
+          wallet_status: w?.status,
+          total_sent: w?.total_sent,
+          total_received: w?.total_received,
+          locked_balance: w?.locked_balance,
+          balance: w ? w.total_received - w.total_sent : 0,
+        } as UserProfile;
+      });
+      setUsers(mapped);
     } catch {
       setError("Failed to load users");
     }
@@ -203,7 +230,7 @@ export default function AdminDashboard() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/v1/payment-methods");
+      const res = await fetch("/api/v1/payment-methods?include_inactive=true");
       if (!res.ok) throw new Error("Failed to fetch payment methods");
       const data = await res.json();
       setPaymentMethods(data.payment_methods || []);
@@ -297,6 +324,61 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleUpdateFeeRule = async (ruleId: string, updates: Record<string, unknown>) => {
+    try {
+      const res = await fetch("/api/v1/fees/manage", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rule_id: ruleId, ...updates }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Failed to update fee rule");
+        return;
+      }
+      fetchFees();
+      setEditingFeeRule(null);
+    } catch {
+      setError("Network error updating fee rule");
+    }
+  };
+
+  const handleCreateFeeRule = async (data: { minimum_amount: number; maximum_amount: number | null; percentage: number }) => {
+    try {
+      const res = await fetch("/api/v1/fees/manage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const errData = await res.json();
+        setError(errData.error || "Failed to create fee rule");
+        return;
+      }
+      fetchFees();
+      setShowCreateFeeRule(false);
+    } catch {
+      setError("Network error creating fee rule");
+    }
+  };
+
+  const handleDeleteFeeRule = async (ruleId: string) => {
+    if (!confirm("Are you sure you want to delete this fee rule?")) return;
+    try {
+      const res = await fetch(`/api/v1/fees/manage?rule_id=${ruleId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Failed to delete fee rule");
+        return;
+      }
+      fetchFees();
+    } catch {
+      setError("Network error deleting fee rule");
+    }
+  };
+
   const handleKycAction = async (documentId: string, status: string, reason?: string) => {
     try {
       const res = await fetch("/api/v1/kyc/manage", {
@@ -331,6 +413,34 @@ export default function AdminDashboard() {
     setLoading(false);
   }, []);
 
+  const fetchDeposits = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/v1/deposits?status=pending", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch deposits");
+      const data = await res.json();
+      setDeposits(data.deposits || []);
+    } catch {
+      setError("Failed to load deposits");
+    }
+    setLoading(false);
+  }, []);
+
+  const fetchWithdrawals = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/v1/withdrawals?status=pending", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch withdrawals");
+      const data = await res.json();
+      setWithdrawals(data.withdrawals || []);
+    } catch {
+      setError("Failed to load withdrawals");
+    }
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
     if (view === "overview") {
       fetchRevenue();
@@ -349,8 +459,12 @@ export default function AdminDashboard() {
       fetchReceipts();
     } else if (view === "audit") {
       fetchAuditLogs();
+    } else if (view === "deposits") {
+      fetchDeposits();
+    } else if (view === "withdrawals") {
+      fetchWithdrawals();
     }
-  }, [view, paymentFilter, userSearch, kycFilter, fetchPayments, fetchUsers, fetchFees, fetchPaymentMethods, fetchKycDocuments, fetchReceipts, fetchRevenue, fetchAuditLogs]);
+  }, [view, paymentFilter, userSearch, kycFilter, fetchPayments, fetchUsers, fetchFees, fetchPaymentMethods, fetchKycDocuments, fetchReceipts, fetchRevenue, fetchAuditLogs, fetchDeposits, fetchWithdrawals]);
 
   const handleApprove = async (paymentId: string) => {
     if (!confirm("Are you sure you want to approve this payment? Funds will be released from escrow.")) return;
@@ -463,6 +577,26 @@ export default function AdminDashboard() {
         <svg className="sidebar-nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M9 11l3 3L22 4" />
           <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+        </svg>
+      ),
+    },
+    {
+      key: "deposits",
+      label: "Deposits",
+      icon: (
+        <svg className="sidebar-nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 5v14" />
+          <path d="M19 12l-7 7-7-7" />
+        </svg>
+      ),
+    },
+    {
+      key: "withdrawals",
+      label: "Withdrawals",
+      icon: (
+        <svg className="sidebar-nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 19V5" />
+          <path d="M5 12l7-7 7 7" />
         </svg>
       ),
     },
@@ -746,6 +880,87 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="mt-6">
+                      <h4 className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--color-charcoal)" }}>Wallet Status</h4>
+                      <div className="flex gap-2 flex-wrap items-center">
+                        {selectedUser.wallet_id ? (
+                          <>
+                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold" style={{
+                              color: selectedUser.wallet_status === "active" ? "var(--color-terminal-green)" : selectedUser.wallet_status === "frozen" ? "var(--color-terminal-yellow)" : "var(--color-terminal-red)",
+                              border: `1px solid ${selectedUser.wallet_status === "active" ? "var(--color-terminal-green)" : selectedUser.wallet_status === "frozen" ? "var(--color-terminal-yellow)" : "var(--color-terminal-red)"}`,
+                            }}>
+                              {selectedUser.wallet_status || "unknown"}
+                            </span>
+                            {selectedUser.wallet_status !== "frozen" && (
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    const res = await fetch("/api/v1/wallet/freeze", {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ wallet_id: selectedUser.wallet_id, status: "frozen" }),
+                                    });
+                                    if (res.ok) {
+                                      setSelectedUser({ ...selectedUser, wallet_status: "frozen" });
+                                      fetchUsers();
+                                    }
+                                  } catch { /* ignore */ }
+                                }}
+                                className="btn btn-sm"
+                                style={{ backgroundColor: "rgba(217,119,6,0.1)", color: "var(--color-warning)", border: "1px solid rgba(217,119,6,0.3)" }}
+                              >
+                                Freeze
+                              </button>
+                            )}
+                            {selectedUser.wallet_status !== "suspended" && (
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    const res = await fetch("/api/v1/wallet/freeze", {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ wallet_id: selectedUser.wallet_id, status: "suspended" }),
+                                    });
+                                    if (res.ok) {
+                                      setSelectedUser({ ...selectedUser, wallet_status: "suspended" });
+                                      fetchUsers();
+                                    }
+                                  } catch { /* ignore */ }
+                                }}
+                                className="btn btn-sm"
+                                style={{ backgroundColor: "rgba(239,68,68,0.1)", color: "var(--color-error)", border: "1px solid rgba(239,68,68,0.3)" }}
+                              >
+                                Suspend
+                              </button>
+                            )}
+                            {selectedUser.wallet_status !== "active" && (
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    const res = await fetch("/api/v1/wallet/freeze", {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ wallet_id: selectedUser.wallet_id, status: "active" }),
+                                    });
+                                    if (res.ok) {
+                                      setSelectedUser({ ...selectedUser, wallet_status: "active" });
+                                      fetchUsers();
+                                    }
+                                  } catch { /* ignore */ }
+                                }}
+                                className="btn btn-sm"
+                                style={{ backgroundColor: "rgba(34,197,94,0.1)", color: "var(--color-success)", border: "1px solid rgba(34,197,94,0.3)" }}
+                              >
+                                Activate
+                              </button>
+                            )}
+                          </>
+                        ) : (
+                          <span className="text-xs" style={{ color: "var(--color-charcoal)" }}>No wallet found</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
                       <h4 className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--color-charcoal)" }}>Update KYC Status</h4>
                       <div className="flex gap-2 flex-wrap">
                         {["unverified", "pending", "verified", "rejected"].map((status) => (
@@ -764,6 +979,109 @@ export default function AdminDashboard() {
                         ))}
                       </div>
                     </div>
+
+                    <div className="mt-6">
+                      <h4 className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--color-charcoal)" }}>Manual Balance Adjustment</h4>
+                      <div className="flex flex-col gap-3">
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="Amount ($)"
+                          value={adjustAmount}
+                          onChange={(e) => setAdjustAmount(e.target.value)}
+                          className="input"
+                          style={{ maxWidth: 200 }}
+                        />
+                        <input
+                          type="text"
+                          placeholder="Reason (optional)"
+                          value={adjustReason}
+                          onChange={(e) => setAdjustReason(e.target.value)}
+                          className="input"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={async () => {
+                              if (!adjustAmount || parseFloat(adjustAmount) <= 0) return;
+                              setAdjusting(true);
+                              try {
+                                const res = await fetch("/api/v1/admin/balance-adjust", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  credentials: "include",
+                                  body: JSON.stringify({
+                                    user_id: selectedUser.id,
+                                    amount: parseFloat(adjustAmount),
+                                    action: "add",
+                                    reason: adjustReason || undefined,
+                                  }),
+                                });
+                                if (res.ok) {
+                                  setAdjustAmount("");
+                                  setAdjustReason("");
+                                  alert("Balance added successfully");
+                                } else {
+                                  const data = await res.json();
+                                  alert(data.error || "Failed to adjust balance");
+                                }
+                              } catch {
+                                alert("Network error");
+                              }
+                              setAdjusting(false);
+                            }}
+                            disabled={adjusting || !adjustAmount}
+                            className="btn btn-sm"
+                            style={{
+                              backgroundColor: "var(--color-terminal-green)",
+                              color: "#fff",
+                              border: "none",
+                            }}
+                          >
+                            Add Balance
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (!adjustAmount || parseFloat(adjustAmount) <= 0) return;
+                              setAdjusting(true);
+                              try {
+                                const res = await fetch("/api/v1/admin/balance-adjust", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  credentials: "include",
+                                  body: JSON.stringify({
+                                    user_id: selectedUser.id,
+                                    amount: parseFloat(adjustAmount),
+                                    action: "remove",
+                                    reason: adjustReason || undefined,
+                                  }),
+                                });
+                                if (res.ok) {
+                                  setAdjustAmount("");
+                                  setAdjustReason("");
+                                  alert("Balance removed successfully");
+                                } else {
+                                  const data = await res.json();
+                                  alert(data.error || "Failed to adjust balance");
+                                }
+                              } catch {
+                                alert("Network error");
+                              }
+                              setAdjusting(false);
+                            }}
+                            disabled={adjusting || !adjustAmount}
+                            className="btn btn-sm"
+                            style={{
+                              backgroundColor: "var(--color-error)",
+                              color: "#fff",
+                              border: "none",
+                            }}
+                          >
+                            Remove Balance
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -773,7 +1091,15 @@ export default function AdminDashboard() {
           {/* Fee Rules View */}
           {view === "fees" && (
             <div>
-              <h2 className="text-2xl font-display font-medium mb-6" style={{ color: "var(--color-ink)" }}>Fee Rules</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-display font-medium" style={{ color: "var(--color-ink)" }}>Fee Rules</h2>
+                <button
+                  onClick={() => setShowCreateFeeRule(true)}
+                  className="btn btn-primary btn-sm"
+                >
+                  + Add Rule
+                </button>
+              </div>
 
               {loading ? (
                 <div className="text-sm" style={{ color: "var(--color-charcoal)" }}>Loading fee rules...</div>
@@ -786,11 +1112,12 @@ export default function AdminDashboard() {
                         <th className="p-4 font-medium">Max Amount</th>
                         <th className="p-4 font-medium">Percentage</th>
                         <th className="p-4 font-medium">Active</th>
+                        <th className="p-4 font-medium">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {feeRules.length === 0 ? (
-                        <tr><td colSpan={4} className="p-4" style={{ color: "var(--color-charcoal)" }}>No fee rules found</td></tr>
+                        <tr><td colSpan={5} className="p-4" style={{ color: "var(--color-charcoal)" }}>No fee rules found</td></tr>
                       ) : (
                         feeRules.map((rule) => (
                           <tr key={rule.rule_id} style={{ borderBottom: "1px solid var(--color-hairline)" }}>
@@ -808,12 +1135,44 @@ export default function AdminDashboard() {
                                 {rule.active ? "Active" : "Inactive"}
                               </span>
                             </td>
+                            <td className="p-4">
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => setEditingFeeRule(rule)}
+                                  className="btn btn-secondary btn-sm"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteFeeRule(rule.rule_id)}
+                                  className="btn btn-sm"
+                                  style={{ backgroundColor: "rgba(239,68,68,0.1)", color: "var(--color-terminal-red)", border: "1px solid rgba(239,68,68,0.3)" }}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
                           </tr>
                         ))
                       )}
                     </tbody>
                   </table>
                 </div>
+              )}
+
+              {editingFeeRule && (
+                <FeeRuleEditModal
+                  rule={editingFeeRule}
+                  onSave={(updates) => handleUpdateFeeRule(editingFeeRule.rule_id, updates)}
+                  onClose={() => setEditingFeeRule(null)}
+                />
+              )}
+
+              {showCreateFeeRule && (
+                <FeeRuleCreateModal
+                  onSave={handleCreateFeeRule}
+                  onClose={() => setShowCreateFeeRule(false)}
+                />
               )}
             </div>
           )}
@@ -1118,6 +1477,184 @@ export default function AdminDashboard() {
             </div>
           )}
 
+          {/* Deposits View */}
+          {view === "deposits" && (
+            <div>
+              <h2 className="text-2xl font-display font-medium mb-6" style={{ color: "var(--color-ink)" }}>Pending Deposits</h2>
+              <p className="text-sm mb-4" style={{ color: "var(--color-charcoal)" }}>
+                Review and approve user deposit requests. On approval, the user&apos;s balance is automatically credited.
+              </p>
+              {loading ? (
+                <div className="text-sm" style={{ color: "var(--color-charcoal)" }}>Loading deposits...</div>
+              ) : deposits.length === 0 ? (
+                <div className="text-sm" style={{ color: "var(--color-charcoal)" }}>No pending deposits</div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {deposits.map((dep) => (
+                    <div key={dep.deposit_id} className="rounded-xl p-4 flex items-center justify-between" style={{ border: "1px solid var(--color-hairline)", backgroundColor: "var(--color-surface-soft)" }}>
+                      <div>
+                        <div className="font-medium text-sm" style={{ color: "var(--color-ink)" }}>
+                          ${dep.amount.toFixed(2)}
+                        </div>
+                        <div className="text-xs font-mono" style={{ color: "var(--color-mute)" }}>
+                          {dep.reference}
+                        </div>
+                        <div className="text-xs" style={{ color: "var(--color-mute)" }}>
+                          {formatDate(dep.created_at)}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={async () => {
+                            try {
+                              const res = await fetch("/api/v1/deposits", {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                credentials: "include",
+                                body: JSON.stringify({ deposit_id: dep.deposit_id, action: "approve" }),
+                              });
+                              if (res.ok) {
+                                fetchDeposits();
+                              } else {
+                                const data = await res.json();
+                                alert(data.error || "Failed to approve deposit");
+                              }
+                            } catch {
+                              alert("Network error");
+                            }
+                          }}
+                          className="btn btn-sm"
+                          style={{ backgroundColor: "var(--color-terminal-green)", color: "#fff", border: "none" }}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={async () => {
+                            try {
+                              const res = await fetch("/api/v1/deposits", {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                credentials: "include",
+                                body: JSON.stringify({ deposit_id: dep.deposit_id, action: "reject" }),
+                              });
+                              if (res.ok) {
+                                fetchDeposits();
+                              } else {
+                                const data = await res.json();
+                                alert(data.error || "Failed to reject deposit");
+                              }
+                            } catch {
+                              alert("Network error");
+                            }
+                          }}
+                          className="btn btn-sm"
+                          style={{ backgroundColor: "var(--color-error)", color: "#fff", border: "none" }}
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Withdrawals View */}
+          {view === "withdrawals" && (
+            <div>
+              <h2 className="text-2xl font-display font-medium mb-6" style={{ color: "var(--color-ink)" }}>Pending Withdrawals</h2>
+              <p className="text-sm mb-4" style={{ color: "var(--color-charcoal)" }}>
+                Review and approve user withdrawal requests. On approval, funds are released from escrow.
+              </p>
+              {loading ? (
+                <div className="text-sm" style={{ color: "var(--color-charcoal)" }}>Loading withdrawals...</div>
+              ) : withdrawals.length === 0 ? (
+                <div className="text-sm" style={{ color: "var(--color-charcoal)" }}>No pending withdrawals</div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {withdrawals.map((wd) => (
+                    <div key={wd.withdrawal_id} className="rounded-xl p-4" style={{ border: "1px solid var(--color-hairline)", backgroundColor: "var(--color-surface-soft)" }}>
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <div className="font-medium text-sm" style={{ color: "var(--color-ink)" }}>
+                            ${wd.amount.toFixed(2)} · {wd.withdrawal_type}
+                          </div>
+                          <div className="text-xs font-mono" style={{ color: "var(--color-mute)" }}>
+                            {wd.reference}
+                          </div>
+                          <div className="text-xs" style={{ color: "var(--color-mute)" }}>
+                            {formatDate(wd.created_at)}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={async () => {
+                              try {
+                                const res = await fetch("/api/v1/withdrawals", {
+                                  method: "PATCH",
+                                  headers: { "Content-Type": "application/json" },
+                                  credentials: "include",
+                                  body: JSON.stringify({ withdrawal_id: wd.withdrawal_id, action: "approve" }),
+                                });
+                                if (res.ok) {
+                                  fetchWithdrawals();
+                                } else {
+                                  const data = await res.json();
+                                  alert(data.error || "Failed to approve withdrawal");
+                                }
+                              } catch {
+                                alert("Network error");
+                              }
+                            }}
+                            className="btn btn-sm"
+                            style={{ backgroundColor: "var(--color-terminal-green)", color: "#fff", border: "none" }}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={async () => {
+                              try {
+                                const res = await fetch("/api/v1/withdrawals", {
+                                  method: "PATCH",
+                                  headers: { "Content-Type": "application/json" },
+                                  credentials: "include",
+                                  body: JSON.stringify({ withdrawal_id: wd.withdrawal_id, action: "reject" }),
+                                });
+                                if (res.ok) {
+                                  fetchWithdrawals();
+                                } else {
+                                  const data = await res.json();
+                                  alert(data.error || "Failed to reject withdrawal");
+                                }
+                              } catch {
+                                alert("Network error");
+                              }
+                            }}
+                            className="btn btn-sm"
+                            style={{ backgroundColor: "var(--color-error)", color: "#fff", border: "none" }}
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      </div>
+                      {wd.details && Object.keys(wd.details).length > 0 && (
+                        <div className="text-xs mt-2 p-2 rounded" style={{ backgroundColor: "var(--color-canvas)", color: "var(--color-charcoal)" }}>
+                          {Object.entries(wd.details).map(([k, v]) => (
+                            <div key={k}>
+                              <span style={{ color: "var(--color-mute)" }}>{k.replace(/_/g, " ")}:</span>{" "}
+                              <span style={{ fontWeight: 500 }}>{String(v)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Audit Logs View */}
           {view === "audit" && (
             <div>
@@ -1275,44 +1812,7 @@ function PaymentTable({
 }
 
 function PaymentMethodIcon({ iconKey, size = 24 }: { iconKey: string; size?: number }) {
-  const icons: Record<string, React.ReactNode> = {
-    crypto: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" />
-        <path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94" />
-      </svg>
-    ),
-    cashapp: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="4" />
-        <path d="M12 7l2 2-2 2-2-2z" />
-        <path d="M9 14l3 3 3-3" />
-      </svg>
-    ),
-    paypal: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M7 4h6a4 4 0 0 1 4 4 4 4 0 0 1-4 4H9l-2 8" />
-        <path d="M9 8h4a2 2 0 0 1 0 4H9" />
-      </svg>
-    ),
-    venmo: (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 7l4 10 4-10" />
-        <path d="M14 7v6a3 3 0 0 0 3 3 3 3 0 0 0 3-3V7" />
-      </svg>
-    ),
-  };
-
-  return (
-    <div style={{ color: "var(--color-ink)" }}>
-      {icons[iconKey] || (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-          <line x1="1" y1="10" x2="23" y2="10" />
-        </svg>
-      )}
-    </div>
-  );
+  return <BrandIcon iconKey={iconKey} size={size} />;
 }
 
 function PaymentMethodEditModal({
@@ -1324,6 +1824,10 @@ function PaymentMethodEditModal({
   onSave: (updates: Record<string, unknown>) => void;
   onClose: () => void;
 }) {
+  const [code, setCode] = useState(method.code);
+  const [displayName, setDisplayName] = useState(method.display_name);
+  const [iconKey, setIconKey] = useState(method.icon_key);
+  const [sortOrder, setSortOrder] = useState(method.sort_order?.toString() || "0");
   const [feePercentage, setFeePercentage] = useState(method.fee_percentage.toString());
   const [feeFixed, setFeeFixed] = useState(method.fee_fixed.toString());
   const [minAmount, setMinAmount] = useState(method.min_amount.toString());
@@ -1335,6 +1839,10 @@ function PaymentMethodEditModal({
 
   const handleSave = () => {
     const updates: Record<string, unknown> = {
+      code: code.toLowerCase().replace(/\s/g, "_"),
+      display_name: displayName,
+      icon_key: iconKey,
+      sort_order: parseInt(sortOrder) || 0,
       fee_percentage: parseFloat(feePercentage) || 0,
       fee_fixed: parseFloat(feeFixed) || 0,
       min_amount: parseFloat(minAmount) || 0,
@@ -1382,6 +1890,22 @@ function PaymentMethodEditModal({
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="input-group">
+              <label className="input-label">Code</label>
+              <input className="input" type="text" value={code} onChange={(e) => setCode(e.target.value)} />
+            </div>
+            <div className="input-group">
+              <label className="input-label">Display Name</label>
+              <input className="input" type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+            </div>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Icon Key</label>
+            <input className="input" type="text" value={iconKey} onChange={(e) => setIconKey(e.target.value)} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="input-group">
               <label className="input-label">Fee Percentage (%)</label>
               <input className="input" type="number" step="0.01" value={feePercentage} onChange={(e) => setFeePercentage(e.target.value)} />
             </div>
@@ -1411,6 +1935,11 @@ function PaymentMethodEditModal({
               <label className="input-label">Monthly Limit ($)</label>
               <input className="input" type="number" step="0.01" placeholder="No limit" value={monthlyLimit} onChange={(e) => setMonthlyLimit(e.target.value)} />
             </div>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Sort Order</label>
+            <input className="input" type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
           </div>
 
           <div className="input-group">
@@ -1605,6 +2134,154 @@ function PaymentMethodCreateModal({
             <button onClick={onClose} className="btn btn-secondary">
               Cancel
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FeeRuleEditModal({
+  rule,
+  onSave,
+  onClose,
+}: {
+  rule: FeeRule;
+  onSave: (updates: Record<string, unknown>) => void;
+  onClose: () => void;
+}) {
+  const [minAmount, setMinAmount] = useState(rule.minimum_amount.toString());
+  const [maxAmount, setMaxAmount] = useState(rule.maximum_amount?.toString() || "");
+  const [percentage, setPercentage] = useState(rule.percentage.toString());
+  const [isActive, setIsActive] = useState(rule.active);
+
+  const handleSave = () => {
+    onSave({
+      minimum_amount: parseFloat(minAmount) || 0,
+      maximum_amount: maxAmount ? parseFloat(maxAmount) : null,
+      percentage: parseFloat(percentage) || 0,
+      active: isActive,
+    });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 flex items-center justify-center p-4 z-50"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+      onClick={onClose}
+    >
+      <div
+        className="w-full rounded-2xl p-6 max-h-[90vh] overflow-auto"
+        style={{ backgroundColor: "var(--color-canvas)", border: "1px solid var(--color-hairline)", maxWidth: "450px" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="font-display font-medium text-base" style={{ color: "var(--color-ink)" }}>
+            Edit Fee Rule
+          </h3>
+          <button onClick={onClose} className="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="input-group">
+              <label className="input-label">Min Amount ($)</label>
+              <input className="input" type="number" step="0.01" value={minAmount} onChange={(e) => setMinAmount(e.target.value)} />
+            </div>
+            <div className="input-group">
+              <label className="input-label">Max Amount ($)</label>
+              <input className="input" type="number" step="0.01" placeholder="No limit" value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} />
+            </div>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Percentage (%)</label>
+            <input className="input" type="number" step="0.01" value={percentage} onChange={(e) => setPercentage(e.target.value)} />
+          </div>
+
+          <label className="toggle">
+            <input type="checkbox" className="toggle-input" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
+            <span className="toggle-track" />
+            <span>Active</span>
+          </label>
+
+          <div className="flex gap-3 mt-2">
+            <button onClick={handleSave} className="btn btn-primary btn-full">Save Changes</button>
+            <button onClick={onClose} className="btn btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FeeRuleCreateModal({
+  onSave,
+  onClose,
+}: {
+  onSave: (data: { minimum_amount: number; maximum_amount: number | null; percentage: number }) => void;
+  onClose: () => void;
+}) {
+  const [minAmount, setMinAmount] = useState("0");
+  const [maxAmount, setMaxAmount] = useState("");
+  const [percentage, setPercentage] = useState("0");
+
+  const handleSave = () => {
+    onSave({
+      minimum_amount: parseFloat(minAmount) || 0,
+      maximum_amount: maxAmount ? parseFloat(maxAmount) : null,
+      percentage: parseFloat(percentage) || 0,
+    });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 flex items-center justify-center p-4 z-50"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+      onClick={onClose}
+    >
+      <div
+        className="w-full rounded-2xl p-6 max-h-[90vh] overflow-auto"
+        style={{ backgroundColor: "var(--color-canvas)", border: "1px solid var(--color-hairline)", maxWidth: "450px" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="font-display font-medium text-base" style={{ color: "var(--color-ink)" }}>
+            Create Fee Rule
+          </h3>
+          <button onClick={onClose} className="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="input-group">
+              <label className="input-label">Min Amount ($)</label>
+              <input className="input" type="number" step="0.01" value={minAmount} onChange={(e) => setMinAmount(e.target.value)} />
+            </div>
+            <div className="input-group">
+              <label className="input-label">Max Amount ($)</label>
+              <input className="input" type="number" step="0.01" placeholder="No limit" value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} />
+            </div>
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Percentage (%)</label>
+            <input className="input" type="number" step="0.01" value={percentage} onChange={(e) => setPercentage(e.target.value)} />
+          </div>
+
+          <div className="flex gap-3 mt-2">
+            <button onClick={handleSave} className="btn btn-primary btn-full">Create Rule</button>
+            <button onClick={onClose} className="btn btn-secondary">Cancel</button>
           </div>
         </div>
       </div>

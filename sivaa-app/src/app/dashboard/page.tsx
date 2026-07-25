@@ -16,9 +16,13 @@ import {
   Search,
   Receipt,
   CheckCircle2,
+  Copy,
+  Check,
+  ArrowDownToLine,
+  ShieldCheck,
 } from "lucide-react";
-import { EmptyState, LoadingState } from "@/components/DashboardShared";
 import { useToast } from "@/components/Toast";
+import { BrandIcon } from "@/components/BrandIcon";
 
 interface PaymentMethod {
   method_id: string;
@@ -34,13 +38,14 @@ interface PaymentMethod {
 
 interface Transaction {
   id: string;
-  type: "sent" | "received";
+  type: "sent" | "received" | "deposit" | "withdrawal" | "adjustment_in" | "adjustment_out";
   counterparty: string;
   amount: number;
   fee: number;
-  status: "escrow_held" | "completed" | "reversed";
+  status: "escrow_held" | "completed" | "reversed" | "pending" | "approved" | "rejected";
   reference: string;
   date: string;
+  created_at: string;
 }
 
 export default function UserDashboard() {
@@ -48,6 +53,8 @@ export default function UserDashboard() {
   const { toast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [sivaTag, setSivaTag] = useState("...");
+  const [kycStatus, setKycStatus] = useState<string>("unverified");
+  const [copiedTag, setCopiedTag] = useState(false);
   const [totalSent, setTotalSent] = useState(0);
   const [totalReceived, setTotalReceived] = useState(0);
   const [walletBalance, setWalletBalance] = useState(0);
@@ -71,6 +78,16 @@ export default function UserDashboard() {
   const [resending2fa, setResending2fa] = useState(false);
   const [sendStep, setSendStep] = useState<"details" | "review" | "confirm">("details");
 
+  const escrowAmount = useMemo(() => {
+    return transactions
+      .filter((t) => t.status === "escrow_held")
+      .reduce((sum, t) => sum + t.amount, 0);
+  }, [transactions]);
+
+  const pendingCount = useMemo(() => {
+    return transactions.filter((t) => t.status === "pending" || t.status === "escrow_held").length;
+  }, [transactions]);
+
   useEffect(() => {
     fetch("/api/v1/auth/me", { credentials: "include" })
       .then((res) => {
@@ -79,6 +96,7 @@ export default function UserDashboard() {
       })
       .then((data) => {
         if (data?.user?.siva_tag) setSivaTag(data.user.siva_tag);
+        if (data?.user?.kyc_status) setKycStatus(data.user.kyc_status);
       })
       .catch(() => {});
 
@@ -89,6 +107,30 @@ export default function UserDashboard() {
           setTotalSent(data.wallet.total_sent || 0);
           setTotalReceived(data.wallet.total_received || 0);
           setWalletBalance((data.wallet.total_received || 0) - (data.wallet.total_sent || 0));
+        }
+        if (data?.transactions) {
+          const adjustTxns: Transaction[] = data.transactions
+            .filter((t: { type: string }) => t.type === "adjust_in" || t.type === "adjust_out")
+            .map((t: {
+              transaction_id: string;
+              amount: number;
+              type: string;
+              description: string;
+              created_at: string;
+            }) => ({
+              id: t.transaction_id,
+              type: (t.type === "adjust_in" ? "adjustment_in" : "adjustment_out") as Transaction["type"],
+              counterparty: t.description || "Admin adjustment",
+              amount: Math.abs(t.amount),
+              fee: 0,
+              status: "completed" as const,
+              reference: t.description || "",
+              date: new Date(t.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+              created_at: t.created_at,
+            }));
+          if (adjustTxns.length > 0) {
+            setTransactions((prev) => [...prev, ...adjustTxns].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+          }
         }
       })
       .catch(() => {});
@@ -113,15 +155,71 @@ export default function UserDashboard() {
             counterparty: p.sender_id ? `$${p.receiver?.siva_tag || "unknown"}` : `$${p.sender?.siva_tag || "unknown"}`,
             amount: p.gross_amount,
             fee: p.fee_amount,
-            status: p.status,
+            status: p.status as Transaction["status"],
             reference: p.reference,
             date: new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            created_at: p.created_at,
           }));
           setTransactions(mapped);
         }
       })
       .catch(() => {})
       .finally(() => setLoadingTxns(false));
+
+    // Fetch deposits and merge into transactions
+    fetch("/api/v1/deposits", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.deposits) {
+          const depositTxns: Transaction[] = data.deposits.map((d: {
+            deposit_id: string;
+            amount: number;
+            reference: string;
+            status: string;
+            created_at: string;
+          }) => ({
+            id: d.deposit_id,
+            type: "deposit",
+            counterparty: "Deposit",
+            amount: d.amount,
+            fee: 0,
+            status: d.status === "approved" ? "completed" : d.status === "rejected" ? "reversed" : "pending",
+            reference: d.reference,
+            date: new Date(d.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            created_at: d.created_at,
+          }));
+          setTransactions((prev) => [...prev, ...depositTxns].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+        }
+      })
+      .catch(() => {});
+
+    // Fetch withdrawals and merge into transactions
+    fetch("/api/v1/withdrawals", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.withdrawals) {
+          const withdrawalTxns: Transaction[] = data.withdrawals.map((w: {
+            withdrawal_id: string;
+            amount: number;
+            reference: string;
+            status: string;
+            withdrawal_type: string;
+            created_at: string;
+          }) => ({
+            id: w.withdrawal_id,
+            type: "withdrawal",
+            counterparty: `${w.withdrawal_type} Withdrawal`,
+            amount: w.amount,
+            fee: 0,
+            status: w.status === "approved" ? "completed" : w.status === "rejected" ? "reversed" : "pending",
+            reference: w.reference,
+            date: new Date(w.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            created_at: w.created_at,
+          }));
+          setTransactions((prev) => [...prev, ...withdrawalTxns].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+        }
+      })
+      .catch(() => {});
 
     fetch("/api/v1/payment-methods", { credentials: "include" })
       .then((res) => res.json())
@@ -303,112 +401,208 @@ export default function UserDashboard() {
   };
 
   const formatAmount = (amount: number, type: string) => {
-    const sign = type === "sent" ? "-" : "+";
+    const sign = type === "sent" || type === "withdrawal" || type === "adjustment_out" ? "-" : "+";
     return `${sign}$${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   const getStatusBadge = (status: string) => {
-    if (status === "completed") return <span className="dash-badge dash-badge-success">Completed</span>;
+    if (status === "completed" || status === "approved") return <span className="dash-badge dash-badge-success">Completed</span>;
     if (status === "escrow_held") return <span className="dash-badge dash-badge-warning">In Escrow</span>;
+    if (status === "pending") return <span className="dash-badge dash-badge-warning">Pending</span>;
+    if (status === "rejected") return <span className="dash-badge dash-badge-error">Rejected</span>;
     return <span className="dash-badge dash-badge-error">Reversed</span>;
   };
 
   return (
     <div className="min-h-screen" style={{ fontFamily: "var(--font-body)" }}>
-      <div className="mx-auto px-4 lg:px-8 py-6" style={{ maxWidth: "1100px" }}>
-        {/* Balance Card */}
-        <div className="dash-balance-card dash-item-enter mb-6">
-          <div style={{ position: "relative", zIndex: 1 }}>
-            <div style={{ fontSize: 13, opacity: 0.8, marginBottom: 8, fontWeight: 500 }}>
-              Available Balance
+      <div className="mx-auto dash-item-enter dash-page-container" style={{ maxWidth: "1100px" }}>
+        <div className="dash-desktop-grid">
+          <div className="dash-desktop-left">
+            {/* Balance Card */}
+            <div className="dash-balance-card dash-section">
+              <div className="dash-balance-card-top">
+                <div style={{ fontSize: 13, opacity: 0.8, marginBottom: "var(--space-sm)", fontWeight: 500 }}>
+                  Available Balance
+                </div>
+                <div className="dash-number-animate" style={{ fontSize: 44, fontWeight: 800, fontFamily: "var(--font-display)", letterSpacing: "-1px" }}>
+                  ${walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+                <div style={{ fontSize: 13, opacity: 0.7, marginTop: "var(--space-sm)", display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
+                  <span>${sivaTag} · USD</span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(`$${sivaTag}`);
+                      setCopiedTag(true);
+                      setTimeout(() => setCopiedTag(false), 2000);
+                    }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "var(--space-xxs)",
+                      background: "rgba(255,255,255,0.15)",
+                      border: "1px solid rgba(255,255,255,0.25)",
+                      borderRadius: "var(--radius-full)",
+                      padding: "4px 12px",
+                      cursor: "pointer",
+                      color: "#fff",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      transition: "background 150ms ease",
+                    }}
+                  >
+                    {copiedTag ? <Check size={12} /> : <Copy size={12} />}
+                    {copiedTag ? "Copied!" : "Copy tag"}
+                  </button>
+                </div>
+              </div>
+              <div className="dash-balance-breakdown">
+                <div className="dash-balance-breakdown-item">
+                  <span className="dash-balance-breakdown-label">Available</span>
+                  <span className="dash-balance-breakdown-value">${walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+                <div className="dash-balance-breakdown-item">
+                  <span className="dash-balance-breakdown-label">Escrow</span>
+                  <span className="dash-balance-breakdown-value">${escrowAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+                <div className="dash-balance-breakdown-item">
+                  <span className="dash-balance-breakdown-label">Pending</span>
+                  <span className="dash-balance-breakdown-value">{pendingCount}</span>
+                </div>
+              </div>
+              <div className="dash-balance-card-footer">
+                <span style={{ fontSize: 12, opacity: 0.7 }}>
+                  This month
+                </span>
+                <span style={{ fontSize: 13, fontWeight: 700, opacity: 0.9 }}>
+                  {transactions.length} transactions
+                </span>
+              </div>
             </div>
-            <div className="dash-number-animate" style={{ fontSize: 40, fontWeight: 800, fontFamily: "var(--font-display)", letterSpacing: "-1px" }}>
-              ${walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </div>
-            <div style={{ fontSize: 13, opacity: 0.7, marginTop: 8 }}>
-              ${sivaTag} · USD
-            </div>
-          </div>
-        </div>
 
-        {/* Action Grid */}
-        <div className="grid grid-cols-4 gap-3 mb-6 dash-item-enter" style={{ animationDelay: "50ms" }}>
-          <button
-            onClick={() => { setShowSendForm(true); setSendStep("details"); }}
-            className="dash-action-btn dash-action-btn-primary"
-          >
-            <div className="dash-action-btn-icon" style={{ background: "rgba(255,255,255,0.2)" }}>
-              <Send size={20} />
+            {/* Trust Indicators */}
+            <div className="dash-trust-row dash-section" style={{ flexWrap: "wrap" }}>
+              <div className="dash-trust-item">
+                <ShieldCheck size={14} style={{ color: "var(--color-success)" }} />
+                <span>Escrow Protected</span>
+              </div>
+              <div className="dash-trust-item">
+                {kycStatus === "verified" ? (
+                  <>
+                    <CheckCircle2 size={14} style={{ color: "var(--color-success)" }} />
+                    <span>Verified</span>
+                  </>
+                ) : kycStatus === "pending" ? (
+                  <>
+                    <span style={{ color: "var(--color-warning)", fontSize: 8 }}>{'\u25CF'}</span>
+                    <span>KYC Pending</span>
+                  </>
+                ) : kycStatus === "rejected" ? (
+                  <>
+                    <span style={{ color: "var(--color-error)", fontSize: 8 }}>{'\u25CF'}</span>
+                    <span>KYC Rejected</span>
+                  </>
+                ) : (
+                  <>
+                    <span style={{ color: "var(--color-mute)", fontSize: 8 }}>{'\u25CF'}</span>
+                    <span>Unverified</span>
+                  </>
+                )}
+              </div>
+              <div className="dash-trust-item">
+                <span style={{ color: "var(--color-mute)" }}>USD</span>
+                <span>Active</span>
+              </div>
             </div>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Send</span>
-          </button>
-          <Link href="/dashboard/request" className="dash-action-btn dash-action-btn-secondary">
-            <div className="dash-action-btn-icon" style={{ background: "rgba(29,78,216,0.1)" }}>
-              <Download size={20} style={{ color: "var(--color-primary)" }} />
-            </div>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Request</span>
-          </Link>
-          <button className="dash-action-btn dash-action-btn-secondary">
-            <div className="dash-action-btn-icon" style={{ background: "rgba(29,78,216,0.1)" }}>
-              <Upload size={20} style={{ color: "var(--color-primary)" }} />
-            </div>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Deposit</span>
-          </button>
-          <button className="dash-action-btn dash-action-btn-secondary">
-            <div className="dash-action-btn-icon" style={{ background: "rgba(29,78,216,0.1)" }}>
-              <CreditCard size={20} style={{ color: "var(--color-primary)" }} />
-            </div>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Withdraw</span>
-          </button>
-        </div>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6 dash-item-enter" style={{ animationDelay: "100ms" }}>
-          <div className="dash-stat-card">
-            <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--color-mute)", marginBottom: 6 }}>
-              Total Sent
+            {/* Action Grid */}
+            <div className="grid grid-cols-4 gap-3 dash-item-enter dash-section" style={{ animationDelay: "50ms" }}>
+              <button
+                onClick={() => { setShowSendForm(true); setSendStep("details"); }}
+                className="dash-action-btn dash-action-btn-primary"
+              >
+                <div className="dash-action-btn-icon" style={{ background: "rgba(29,78,216,0.1)" }}>
+                  <Send size={20} style={{ color: "var(--color-primary)" }} />
+                </div>
+                <span style={{ fontSize: "var(--text-body-sm-size)", fontWeight: 600 }}>Send</span>
+              </button>
+              <Link href="/dashboard/request" className="dash-action-btn dash-action-btn-secondary">
+                <div className="dash-action-btn-icon" style={{ background: "rgba(22,163,74,0.1)" }}>
+                  <Download size={20} style={{ color: "var(--color-success)" }} />
+                </div>
+                <span style={{ fontSize: "var(--text-body-sm-size)", fontWeight: 600 }}>Request</span>
+              </Link>
+              <Link href="/dashboard/deposit" className="dash-action-btn dash-action-btn-secondary">
+                <div className="dash-action-btn-icon" style={{ background: "rgba(217,119,6,0.1)" }}>
+                  <Upload size={20} style={{ color: "var(--color-warning)" }} />
+                </div>
+                <span style={{ fontSize: "var(--text-body-sm-size)", fontWeight: 600 }}>Deposit</span>
+              </Link>
+              <Link href="/dashboard/withdraw" className="dash-action-btn dash-action-btn-secondary">
+                <div className="dash-action-btn-icon" style={{ background: "rgba(220,38,38,0.1)" }}>
+                  <ArrowDownToLine size={20} style={{ color: "var(--color-error)" }} />
+                </div>
+                <span style={{ fontSize: "var(--text-body-sm-size)", fontWeight: 600 }}>Withdraw</span>
+              </Link>
             </div>
-            <div className="dash-number-animate" style={{ fontSize: 22, fontWeight: 700, fontVariantNumeric: "tabular-nums", color: "var(--color-ink)" }}>
-              ${totalSent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </div>
-          </div>
-          <div className="dash-stat-card">
-            <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--color-mute)", marginBottom: 6 }}>
-              Total Received
-            </div>
-            <div className="dash-number-animate" style={{ fontSize: 22, fontWeight: 700, fontVariantNumeric: "tabular-nums", color: "var(--color-success)" }}>
-              ${totalReceived.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </div>
-          </div>
-          <div className="dash-stat-card hidden lg:block">
-            <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--color-mute)", marginBottom: 6 }}>
-              Transactions
-            </div>
-            <div className="dash-number-animate" style={{ fontSize: 22, fontWeight: 700, fontVariantNumeric: "tabular-nums", color: "var(--color-ink)" }}>
-              {transactions.length}
-            </div>
-          </div>
-        </div>
 
-        {/* Transaction History */}
-        <div className="dash-item-enter" style={{ animationDelay: "150ms" }}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--color-ink)" }}>
-              Recent Activity
-            </h3>
-            <Link
-              href="/dashboard/portfolio"
-              style={{ fontSize: 13, fontWeight: 600, color: "var(--color-primary)", textDecoration: "none" }}
-            >
-              View all →
-            </Link>
+            {/* Stats Row - compact 4-grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 dash-item-enter" style={{ animationDelay: "100ms" }}>
+              <div className="dash-stat-card">
+                <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--color-mute)", marginBottom: 2 }}>
+                  Money Sent
+                </div>
+                <div className="dash-number-animate" style={{ fontSize: 18, fontWeight: 700, fontVariantNumeric: "tabular-nums", color: "var(--color-ink)" }}>
+                  ${totalSent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
+              <div className="dash-stat-card">
+                <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--color-mute)", marginBottom: 2 }}>
+                  Money Received
+                </div>
+                <div className="dash-number-animate" style={{ fontSize: 18, fontWeight: 700, fontVariantNumeric: "tabular-nums", color: "var(--color-success)" }}>
+                  ${totalReceived.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
+              <div className="dash-stat-card">
+                <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--color-mute)", marginBottom: 2 }}>
+                  In Escrow
+                </div>
+                <div className="dash-number-animate" style={{ fontSize: 18, fontWeight: 700, fontVariantNumeric: "tabular-nums", color: "var(--color-warning)" }}>
+                  ${escrowAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
+              <div className="dash-stat-card">
+                <div style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--color-mute)", marginBottom: 2 }}>
+                  Pending
+                </div>
+                <div className="dash-number-animate" style={{ fontSize: 18, fontWeight: 700, fontVariantNumeric: "tabular-nums", color: "var(--color-charcoal)" }}>
+                  {pendingCount}
+                </div>
+              </div>
+            </div>
           </div>
+
+          <div className="dash-desktop-right">
+            {/* Transaction History */}
+            <div className="dash-item-enter" style={{ animationDelay: "150ms" }}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 style={{ fontSize: 20, fontWeight: 700, color: "var(--color-ink)" }}>
+                  Recent Activity
+                </h3>
+                <Link
+                  href="/dashboard/portfolio"
+                  style={{ fontSize: 13, fontWeight: 600, color: "var(--color-primary)", textDecoration: "none" }}
+                >
+                  View all →
+                </Link>
+              </div>
 
           {/* Filter Pills */}
           <div className="flex gap-2 mb-3 flex-wrap">
             {[
               { key: "all", label: "All" },
               { key: "escrow_held", label: "In Escrow" },
+              { key: "pending", label: "Pending" },
               { key: "completed", label: "Completed" },
               { key: "reversed", label: "Reversed" },
             ].map((f) => (
@@ -422,94 +616,128 @@ export default function UserDashboard() {
             ))}
           </div>
 
-          {/* Search */}
-          <div className="dash-search mb-4">
+          {/* Search — directly above transaction list */}
+          <div className="dash-search mb-3">
             <Search size={16} style={{ color: "var(--color-mute)" }} />
             <input
               type="text"
               value={txnSearch}
               onChange={(e) => setTxnSearch(e.target.value)}
-              placeholder="Search by tag or reference..."
+              placeholder="Search transactions..."
               className="flex-1 bg-transparent py-2.5 outline-none text-sm"
               style={{ color: "var(--color-ink)" }}
             />
           </div>
 
           {loadingTxns ? (
-            <LoadingState message="Loading transactions..." />
+            <div className="flex flex-col gap-2">
+              <div className="dash-skeleton dash-skeleton-txn" />
+              <div className="dash-skeleton dash-skeleton-txn" />
+              <div className="dash-skeleton dash-skeleton-txn" />
+              <div className="dash-skeleton dash-skeleton-txn" />
+            </div>
           ) : filteredTxns.length === 0 ? (
-            <EmptyState
-              icon={<Receipt size={24} style={{ color: "var(--color-mute)" }} />}
-              title={transactions.length === 0 ? "No transactions yet" : "No matching transactions"}
-              message={transactions.length === 0 ? "Your payment history will appear here once you start sending or receiving." : "Try adjusting your filters or search."}
-            />
+            <div className="dash-empty-state">
+              <div className="dash-empty-state-icon">
+                <Receipt size={24} style={{ color: "var(--color-mute)" }} />
+              </div>
+              <div className="dash-empty-state-title">
+                {transactions.length === 0 ? "No transactions yet" : "No matching transactions"}
+              </div>
+              <div className="dash-empty-state-message">
+                {transactions.length === 0 ? "Receive your first payment to get started." : "Try adjusting your filters or search."}
+              </div>
+              {transactions.length === 0 && (
+                <Link href="/dashboard/request" className="dash-empty-state-cta">
+                  Receive Money
+                </Link>
+              )}
+            </div>
           ) : (
             <div className="flex flex-col gap-2">
-              {filteredTxns.slice(0, 8).map((txn, i) => (
-                <div
-                  key={txn.id}
-                  className="dash-txn-row dash-item-enter"
-                  style={{ animationDelay: `${200 + i * 40}ms` }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`dash-txn-avatar ${txn.type === "received" ? "dash-txn-avatar-received" : "dash-txn-avatar-sent"}`}>
-                      {txn.type === "sent" ? (
-                        <ArrowUpRight size={18} style={{ color: "var(--color-canvas)" }} />
-                      ) : (
-                        <ArrowDownLeft size={18} style={{ color: "var(--color-success)" }} />
-                      )}
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: "var(--color-ink)" }}>
-                        {txn.counterparty}
+              {filteredTxns.slice(0, 8).map((txn, i) => {
+                const statusClass =
+                  txn.status === "completed" ? "dash-txn-row-completed"
+                  : txn.status === "pending" ? "dash-txn-row-pending"
+                  : txn.status === "escrow_held" ? "dash-txn-row-escrow"
+                  : txn.status === "reversed" || txn.status === "rejected" ? "dash-txn-row-reversed"
+                  : "";
+                return (
+                  <div
+                    key={txn.id}
+                    className={`dash-txn-row dash-item-enter ${statusClass}`}
+                    style={{ animationDelay: `${200 + i * 40}ms` }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`dash-txn-avatar ${txn.type === "received" || txn.type === "deposit" || txn.type === "adjustment_in" ? "dash-txn-avatar-received" : "dash-txn-avatar-sent"}`}>
+                        {txn.type === "sent" ? (
+                          <ArrowUpRight size={18} style={{ color: "var(--color-canvas)" }} />
+                        ) : txn.type === "withdrawal" ? (
+                          <ArrowDownToLine size={18} style={{ color: "var(--color-canvas)" }} />
+                        ) : txn.type === "deposit" ? (
+                          <Upload size={18} style={{ color: "var(--color-success)" }} />
+                        ) : txn.type === "adjustment_in" ? (
+                          <ArrowDownLeft size={18} style={{ color: "var(--color-success)" }} />
+                        ) : txn.type === "adjustment_out" ? (
+                          <ArrowUpRight size={18} style={{ color: "var(--color-canvas)" }} />
+                        ) : (
+                          <ArrowDownLeft size={18} style={{ color: "var(--color-success)" }} />
+                        )}
                       </div>
-                      <div style={{ fontSize: 12, color: "var(--color-mute)" }}>
-                        {txn.date}
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: "var(--color-ink)" }}>
+                          {txn.counterparty}
+                        </div>
+                        <div style={{ fontSize: 12, color: "var(--color-mute)" }}>
+                          {txn.date}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div
-                      style={{
-                        fontSize: 15,
-                        fontWeight: 700,
-                        fontVariantNumeric: "tabular-nums",
-                        color: txn.type === "received" ? "var(--color-success)" : "var(--color-ink)",
-                      }}
-                    >
-                      {formatAmount(txn.amount, txn.type)}
-                    </div>
-                    <div className="mt-1">
-                      {getStatusBadge(txn.status)}
-                    </div>
-                    {txn.status === "escrow_held" && (
-                      <button
+                    <div className="text-right">
+                      <div
                         style={{
-                          fontSize: 11,
-                          marginTop: 4,
-                          color: "var(--color-primary)",
-                          background: "none",
-                          border: "none",
-                          cursor: "pointer",
-                          textDecoration: "underline",
-                        }}
-                        onClick={() => {
-                          setReceiptPaymentId(txn.id);
-                          setShowReceiptUpload(true);
+                          fontSize: 15,
+                          fontWeight: 700,
+                          fontVariantNumeric: "tabular-nums",
+                          color: txn.type === "received" || txn.type === "deposit" || txn.type === "adjustment_in" ? "var(--color-success)" : "var(--color-ink)",
                         }}
                       >
-                        Upload Receipt
-                      </button>
-                    )}
+                        {formatAmount(txn.amount, txn.type)}
+                      </div>
+                      <div className="mt-1">
+                        {getStatusBadge(txn.status)}
+                      </div>
+                      {txn.status === "escrow_held" && (
+                        <button
+                          style={{
+                            fontSize: 11,
+                            marginTop: "var(--space-xxs)",
+                            color: "var(--color-primary)",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            textDecoration: "underline",
+                          }}
+                          onClick={() => {
+                            setReceiptPaymentId(txn.id);
+                            setShowReceiptUpload(true);
+                          }}
+                        >
+                          Upload Receipt
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Send Money Modal — Branched Workflow */}
+      {/* Send Money Modal - Branched Workflow */}
       {showSendForm && (
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center dash-overlay"
@@ -810,16 +1038,9 @@ export default function UserDashboard() {
 }
 
 function PaymentMethodIcon({ iconKey, size = 24 }: { iconKey: string; size?: number }) {
-  const icons: Record<string, React.ReactNode> = {
-    crypto: <Bitcoin size={size} />,
-    cashapp: <DollarSign size={size} />,
-    paypal: <CreditCard size={size} />,
-    venmo: <Wallet size={size} />,
-  };
-
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "currentColor" }}>
-      {icons[iconKey] || <CreditCard size={size} />}
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <BrandIcon iconKey={iconKey} size={size} />
     </div>
   );
 }

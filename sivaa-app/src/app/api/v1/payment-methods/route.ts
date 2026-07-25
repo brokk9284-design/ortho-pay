@@ -2,15 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const includeInactive = searchParams.get("include_inactive") === "true";
+
     const supabase = await createSupabaseServerClient();
 
-    const { data: methods, error } = await supabase
+    let query = supabase
       .from("payment_methods")
-      .select("*")
-      .eq("is_active", true)
-      .order("sort_order", { ascending: true });
+      .select("*");
+
+    if (!includeInactive) {
+      query = query.eq("is_active", true);
+    }
+
+    const { data: methods, error } = await query.order("sort_order", { ascending: true });
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -101,6 +108,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const allowedFields = [
+      "code",
       "display_name",
       "icon_key",
       "fee_percentage",

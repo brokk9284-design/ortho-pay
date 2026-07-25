@@ -45,10 +45,11 @@ function VerifyOtpContent() {
     return `${m}:${sec.toString().padStart(2, "0")}`;
   };
 
-  const handleVerify = async (e?: React.FormEvent) => {
+  const handleVerify = async (e?: React.FormEvent, codeOverride?: string) => {
     if (e) e.preventDefault();
-    if (verifiedRef.current) return;
-    verifiedRef.current = true;
+    if (verifying) return;
+    const codeToUse = codeOverride ?? code;
+    if (codeToUse.length < 6) return;
     setError("");
     setSuccess("");
     setVerifying(true);
@@ -57,7 +58,7 @@ function VerifyOtpContent() {
       const res = await fetch("/api/v1/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code }),
+        body: JSON.stringify({ email, code: codeToUse }),
       });
 
       const data = await res.json();
@@ -75,6 +76,7 @@ function VerifyOtpContent() {
       }
 
       setSuccess("Email verified! Redirecting to your dashboard...");
+      verifiedRef.current = true;
 
       // Sign in with Supabase client-side to establish session cookies
       const password = sessionStorage.getItem("reg_password");
@@ -130,35 +132,36 @@ function VerifyOtpContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8" style={{ backgroundColor: "var(--color-canvas)", fontFamily: "var(--font-body)" }}>
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8" style={{ backgroundColor: "#0a0a0a", fontFamily: "var(--font-body)" }}>
       <div className="w-full" style={{ maxWidth: "400px" }}>
         <Link href="/" className="block text-center mb-8">
-          <span className="text-2xl font-bold font-display tracking-tight" style={{ color: "var(--color-ink)" }}>
+          <span className="text-2xl font-bold font-display tracking-tight" style={{ color: "#ffffff" }}>
             ORTHO-PAY
           </span>
         </Link>
 
-        <h1 className="text-xl font-display font-medium text-center mb-2" style={{ color: "var(--color-ink)" }}>
+        <h1 className="text-xl font-display font-medium text-center mb-2" style={{ color: "#ffffff" }}>
           Verify your email
         </h1>
-        <p className="text-sm text-center mb-8" style={{ color: "var(--color-charcoal)" }}>
-          We sent a 6-digit code to <strong style={{ color: "var(--color-ink)" }}>{email}</strong>. Enter it below to activate your account.
+        <p className="text-sm text-center mb-8" style={{ color: "rgba(255,255,255,0.5)" }}>
+          We sent a 6-digit code to <strong style={{ color: "#ffffff" }}>{email}</strong>. Enter it below to activate your account.
         </p>
 
         <form onSubmit={handleVerify} className="flex flex-col gap-4">
           <div className="input-group">
-            <label className="input-label" htmlFor="code">Verification Code</label>
+            <label className="input-label" htmlFor="code" style={{ color: "#ffffff" }}>Verification Code</label>
             <input
               id="code"
               type="text"
               inputMode="numeric"
               className="input text-center text-2xl font-mono tracking-widest"
+              style={{ backgroundColor: "#1a1a1a", border: "1px solid #262626", color: "#ffffff" }}
               value={code}
               onChange={(e) => {
                 const val = e.target.value.replace(/\D/g, "").slice(0, 6);
                 setCode(val);
                 if (val.length === 6 && !verifiedRef.current) {
-                  handleVerify();
+                  handleVerify(undefined, val);
                 }
               }}
               placeholder="000000"
@@ -170,20 +173,21 @@ function VerifyOtpContent() {
           </div>
 
           {error && (
-            <div className="text-sm rounded-lg p-3" style={{ color: "var(--color-error)", backgroundColor: "rgba(239, 68, 68, 0.08)" }}>
+            <div className="text-sm rounded-lg p-3" style={{ color: "#ef4444", backgroundColor: "rgba(239,68,68,0.08)" }}>
               {error}
             </div>
           )}
 
           {success && (
-            <div className="text-sm rounded-lg p-3" style={{ color: "var(--color-terminal-green)", backgroundColor: "rgba(34, 197, 94, 0.08)", border: "1px solid var(--color-terminal-green)" }}>
+            <div className="text-sm rounded-lg p-3" style={{ color: "#22c55e", backgroundColor: "rgba(34,197,94,0.08)", border: "1px solid #22c55e" }}>
               {success}
             </div>
           )}
 
           <button
             type="submit"
-            className="btn btn-primary btn-lg btn-full"
+            className="w-full h-12 rounded-xl font-semibold transition-all active:scale-[0.98] disabled:opacity-50"
+            style={{ backgroundColor: "var(--color-primary)", color: "#0a0a0a" }}
             disabled={verifying || code.length < 6}
           >
             {verifying ? "Verifying..." : "Verify & Continue"}
@@ -192,27 +196,27 @@ function VerifyOtpContent() {
 
         <div className="mt-6 text-center">
           {codeExpiry > 0 ? (
-            <p className="text-xs flex items-center justify-center gap-1 mb-3" style={{ color: "var(--color-mute)" }}>
+            <p className="text-xs flex items-center justify-center gap-1 mb-3" style={{ color: "rgba(255,255,255,0.4)" }}>
               <Clock size={12} />
               Code expires in {formatExpiry(codeExpiry)}
             </p>
           ) : (
-            <p className="text-xs mb-3" style={{ color: "var(--color-error)" }}>
+            <p className="text-xs mb-3" style={{ color: "#ef4444" }}>
               Your code has expired. Please request a new one.
             </p>
           )}
-          <p className="text-sm" style={{ color: "var(--color-charcoal)" }}>
+          <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
             Didn&apos;t receive a code?{" "}
             <button
               onClick={handleResend}
               disabled={resending || resendCooldown > 0}
               className="font-medium underline disabled:opacity-50 disabled:no-underline"
-              style={{ color: "var(--color-ink)" }}
+              style={{ color: "var(--color-primary)" }}
             >
               {resending ? "Sending..." : resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
             </button>
           </p>
-          <p className="text-xs mt-4" style={{ color: "var(--color-mute)" }}>
+          <p className="text-xs mt-4" style={{ color: "rgba(255,255,255,0.3)" }}>
             Check your spam folder if you don&apos;t see the email within a minute.
           </p>
         </div>
@@ -223,7 +227,7 @@ function VerifyOtpContent() {
 
 export default function VerifyOtpPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--color-canvas)" }}><span style={{ color: "var(--color-charcoal)" }}>Loading...</span></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#0a0a0a" }}><span style={{ color: "rgba(255,255,255,0.5)" }}>Loading...</span></div>}>
       <VerifyOtpContent />
     </Suspense>
   );

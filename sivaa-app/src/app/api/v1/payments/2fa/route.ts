@@ -10,9 +10,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { purpose } = body;
 
-    if (!purpose || !["payment_send", "payment_fulfill"].includes(purpose)) {
+    if (!purpose || !["payment_send", "payment_fulfill", "withdrawal"].includes(purpose)) {
       return NextResponse.json(
-        { error: "purpose must be 'payment_send' or 'payment_fulfill'" },
+        { error: "purpose must be 'payment_send', 'payment_fulfill', or 'withdrawal'" },
         { status: 400 }
       );
     }
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (profile?.email) {
-      const purposeText = purpose === "payment_send" ? "confirm your payment" : "fulfill the payment request";
+      const purposeText = purpose === "payment_send" ? "confirm your payment" : purpose === "payment_fulfill" ? "fulfill the payment request" : "confirm your withdrawal";
       const emailResult = await send2FACodeEmail(profile.email, profile.name || "User", code, purposeText);
       if (!emailResult?.success) {
         console.error("[2fa] Failed to send email:", emailResult?.error);

@@ -13,7 +13,10 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from("profiles")
-      .select("id, siva_tag, name, email, phone, country, kyc_status, created_at")
+      .select(`
+        id, siva_tag, name, email, phone, country, kyc_status, created_at,
+        wallets (wallet_id, status, total_sent, total_received, locked_balance)
+      `)
       .order("created_at", { ascending: false })
       .limit(limit);
 

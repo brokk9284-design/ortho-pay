@@ -13,9 +13,12 @@ import {
   Bell,
   Globe,
   LogOut,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { useToast } from "@/components/Toast";
 import { useLogout } from "@/components/DashboardShared";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface KycDocument {
   document_id: string;
@@ -30,18 +33,21 @@ interface UserProfile {
   name: string;
   email: string;
   kyc_status: string;
+  avatar_url?: string;
 }
 
 export default function SettingsPage() {
   const router = useRouter();
   const { toast } = useToast();
   const logout = useLogout();
+  const { theme, toggleTheme } = useTheme();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [kycDocuments, setKycDocuments] = useState<KycDocument[]>([]);
   const [showKycUpload, setShowKycUpload] = useState(false);
   const [kycDocType, setKycDocType] = useState("passport");
   const [kycFile, setKycFile] = useState<File | null>(null);
   const [kycUploading, setKycUploading] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -57,6 +63,7 @@ export default function SettingsPage() {
             name: data.user.name || "",
             email: data.user.email || "",
             kyc_status: data.user.kyc_status || "unverified",
+            avatar_url: data.user.avatar_url || null,
           });
         }
       })
@@ -109,6 +116,48 @@ export default function SettingsPage() {
     await logout();
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarUploading(true);
+    setError("");
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("category", "profile");
+
+      const uploadRes = await fetch("/api/v1/storage/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadRes.ok) {
+        const data = await uploadRes.json();
+        setError(data.error || "Failed to upload photo");
+        setAvatarUploading(false);
+        return;
+      }
+
+      const { url } = await uploadRes.json();
+
+      const updateRes = await fetch("/api/v1/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatar_url: url }),
+      });
+
+      if (updateRes.ok) {
+        setProfile((prev) => prev ? { ...prev, avatar_url: url } : prev);
+        toast("Profile photo updated", "success");
+      } else {
+        setError("Failed to update profile photo");
+      }
+    } catch {
+      setError("Failed to upload photo");
+    }
+    setAvatarUploading(false);
+  };
+
   const kycStatus = profile?.kyc_status || "unverified";
 
   const getKycIcon = (status: string) => {
@@ -136,6 +185,37 @@ export default function SettingsPage() {
             Profile
           </h3>
           <div className="dash-settings-section">
+            <div className="dash-settings-row" style={{ flexDirection: "column", alignItems: "flex-start", gap: 12 }}>
+              <div className="flex items-center gap-3 w-full">
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt="Profile"
+                    style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover" }}
+                  />
+                ) : (
+                  <div style={{ width: 56, height: 56, borderRadius: 14, background: "var(--color-surface-dark)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <User size={24} style={{ color: "var(--color-canvas)" }} />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <div className="dash-settings-row-label">Profile Photo</div>
+                  <div className="dash-settings-row-value" style={{ fontSize: 12 }}>
+                    {avatarUploading ? "Uploading..." : "Click below to upload a new photo"}
+                  </div>
+                </div>
+              </div>
+              <label className="btn btn-secondary btn-sm cursor-pointer" style={{ display: "inline-flex" }}>
+                <Upload size={14} style={{ marginRight: 6 }} />
+                Upload Photo
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={handleAvatarUpload}
+                  style={{ display: "none" }}
+                />
+              </label>
+            </div>
             <div className="dash-settings-row">
               <div className="flex items-center gap-3">
                 <div style={{ width: 40, height: 40, borderRadius: 12, background: "var(--color-surface-dark)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -285,6 +365,17 @@ export default function SettingsPage() {
             Preferences
           </h3>
           <div className="dash-settings-section">
+            <button
+              onClick={toggleTheme}
+              className="dash-settings-row"
+              style={{ width: "100%", textAlign: "left", cursor: "pointer", background: "none", border: "none" }}
+            >
+              <div className="flex items-center gap-3">
+                {theme === "light" ? <Moon size={18} style={{ color: "var(--color-charcoal)" }} /> : <Sun size={18} style={{ color: "var(--color-charcoal)" }} />}
+                <span className="dash-settings-row-label">Theme</span>
+              </div>
+              <span className="dash-settings-row-value">{theme === "light" ? "Light" : "Dark"}</span>
+            </button>
             <div className="dash-settings-row">
               <div className="flex items-center gap-3">
                 <Bell size={18} style={{ color: "var(--color-charcoal)" }} />
@@ -297,7 +388,7 @@ export default function SettingsPage() {
                 <Globe size={18} style={{ color: "var(--color-charcoal)" }} />
                 <span className="dash-settings-row-label">Region</span>
               </div>
-              <span className="dash-settings-row-value">USA & UK</span>
+              <span className="dash-settings-row-value">Global</span>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, createSupabaseAdminClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/auth";
 
 export async function GET() {
@@ -108,7 +108,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const { error: profileError } = await supabase
+    const adminClient = await createSupabaseAdminClient();
+    const { error: profileError } = await adminClient
       .from("profiles")
       .update({ kyc_status: "pending" })
       .eq("id", user.id);

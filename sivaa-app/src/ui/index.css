@@ -22,7 +22,6 @@
 /* 2. Themes — override foundation tokens for dark mode */
 @import './themes/light.css';
 @import './themes/dark.css';
-@import './themes/high-contrast.css';
 
 /* 3. Motion — transitions, animations, reduced-motion */
 @import './motion/transitions.css';

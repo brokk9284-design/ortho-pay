@@ -266,6 +266,18 @@
   background: var(--component-transaction-row-hover-bg);
 }
 
+/* --- Count up (balance figure) --- */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Shimmer skeleton --- */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 /* --- Progress bar --- */
 .progress-bar-fill {
   animation: progress-fill var(--duration-slow) var(--ease-out) both;
