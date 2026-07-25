@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/015-RealityModelGenerator.schema.json",
+  "title": "Reality Model Generator",
+  "description": "Generates, evaluates and ranks competing models that explain observed reality before verification.",
+
+  "type": "object",
+
+  "required": [
+    "generationContext",
+    "candidateModels",
+    "modelComparison",
+    "ranking",
+    "selection"
+  ],
+
+  "properties": {
+
+    "generationContext": {
+
+      "type": "object",
+
+      "properties": {
+
+        "contextId": {
+          "type": "string"
+        },
+
+        "objectiveId": {
+          "type": "string"
+        },
+
+        "problemId": {
+          "type": "string"
+        },
+
+        "rootCauseId": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "candidateModels": {
+
+      "type": "array",
+
+      "items": {
+
+        "type": "object",
+
+        "properties": {
+
+          "modelId": {
+            "type": "string"
+          },
+
+          "title": {
+            "type": "string"
+          },
+
+          "description": {
+            "type": "string"
+          },
+
+          "modelType": {
+
+            "type": "string",
+
+            "enum": [
+
+              "Causal",
+              "Mechanistic",
+              "Behavioral",
+              "Statistical",
+              "Predictive",
+              "Constraint",
+              "Hybrid"
+
+            ]
+
+          },
+
+          "assumptions": {
+
+            "type": "array",
+
+            "items": {
+              "type": "string"
+            }
+
+          },
+
+          "predictedOutcome": {
+            "type": "string"
+          },
+
+          "confidence": {
+            "type": "number"
+          }
+
+        }
+
+      }
+
+    },
+
+    "modelComparison": {
+
+      "type": "object",
+
+      "properties": {
+
+        "comparisonMethod": {
+          "type": "string"
+        },
+
+        "agreementMatrix": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "array",
+
+            "items": {
+              "type": "number"
+            }
+
+          }
+
+        },
+
+        "conflictScore": {
+          "type": "number"
+        },
+
+        "diversityScore": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "ranking": {
+
+      "type": "object",
+
+      "properties": {
+
+        "rankingMethod": {
+          "type": "string"
+        },
+
+        "rankedModels": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "modelId": {
+                "type": "string"
+              },
+
+              "rank": {
+                "type": "integer"
+              },
+
+              "score": {
+                "type": "number"
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "selection": {
+
+      "type": "object",
+
+      "properties": {
+
+        "selectedModel": {
+          "type": "string"
+        },
+
+        "selectionReason": {
+          "type": "string"
+        },
+
+        "alternativeModelsRetained": {
+          "type": "integer"
+        },
+
+        "requiresVerification": {
+          "type": "boolean"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

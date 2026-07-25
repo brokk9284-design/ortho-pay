@@ -1,0 +1,338 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/008-RealityCompiler.schema.json",
+  "title": "Reality Compiler",
+  "description": "Compares expected reality with observed reality, quantifies deviation, discovers unknown variables and continuously recompiles system knowledge.",
+
+  "type": "object",
+
+  "required": [
+    "prediction",
+    "observation",
+    "realityComparison",
+    "deviationAnalysis",
+    "unknownVariableAnalysis",
+    "recompilation"
+  ],
+
+  "properties": {
+
+    "prediction": {
+
+      "type": "object",
+
+      "properties": {
+
+        "predictionId": {
+          "type": "string"
+        },
+
+        "decisionId": {
+          "type": "string"
+        },
+
+        "expectedOutcome": {
+          "type": "string"
+        },
+
+        "expectedState": {
+          "type": "string"
+        },
+
+        "predictionConfidence": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "observation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "observationId": {
+          "type": "string"
+        },
+
+        "actualOutcome": {
+          "type": "string"
+        },
+
+        "actualState": {
+          "type": "string"
+        },
+
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+
+      }
+
+    },
+
+    "realityComparison": {
+
+      "type": "object",
+
+      "properties": {
+
+        "agreementScore": {
+          "type": "number"
+        },
+
+        "predictionAccuracy": {
+          "type": "number"
+        },
+
+        "realityGap": {
+          "type": "number"
+        },
+
+        "deviationMagnitude": {
+          "type": "number"
+        },
+
+        "agreementStatus": {
+
+          "type": "string",
+
+          "enum": [
+
+            "Matched",
+            "MinorDeviation",
+            "MajorDeviation",
+            "Failed"
+
+          ]
+
+        }
+
+      }
+
+    },
+
+    "deviationAnalysis": {
+
+      "type": "object",
+
+      "properties": {
+
+        "deviationSources": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        },
+
+        "systemError": {
+
+          "type": "number"
+
+        },
+
+        "environmentalError": {
+
+          "type": "number"
+
+        },
+
+        "measurementError": {
+
+          "type": "number"
+
+        },
+
+        "humanError": {
+
+          "type": "number"
+
+        }
+
+      }
+
+    },
+
+    "unknownVariableAnalysis": {
+
+      "type": "object",
+
+      "properties": {
+
+        "unknownVariablesDetected": {
+
+          "type": "integer"
+
+        },
+
+        "estimatedImpact": {
+
+          "type": "number"
+
+        },
+
+        "confidenceLoss": {
+
+          "type": "number"
+
+        },
+
+        "candidateUnknowns": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "recompilation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "knowledgeUpdated": {
+
+          "type": "boolean"
+
+        },
+
+        "mappingUpdated": {
+
+          "type": "boolean"
+
+        },
+
+        "patternUpdated": {
+
+          "type": "boolean"
+
+        },
+
+        "featureUpdated": {
+
+          "type": "boolean"
+
+        },
+
+        "rootCauseUpdated": {
+
+          "type": "boolean"
+
+        },
+
+        "decisionUpdated": {
+
+          "type": "boolean"
+
+        }
+
+      }
+
+    },
+
+    "feedbackLoop": {
+
+      "type": "object",
+
+      "properties": {
+
+        "problemTwinFeedback": {
+
+          "type": "boolean"
+
+        },
+
+        "solutionTwinFeedback": {
+
+          "type": "boolean"
+
+        },
+
+        "mappingFeedback": {
+
+          "type": "boolean"
+
+        },
+
+        "patternFeedback": {
+
+          "type": "boolean"
+
+        },
+
+        "featureFeedback": {
+
+          "type": "boolean"
+
+        },
+
+        "learningTriggered": {
+
+          "type": "boolean"
+
+        }
+
+      }
+
+    },
+
+    "knowledgeDelta": {
+
+      "type": "object",
+
+      "properties": {
+
+        "newKnowledge": {
+
+          "type": "integer"
+
+        },
+
+        "obsoleteKnowledge": {
+
+          "type": "integer"
+
+        },
+
+        "confidenceImprovement": {
+
+          "type": "number"
+
+        },
+
+        "systemLearningGain": {
+
+          "type": "number"
+
+        }
+
+      }
+
+    },
+
+    "confidence": {
+
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+
+    }
+
+  }
+
+}

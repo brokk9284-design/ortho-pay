@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/018-IntelligenceOrchestrator.schema.json",
+  "title": "Intelligence Orchestrator",
+  "description": "Coordinates the complete reasoning lifecycle by selecting, scheduling, synchronizing and governing intelligence engines.",
+
+  "type": "object",
+
+  "required": [
+    "orchestrationContext",
+    "workflowGraph",
+    "executionPolicy",
+    "routingEngine",
+    "stateManagement",
+    "terminationCriteria"
+  ],
+
+  "properties": {
+
+    "orchestrationContext": {
+
+      "type": "object",
+
+      "properties": {
+
+        "sessionId": {
+          "type": "string"
+        },
+
+        "objectiveId": {
+          "type": "string"
+        },
+
+        "currentState": {
+          "type": "string"
+        },
+
+        "reasoningCycle": {
+          "type": "integer"
+        }
+
+      }
+
+    },
+
+    "workflowGraph": {
+
+      "type": "object",
+
+      "properties": {
+
+        "activeEngine": {
+          "type": "string"
+        },
+
+        "completedEngines": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "pendingEngines": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "parallelExecution": {
+          "type": "boolean"
+        }
+
+      }
+
+    },
+
+    "executionPolicy": {
+
+      "type": "object",
+
+      "properties": {
+
+        "retryLimit": {
+          "type": "integer"
+        },
+
+        "maximumIterations": {
+          "type": "integer"
+        },
+
+        "minimumConfidence": {
+          "type": "number"
+        },
+
+        "maximumUncertainty": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "routingEngine": {
+
+      "type": "object",
+
+      "properties": {
+
+        "nextEngine": {
+          "type": "string"
+        },
+
+        "routingReason": {
+          "type": "string"
+        },
+
+        "branchCondition": {
+          "type": "string"
+        },
+
+        "fallbackEngine": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "stateManagement": {
+
+      "type": "object",
+
+      "properties": {
+
+        "stateVersion": {
+          "type": "string"
+        },
+
+        "checkpointEnabled": {
+          "type": "boolean"
+        },
+
+        "rollbackAvailable": {
+          "type": "boolean"
+        },
+
+        "lastCheckpoint": {
+          "type": "string",
+          "format": "date-time"
+        }
+
+      }
+
+    },
+
+    "terminationCriteria": {
+
+      "type": "object",
+
+      "properties": {
+
+        "objectiveSatisfied": {
+          "type": "boolean"
+        },
+
+        "confidenceSatisfied": {
+          "type": "boolean"
+        },
+
+        "resourceLimitReached": {
+          "type": "boolean"
+        },
+
+        "manualTermination": {
+          "type": "boolean"
+        },
+
+        "terminationReason": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

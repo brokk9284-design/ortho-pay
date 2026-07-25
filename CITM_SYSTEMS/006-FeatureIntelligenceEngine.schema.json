@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/006-FeatureIntelligenceEngine.schema.json",
+  "title": "Feature Intelligence Engine",
+  "description": "Discovers, evaluates, transforms, validates and governs reusable domain-independent features.",
+
+  "type": "object",
+
+  "required": [
+    "featureRepository",
+    "featureDiscovery",
+    "featureEngineering",
+    "featureImportance",
+    "featureValidation",
+    "featureLineage",
+    "featureConfidence"
+  ],
+
+  "properties": {
+
+    "featureRepository": {
+
+      "type": "object",
+
+      "properties": {
+
+        "featureId": {
+          "type": "string"
+        },
+
+        "name": {
+          "type": "string"
+        },
+
+        "description": {
+          "type": "string"
+        },
+
+        "domain": {
+          "type": "string"
+        },
+
+        "dataType": {
+          "type": "string"
+        },
+
+        "unit": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "featureDiscovery": {
+
+      "type": "object",
+
+      "properties": {
+
+        "discoveryMethod": {
+          "type": "string"
+        },
+
+        "sourcePatterns": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "sourceEvidence": {
+
+          "type": "array",
+
+          "items": {
+            "$ref": "./000-Core.schema.json#/$defs/Evidence"
+          }
+
+        }
+
+      }
+
+    },
+
+    "featureEngineering": {
+
+      "type": "object",
+
+      "properties": {
+
+        "transformation": {
+          "type": "string"
+        },
+
+        "normalization": {
+          "type": "string"
+        },
+
+        "aggregation": {
+          "type": "string"
+        },
+
+        "derivedFrom": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "generatedFeatures": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "featureImportance": {
+
+      "type": "object",
+
+      "properties": {
+
+        "importanceScore": {
+          "type": "number"
+        },
+
+        "causalStrength": {
+          "type": "number"
+        },
+
+        "predictivePower": {
+          "type": "number"
+        },
+
+        "stability": {
+          "type": "number"
+        },
+
+        "redundancy": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "featureValidation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "validated": {
+          "type": "boolean"
+        },
+
+        "validationMethod": {
+          "type": "string"
+        },
+
+        "validationScore": {
+          "type": "number"
+        },
+
+        "crossDomainReusable": {
+          "type": "boolean"
+        }
+
+      }
+
+    },
+
+    "featureLineage": {
+
+      "type": "object",
+
+      "properties": {
+
+        "parentFeatures": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "childFeatures": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "dependentModels": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "featureConfidence": {
+
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+
+    },
+
+    "qualityMetrics": {
+
+      "type": "object",
+
+      "properties": {
+
+        "completeness": {
+          "type": "number"
+        },
+
+        "consistency": {
+          "type": "number"
+        },
+
+        "accuracy": {
+          "type": "number"
+        },
+
+        "freshness": {
+          "type": "number"
+        },
+
+        "interpretability": {
+          "type": "number"
+        }
+
+      }
+
+    }
+
+  }
+
+}

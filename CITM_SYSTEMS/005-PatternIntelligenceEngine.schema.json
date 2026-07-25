@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/005-PatternIntelligenceEngine.schema.json",
+  "title": "Pattern Intelligence Engine",
+  "description": "Discovers, validates, clusters and evolves patterns across domains.",
+
+  "type": "object",
+
+  "required": [
+    "patternRepository",
+    "patternDiscovery",
+    "patternValidation",
+    "patternEvolution",
+    "patternConfidence"
+  ],
+
+  "properties": {
+
+    "patternRepository": {
+
+      "type": "object",
+
+      "properties": {
+
+        "patternId": {
+          "type": "string"
+        },
+
+        "name": {
+          "type": "string"
+        },
+
+        "domain": {
+          "type": "string"
+        },
+
+        "category": {
+          "type": "string"
+        },
+
+        "description": {
+          "type": "string"
+        },
+
+        "tags": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "patternDiscovery": {
+
+      "type": "object",
+
+      "properties": {
+
+        "discoveryMethod": {
+
+          "type": "string"
+
+        },
+
+        "candidatePatterns": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "patternId": {
+                "type": "string"
+              },
+
+              "score": {
+                "type": "number"
+              },
+
+              "confidence": {
+                "type": "number"
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "patternClassification": {
+
+      "type": "object",
+
+      "properties": {
+
+        "patternType": {
+
+          "type": "string",
+
+          "enum": [
+
+            "Behavioral",
+            "Structural",
+            "Temporal",
+            "Spatial",
+            "Causal",
+            "Statistical",
+            "Predictive",
+            "Emergent"
+
+          ]
+
+        },
+
+        "complexity": {
+
+          "type": "number"
+
+        },
+
+        "stability": {
+
+          "type": "number"
+
+        }
+
+      }
+
+    },
+
+    "patternRelationships": {
+
+      "type": "object",
+
+      "properties": {
+
+        "parentPatterns": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        },
+
+        "childPatterns": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        },
+
+        "relatedPatterns": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "patternValidation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "validated": {
+
+          "type": "boolean"
+
+        },
+
+        "validationMethod": {
+
+          "type": "string"
+
+        },
+
+        "validationScore": {
+
+          "type": "number"
+
+        },
+
+        "falsePositiveRisk": {
+
+          "type": "number"
+
+        },
+
+        "falseNegativeRisk": {
+
+          "type": "number"
+
+        }
+
+      }
+
+    },
+
+    "patternEvolution": {
+
+      "type": "object",
+
+      "properties": {
+
+        "version": {
+
+          "type": "string"
+
+        },
+
+        "iterations": {
+
+          "type": "integer"
+
+        },
+
+        "adaptationRate": {
+
+          "type": "number"
+
+        },
+
+        "driftScore": {
+
+          "type": "number"
+
+        },
+
+        "retired": {
+
+          "type": "boolean"
+
+        }
+
+      }
+
+    },
+
+    "patternConfidence": {
+
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+
+    },
+
+    "evidence": {
+
+      "type": "array",
+
+      "items": {
+
+        "$ref": "./000-Core.schema.json#/$defs/Evidence"
+
+      }
+
+    }
+
+  }
+
+}

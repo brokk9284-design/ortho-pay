@@ -1,0 +1,294 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/003c-MappingOptimization.schema.json",
+  "title": "Mapping Optimization Engine",
+  "description": "Optimization governance, over-solution detection, uncertainty hedging, adaptive learning and self-correction.",
+
+  "type": "object",
+
+  "required": [
+    "optimizationBoundary",
+    "oversolution",
+    "goodhartMonitor",
+    "hedging",
+    "counterfactuals",
+    "adaptiveLearning"
+  ],
+
+  "properties": {
+
+    "optimizationBoundary": {
+
+      "type": "object",
+
+      "properties": {
+
+        "targetOptimization": {
+          "type": "number"
+        },
+
+        "currentOptimization": {
+          "type": "number"
+        },
+
+        "boundaryScore": {
+          "type": "number"
+        },
+
+        "safeOperatingMargin": {
+          "type": "number"
+        },
+
+        "optimizationPressure": {
+          "type": "number"
+        },
+
+        "boundaryStatus": {
+          "type": "string",
+          "enum": [
+            "Safe",
+            "Approaching",
+            "Critical",
+            "Exceeded"
+          ]
+        }
+
+      }
+
+    },
+
+    "oversolution": {
+
+      "type": "object",
+
+      "properties": {
+
+        "detected": {
+          "type": "boolean"
+        },
+
+        "severity": {
+          "type": "number"
+        },
+
+        "confidence": {
+          "type": "number"
+        },
+
+        "generatedProblems": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "problemId": {
+                "type": "string"
+              },
+
+              "description": {
+                "type": "string"
+              },
+
+              "impact": {
+                "type": "number"
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "goodhartMonitor": {
+
+      "type": "object",
+
+      "properties": {
+
+        "enabled": {
+          "type": "boolean"
+        },
+
+        "optimizationDrift": {
+          "type": "number"
+        },
+
+        "objectiveDrift": {
+          "type": "number"
+        },
+
+        "metricGamingRisk": {
+          "type": "number"
+        },
+
+        "loopholeSensitivity": {
+          "type": "number"
+        },
+
+        "goodhartScore": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "hedging": {
+
+      "type": "object",
+
+      "properties": {
+
+        "unknownVariables": {
+          "type": "integer"
+        },
+
+        "estimatedCoverage": {
+          "type": "number"
+        },
+
+        "residualRisk": {
+          "type": "number"
+        },
+
+        "hedgeStrength": {
+          "type": "number"
+        },
+
+        "confidenceFloor": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "counterfactuals": {
+
+      "type": "object",
+
+      "properties": {
+
+        "enabled": {
+          "type": "boolean"
+        },
+
+        "alternativeSolutionsEvaluated": {
+          "type": "integer"
+        },
+
+        "alternativeProblemsEvaluated": {
+          "type": "integer"
+        },
+
+        "bestAlternativeScore": {
+          "type": "number"
+        },
+
+        "decisionRobustness": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "realityCompiler": {
+
+      "type": "object",
+
+      "properties": {
+
+        "expectedOutcome": {
+          "type": "number"
+        },
+
+        "observedOutcome": {
+          "type": "number"
+        },
+
+        "realityGap": {
+          "type": "number"
+        },
+
+        "correctionRequired": {
+          "type": "boolean"
+        }
+
+      }
+
+    },
+
+    "adaptiveLearning": {
+
+      "type": "object",
+
+      "properties": {
+
+        "enabled": {
+          "type": "boolean"
+        },
+
+        "iterations": {
+          "type": "integer"
+        },
+
+        "selfCorrections": {
+          "type": "integer"
+        },
+
+        "learningRate": {
+          "type": "number"
+        },
+
+        "knowledgeGain": {
+          "type": "number"
+        },
+
+        "mappingImprovement": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "recalibration": {
+
+      "type": "object",
+
+      "properties": {
+
+        "required": {
+          "type": "boolean"
+        },
+
+        "reason": {
+          "type": "string"
+        },
+
+        "lastCalibration": {
+          "type": "string",
+          "format": "date-time"
+        },
+
+        "nextCalibration": {
+          "type": "string",
+          "format": "date-time"
+        }
+
+      }
+
+    }
+
+  }
+
+}

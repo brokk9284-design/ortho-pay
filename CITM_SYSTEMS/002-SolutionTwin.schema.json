@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/002-SolutionTwin.schema.json",
+  "title": "Solution Twin",
+  "description": "Digital representation of a solution independent of any specific problem mapping.",
+  "type": "object",
+
+  "required": [
+    "solution",
+    "objective",
+    "capabilities",
+    "operatingEnvelope",
+    "optimization",
+    "constraints",
+    "quality",
+    "confidence"
+  ],
+
+  "properties": {
+
+    "solution": {
+      "type": "object",
+      "required": [
+        "solutionId",
+        "title",
+        "state"
+      ],
+      "properties": {
+        "solutionId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "Concept",
+            "Prototype",
+            "Validated",
+            "Production",
+            "Deprecated",
+            "Retired"
+          ]
+        }
+      }
+    },
+
+    "objective": {
+      "type": "object",
+      "properties": {
+        "primaryObjective": {
+          "type": "string"
+        },
+        "secondaryObjectives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "successCriteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "capabilityId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "strength": {
+            "type": "number"
+          }
+        }
+      }
+    },
+
+    "operatingEnvelope": {
+      "type": "object",
+      "properties": {
+        "minimumConditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "maximumConditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "optimization": {
+      "type": "object",
+      "properties": {
+        "optimizationTarget": {
+          "type": "string"
+        },
+        "optimizationScore": {
+          "type": "number"
+        },
+        "optimizationPressure": {
+          "type": "number"
+        },
+        "optimizationBoundary": {
+          "type": "number"
+        },
+        "oversolutionThreshold": {
+          "type": "number"
+        },
+        "goodhartRisk": {
+          "type": "number"
+        }
+      }
+    },
+
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "technical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "business": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "legal": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resource": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "quality": {
+      "type": "object",
+      "properties": {
+        "qualityScore": {
+          "type": "number"
+        },
+        "reliability": {
+          "type": "number"
+        },
+        "robustness": {
+          "type": "number"
+        },
+        "maintainability": {
+          "type": "number"
+        },
+        "adaptability": {
+          "type": "number"
+        }
+      }
+    },
+
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "featureId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "value": {},
+          "importance": {
+            "type": "number"
+          }
+        }
+      }
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    },
+
+    "validation": {
+      "$ref": "./000-Core.schema.json#/$defs/Validation"
+    },
+
+    "lifecycle": {
+      "$ref": "./000-Core.schema.json#/$defs/Lifecycle"
+    },
+
+    "version": {
+      "$ref": "./000-Core.schema.json#/$defs/Version"
+    }
+
+  }
+}

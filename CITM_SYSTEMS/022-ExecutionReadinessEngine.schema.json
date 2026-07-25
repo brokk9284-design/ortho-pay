@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/022-ExecutionReadinessEngine.schema.json",
+  "title": "Execution Readiness Engine",
+  "description": "Verifies operational readiness before execution by evaluating prerequisites, dependencies, resources, safety, rollback capability and monitoring readiness.",
+
+  "type": "object",
+
+  "required": [
+    "executionContext",
+    "prerequisites",
+    "dependencyAssessment",
+    "resourceAssessment",
+    "riskGate",
+    "readinessDecision"
+  ],
+
+  "properties": {
+
+    "executionContext": {
+
+      "type": "object",
+
+      "properties": {
+
+        "executionId": {
+          "type": "string"
+        },
+
+        "strategyId": {
+          "type": "string"
+        },
+
+        "objectiveId": {
+          "type": "string"
+        },
+
+        "domain": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "prerequisites": {
+
+      "type": "object",
+
+      "properties": {
+
+        "requiredConditions": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "satisfiedConditions": {
+          "type": "integer"
+        },
+
+        "unsatisfiedConditions": {
+          "type": "integer"
+        }
+
+      }
+
+    },
+
+    "dependencyAssessment": {
+
+      "type": "object",
+
+      "properties": {
+
+        "internalDependencies": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "externalDependencies": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "dependencyHealth": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "resourceAssessment": {
+
+      "type": "object",
+
+      "properties": {
+
+        "resourceAvailability": {
+          "type": "number"
+        },
+
+        "capacityUtilization": {
+          "type": "number"
+        },
+
+        "resourceRisk": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "riskGate": {
+
+      "type": "object",
+
+      "properties": {
+
+        "rollbackAvailable": {
+          "type": "boolean"
+        },
+
+        "monitoringReady": {
+          "type": "boolean"
+        },
+
+        "stopConditionsDefined": {
+          "type": "boolean"
+        },
+
+        "residualRisk": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "readinessDecision": {
+
+      "type": "object",
+
+      "properties": {
+
+        "ready": {
+          "type": "boolean"
+        },
+
+        "readinessScore": {
+          "type": "number"
+        },
+
+        "blockingIssues": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "recommendation": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

@@ -1,0 +1,333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/007-DecisionIntelligenceEngine.schema.json",
+  "title": "Decision Intelligence Engine",
+  "description": "Constructs, evaluates, qualifies, quantifies, ranks and verifies decisions prior to execution.",
+
+  "type": "object",
+
+  "required": [
+    "decisionContext",
+    "decisionGeneration",
+    "decisionQualification",
+    "decisionQuantification",
+    "decisionRanking",
+    "decisionVerification"
+  ],
+
+  "properties": {
+
+    "decisionContext": {
+
+      "type": "object",
+
+      "properties": {
+
+        "decisionId": {
+          "type": "string"
+        },
+
+        "problemId": {
+          "type": "string"
+        },
+
+        "solutionId": {
+          "type": "string"
+        },
+
+        "objective": {
+          "type": "string"
+        },
+
+        "decisionType": {
+
+          "type": "string",
+
+          "enum": [
+            "Diagnostic",
+            "Corrective",
+            "Preventive",
+            "Predictive",
+            "Strategic",
+            "Operational",
+            "Tactical",
+            "Adaptive"
+          ]
+
+        }
+
+      }
+
+    },
+
+    "decisionGeneration": {
+
+      "type": "object",
+
+      "properties": {
+
+        "candidateDecisions": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "decisionId": {
+                "type": "string"
+              },
+
+              "description": {
+                "type": "string"
+              },
+
+              "expectedOutcome": {
+                "type": "string"
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "decisionQualification": {
+
+      "type": "object",
+
+      "properties": {
+
+        "qualified": {
+          "type": "boolean"
+        },
+
+        "qualificationScore": {
+          "type": "number"
+        },
+
+        "mandatoryConditionsSatisfied": {
+          "type": "boolean"
+        },
+
+        "constraintCompliance": {
+          "type": "number"
+        },
+
+        "evidenceCoverage": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "decisionQuantification": {
+
+      "type": "object",
+
+      "properties": {
+
+        "expectedValue": {
+          "type": "number"
+        },
+
+        "expectedBenefit": {
+          "type": "number"
+        },
+
+        "expectedCost": {
+          "type": "number"
+        },
+
+        "expectedRisk": {
+          "type": "number"
+        },
+
+        "confidence": {
+          "type": "number"
+        },
+
+        "utilityScore": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "decisionRanking": {
+
+      "type": "object",
+
+      "properties": {
+
+        "rankingMethod": {
+          "type": "string"
+        },
+
+        "recommendedDecision": {
+          "type": "string"
+        },
+
+        "alternatives": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "decisionId": {
+                "type": "string"
+              },
+
+              "rank": {
+                "type": "integer"
+              },
+
+              "score": {
+                "type": "number"
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "decisionVerification": {
+
+      "type": "object",
+
+      "properties": {
+
+        "simulationVerified": {
+          "type": "boolean"
+        },
+
+        "counterfactualVerified": {
+          "type": "boolean"
+        },
+
+        "realityVerified": {
+          "type": "boolean"
+        },
+
+        "verificationConfidence": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "decisionRippleAnalysis": {
+
+      "type": "object",
+
+      "properties": {
+
+        "primaryEffects": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "secondaryEffects": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "tertiaryEffects": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "unintendedConsequences": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "cascadeRisk": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "executionRecommendation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "approved": {
+          "type": "boolean"
+        },
+
+        "approvalReason": {
+          "type": "string"
+        },
+
+        "monitoringRequired": {
+          "type": "boolean"
+        },
+
+        "rollbackPlan": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    },
+
+    "evidence": {
+
+      "type": "array",
+
+      "items": {
+        "$ref": "./000-Core.schema.json#/$defs/Evidence"
+      }
+
+    }
+
+  }
+
+}

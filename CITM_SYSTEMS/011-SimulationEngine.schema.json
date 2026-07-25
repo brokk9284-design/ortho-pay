@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/011-SimulationEngine.schema.json",
+  "title": "Simulation Engine",
+  "description": "Executes predictive simulations, stress tests and scenario analyses before real-world execution.",
+
+  "type": "object",
+
+  "required": [
+    "simulationContext",
+    "scenarioGeneration",
+    "simulationExecution",
+    "outcomeAnalysis",
+    "riskAssessment",
+    "simulationDecision"
+  ],
+
+  "properties": {
+
+    "simulationContext": {
+
+      "type": "object",
+
+      "properties": {
+
+        "simulationId": {
+          "type": "string"
+        },
+
+        "problemId": {
+          "type": "string"
+        },
+
+        "solutionId": {
+          "type": "string"
+        },
+
+        "decisionId": {
+          "type": "string"
+        },
+
+        "simulationType": {
+
+          "type": "string",
+
+          "enum": [
+
+            "Baseline",
+            "Scenario",
+            "MonteCarlo",
+            "Stress",
+            "Sensitivity",
+            "Counterfactual",
+            "WhatIf"
+
+          ]
+
+        }
+
+      }
+
+    },
+
+    "scenarioGeneration": {
+
+      "type": "object",
+
+      "properties": {
+
+        "baselineScenario": {
+          "type": "string"
+        },
+
+        "alternativeScenarios": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        },
+
+        "assumptions": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        },
+
+        "unknownVariables": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "simulationExecution": {
+
+      "type": "object",
+
+      "properties": {
+
+        "iterations": {
+          "type": "integer"
+        },
+
+        "completedIterations": {
+          "type": "integer"
+        },
+
+        "executionTime": {
+          "type": "number"
+        },
+
+        "status": {
+
+          "type": "string",
+
+          "enum": [
+
+            "Queued",
+            "Running",
+            "Completed",
+            "Failed"
+
+          ]
+
+        }
+
+      }
+
+    },
+
+    "outcomeAnalysis": {
+
+      "type": "object",
+
+      "properties": {
+
+        "expectedBenefit": {
+          "type": "number"
+        },
+
+        "expectedCost": {
+          "type": "number"
+        },
+
+        "expectedRisk": {
+          "type": "number"
+        },
+
+        "probabilityOfSuccess": {
+          "type": "number"
+        },
+
+        "confidence": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "rippleAnalysis": {
+
+      "type": "object",
+
+      "properties": {
+
+        "primaryEffects": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "secondaryEffects": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "tertiaryEffects": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "emergentEffects": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "riskAssessment": {
+
+      "type": "object",
+
+      "properties": {
+
+        "failureProbability": {
+          "type": "number"
+        },
+
+        "worstCaseScore": {
+          "type": "number"
+        },
+
+        "bestCaseScore": {
+          "type": "number"
+        },
+
+        "expectedValue": {
+          "type": "number"
+        },
+
+        "residualRisk": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "simulationDecision": {
+
+      "type": "object",
+
+      "properties": {
+
+        "recommended": {
+          "type": "boolean"
+        },
+
+        "recommendation": {
+          "type": "string"
+        },
+
+        "confidence": {
+          "type": "number"
+        },
+
+        "requiresFurtherSimulation": {
+          "type": "boolean"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

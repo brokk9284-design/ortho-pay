@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/016-TruthValidationEngine.schema.json",
+  "title": "Truth Validation Engine",
+  "description": "Validates claims, models and decisions through evidence, falsification, reproducibility and continuous reality observation.",
+
+  "type": "object",
+
+  "required": [
+    "validationContext",
+    "claim",
+    "validation",
+    "falsification",
+    "reproducibility",
+    "truthAssessment"
+  ],
+
+  "properties": {
+
+    "validationContext": {
+
+      "type": "object",
+
+      "properties": {
+
+        "validationId": {
+          "type": "string"
+        },
+
+        "objectiveId": {
+          "type": "string"
+        },
+
+        "problemId": {
+          "type": "string"
+        },
+
+        "modelId": {
+          "type": "string"
+        },
+
+        "decisionId": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "claim": {
+
+      "type": "object",
+
+      "properties": {
+
+        "claimId": {
+          "type": "string"
+        },
+
+        "statement": {
+          "type": "string"
+        },
+
+        "claimType": {
+
+          "type": "string",
+
+          "enum": [
+
+            "Observation",
+            "Hypothesis",
+            "Prediction",
+            "RootCause",
+            "Decision",
+            "Constraint",
+            "Pattern"
+
+          ]
+
+        }
+
+      }
+
+    },
+
+    "validation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "supportingEvidence": {
+          "type": "integer"
+        },
+
+        "contradictingEvidence": {
+          "type": "integer"
+        },
+
+        "evidenceCoverage": {
+          "type": "number"
+        },
+
+        "validationScore": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "falsification": {
+
+      "type": "object",
+
+      "properties": {
+
+        "testsPerformed": {
+          "type": "integer"
+        },
+
+        "failedTests": {
+          "type": "integer"
+        },
+
+        "survivedFalsification": {
+          "type": "boolean"
+        },
+
+        "falsificationStrength": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "reproducibility": {
+
+      "type": "object",
+
+      "properties": {
+
+        "repeatedTrials": {
+          "type": "integer"
+        },
+
+        "successfulReplications": {
+          "type": "integer"
+        },
+
+        "reproducibilityScore": {
+          "type": "number"
+        },
+
+        "environmentConsistency": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "truthAssessment": {
+
+      "type": "object",
+
+      "properties": {
+
+        "truthScore": {
+          "type": "number"
+        },
+
+        "truthStatus": {
+
+          "type": "string",
+
+          "enum": [
+
+            "Supported",
+            "ProvisionallySupported",
+            "Inconclusive",
+            "Refuted"
+
+          ]
+
+        },
+
+        "requiresMonitoring": {
+          "type": "boolean"
+        },
+
+        "expirationRisk": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "continuousObservation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "enabled": {
+          "type": "boolean"
+        },
+
+        "monitoringFrequency": {
+          "type": "string"
+        },
+
+        "revalidationThreshold": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

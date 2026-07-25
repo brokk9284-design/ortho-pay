@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/003a-MappingEngine.schema.json",
+  "title": "Mapping Engine Core",
+  "description": "Core bidirectional mapping engine connecting Problem Twins and Solution Twins.",
+
+  "type": "object",
+
+  "required": [
+    "mapping",
+    "problemReference",
+    "solutionReference",
+    "mappingState",
+    "confidence",
+    "mappingHistory"
+  ],
+
+  "properties": {
+
+    "mapping": {
+      "type": "object",
+      "required": [
+        "mappingId",
+        "mappingType",
+        "mappingDirection"
+      ],
+      "properties": {
+
+        "mappingId": {
+          "type": "string"
+        },
+
+        "mappingName": {
+          "type": "string"
+        },
+
+        "mappingType": {
+          "type": "string",
+          "enum": [
+            "OneToOne",
+            "OneToMany",
+            "ManyToOne",
+            "ManyToMany",
+            "Hierarchical",
+            "Composite"
+          ]
+        },
+
+        "mappingDirection": {
+          "type": "string",
+          "enum": [
+            "ProblemToSolution",
+            "SolutionToProblem",
+            "Bidirectional"
+          ]
+        },
+
+        "mappingPurpose": {
+          "type": "string"
+        }
+
+      }
+    },
+
+    "problemReference": {
+
+      "type": "object",
+
+      "properties": {
+
+        "problemId": {
+          "type": "string"
+        },
+
+        "problemVersion": {
+          "type": "string"
+        },
+
+        "problemTwin": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "solutionReference": {
+
+      "type": "object",
+
+      "properties": {
+
+        "solutionId": {
+          "type": "string"
+        },
+
+        "solutionVersion": {
+          "type": "string"
+        },
+
+        "solutionTwin": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "mappingState": {
+
+      "type": "object",
+
+      "properties": {
+
+        "state": {
+
+          "type": "string",
+
+          "enum": [
+
+            "Candidate",
+            "Learning",
+            "Validated",
+            "Production",
+            "Monitoring",
+            "Broken",
+            "Retired"
+
+          ]
+
+        },
+
+        "active": {
+          "type": "boolean"
+        },
+
+        "verified": {
+          "type": "boolean"
+        }
+
+      }
+
+    },
+
+    "mappingConfidence": {
+
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+
+    },
+
+    "confidence": {
+
+      "type": "object",
+
+      "properties": {
+
+        "problemConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+
+        "solutionConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+
+        "mappingConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+
+        "residualConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+
+        "unknownSpace": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+
+      }
+
+    },
+
+    "mappingHistory": {
+
+      "type": "array",
+
+      "items": {
+
+        "type": "object",
+
+        "properties": {
+
+          "timestamp": {
+
+            "type": "string",
+            "format": "date-time"
+
+          },
+
+          "event": {
+
+            "type": "string"
+
+          },
+
+          "reason": {
+
+            "type": "string"
+
+          },
+
+          "previousState": {
+
+            "type": "string"
+
+          },
+
+          "newState": {
+
+            "type": "string"
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "traceability": {
+
+      "type": "object",
+
+      "properties": {
+
+        "createdFrom": {
+
+          "type": "string"
+
+        },
+
+        "validatedBy": {
+
+          "type": "string"
+
+        },
+
+        "lastUpdatedBy": {
+
+          "type": "string"
+
+        },
+
+        "decisionReference": {
+
+          "type": "string"
+
+        }
+
+      }
+
+    }
+
+  }
+
+}

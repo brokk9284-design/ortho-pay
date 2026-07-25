@@ -1,0 +1,347 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/010-DomainPlugAdapter.schema.json",
+  "title": "Domain Plug Adapter",
+  "description": "Canonical adapter that maps domain-specific concepts to the universal reasoning model and back.",
+
+  "type": "object",
+
+  "required": [
+    "adapter",
+    "domainProfile",
+    "semanticMapping",
+    "translationRules",
+    "validationRules",
+    "executionProfile"
+  ],
+
+  "properties": {
+
+    "adapter": {
+
+      "type": "object",
+
+      "properties": {
+
+        "adapterId": {
+          "type": "string"
+        },
+
+        "name": {
+          "type": "string"
+        },
+
+        "version": {
+          "type": "string"
+        },
+
+        "status": {
+
+          "type": "string",
+
+          "enum": [
+            "Development",
+            "Testing",
+            "Production",
+            "Deprecated"
+          ]
+
+        }
+
+      }
+
+    },
+
+    "domainProfile": {
+
+      "type": "object",
+
+      "properties": {
+
+        "domainId": {
+          "type": "string"
+        },
+
+        "domainName": {
+          "type": "string"
+        },
+
+        "industry": {
+          "type": "string"
+        },
+
+        "ontologyVersion": {
+          "type": "string"
+        },
+
+        "description": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "semanticMapping": {
+
+      "type": "object",
+
+      "properties": {
+
+        "entities": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "canonicalEntity": {
+                "type": "string"
+              },
+
+              "domainEntity": {
+                "type": "string"
+              },
+
+              "confidence": {
+                "type": "number"
+              }
+
+            }
+
+          }
+
+        },
+
+        "relationships": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "canonicalRelation": {
+                "type": "string"
+              },
+
+              "domainRelation": {
+                "type": "string"
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "translationRules": {
+
+      "type": "object",
+
+      "properties": {
+
+        "inputMappings": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "outputMappings": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "transformationRules": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "constraintProfile": {
+
+      "type": "object",
+
+      "properties": {
+
+        "businessConstraints": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "technicalConstraints": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "regulatoryConstraints": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "validationRules": {
+
+      "type": "object",
+
+      "properties": {
+
+        "requiredFields": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "validationChecks": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "acceptanceThreshold": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "executionProfile": {
+
+      "type": "object",
+
+      "properties": {
+
+        "supportedOperations": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "supportedInputs": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "supportedOutputs": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "interoperability": {
+
+      "type": "object",
+
+      "properties": {
+
+        "supportedStandards": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "supportedSchemas": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "supportedProtocols": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

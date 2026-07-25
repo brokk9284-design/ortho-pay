@@ -1,0 +1,388 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/004-RootCauseEngine.schema.json",
+  "title": "Root Cause Engine",
+  "description": "Root cause discovery, causal graph construction, hypothesis evaluation and validation.",
+
+  "type": "object",
+
+  "required": [
+    "problemReference",
+    "hypothesisEngine",
+    "causalGraph",
+    "validationEngine",
+    "rankingEngine"
+  ],
+
+  "properties": {
+
+    "problemReference": {
+
+      "type": "object",
+
+      "properties": {
+
+        "problemId": {
+          "type": "string"
+        },
+
+        "problemTwin": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "problemDefinition": {
+
+      "type": "object",
+
+      "properties": {
+
+        "observedSymptoms": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "knownFailures": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "expectedBehavior": {
+
+          "type": "string"
+
+        },
+
+        "observedBehavior": {
+
+          "type": "string"
+
+        }
+
+      }
+
+    },
+
+    "hypothesisEngine": {
+
+      "type": "object",
+
+      "properties": {
+
+        "generatedHypotheses": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "hypothesisId": {
+
+                "type": "string"
+
+              },
+
+              "statement": {
+
+                "type": "string"
+
+              },
+
+              "confidence": {
+
+                "type": "number"
+
+              },
+
+              "status": {
+
+                "type": "string",
+
+                "enum": [
+
+                  "Candidate",
+                  "Accepted",
+                  "Rejected",
+                  "Pending"
+
+                ]
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "causalGraph": {
+
+      "type": "object",
+
+      "properties": {
+
+        "nodes": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "nodeId": {
+
+                "type": "string"
+
+              },
+
+              "label": {
+
+                "type": "string"
+
+              },
+
+              "type": {
+
+                "type": "string"
+
+              }
+
+            }
+
+          }
+
+        },
+
+        "edges": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "source": {
+
+                "type": "string"
+
+              },
+
+              "target": {
+
+                "type": "string"
+
+              },
+
+              "weight": {
+
+                "type": "number"
+
+              },
+
+              "confidence": {
+
+                "type": "number"
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "eliminationEngine": {
+
+      "type": "object",
+
+      "properties": {
+
+        "eliminatedHypotheses": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        },
+
+        "remainingCandidates": {
+
+          "type": "integer"
+
+        },
+
+        "eliminationReason": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "validationEngine": {
+
+      "type": "object",
+
+      "properties": {
+
+        "validatedRootCause": {
+
+          "type": "string"
+
+        },
+
+        "validationMethod": {
+
+          "type": "string"
+
+        },
+
+        "validationConfidence": {
+
+          "type": "number"
+
+        },
+
+        "supportingEvidence": {
+
+          "type": "array",
+
+          "items": {
+
+            "$ref": "./000-Core.schema.json#/$defs/Evidence"
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "rankingEngine": {
+
+      "type": "object",
+
+      "properties": {
+
+        "rankingMethod": {
+
+          "type": "string"
+
+        },
+
+        "candidateRanking": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "hypothesisId": {
+
+                "type": "string"
+
+              },
+
+              "score": {
+
+                "type": "number"
+
+              },
+
+              "rank": {
+
+                "type": "integer"
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "counterEvidence": {
+
+      "type": "object",
+
+      "properties": {
+
+        "contradictingEvidence": {
+
+          "type": "array",
+
+          "items": {
+
+            "$ref": "./000-Core.schema.json#/$defs/Evidence"
+
+          }
+
+        },
+
+        "contradictionScore": {
+
+          "type": "number"
+
+        }
+
+      }
+
+    },
+
+    "rootCauseConfidence": {
+
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+
+    }
+
+  }
+
+}

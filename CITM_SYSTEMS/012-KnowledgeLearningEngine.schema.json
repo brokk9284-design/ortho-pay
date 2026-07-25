@@ -1,0 +1,297 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/012-KnowledgeLearningEngine.schema.json",
+  "title": "Knowledge Learning Engine",
+  "description": "Maintains system knowledge, learning, memory, confidence calibration, ontology evolution and continuous improvement.",
+
+  "type": "object",
+
+  "required": [
+    "knowledgeRepository",
+    "knowledgeAcquisition",
+    "knowledgeValidation",
+    "learningEngine",
+    "memoryEngine",
+    "ontologyEvolution",
+    "confidenceCalibration"
+  ],
+
+  "properties": {
+
+    "knowledgeRepository": {
+
+      "type": "object",
+
+      "properties": {
+
+        "repositoryId": {
+          "type": "string"
+        },
+
+        "knowledgeVersion": {
+          "type": "string"
+        },
+
+        "totalKnowledgeObjects": {
+          "type": "integer"
+        },
+
+        "activeKnowledgeObjects": {
+          "type": "integer"
+        },
+
+        "retiredKnowledgeObjects": {
+          "type": "integer"
+        }
+
+      }
+
+    },
+
+    "knowledgeAcquisition": {
+
+      "type": "object",
+
+      "properties": {
+
+        "newPatterns": {
+          "type": "integer"
+        },
+
+        "newFeatures": {
+          "type": "integer"
+        },
+
+        "newRootCauses": {
+          "type": "integer"
+        },
+
+        "newMappings": {
+          "type": "integer"
+        },
+
+        "newDecisions": {
+          "type": "integer"
+        },
+
+        "newEvidence": {
+          "type": "integer"
+        }
+
+      }
+
+    },
+
+    "knowledgeValidation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "validatedKnowledge": {
+          "type": "integer"
+        },
+
+        "rejectedKnowledge": {
+          "type": "integer"
+        },
+
+        "obsoleteKnowledge": {
+          "type": "integer"
+        },
+
+        "knowledgeIntegrity": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "learningEngine": {
+
+      "type": "object",
+
+      "properties": {
+
+        "learningIterations": {
+          "type": "integer"
+        },
+
+        "learningRate": {
+          "type": "number"
+        },
+
+        "knowledgeGain": {
+          "type": "number"
+        },
+
+        "reasoningImprovement": {
+          "type": "number"
+        },
+
+        "predictionImprovement": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "memoryEngine": {
+
+      "type": "object",
+
+      "properties": {
+
+        "shortTermMemoryObjects": {
+          "type": "integer"
+        },
+
+        "longTermMemoryObjects": {
+          "type": "integer"
+        },
+
+        "archivedKnowledgeObjects": {
+          "type": "integer"
+        },
+
+        "memoryCompressionRatio": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "ontologyEvolution": {
+
+      "type": "object",
+
+      "properties": {
+
+        "ontologyVersion": {
+          "type": "string"
+        },
+
+        "newConcepts": {
+          "type": "integer"
+        },
+
+        "modifiedConcepts": {
+          "type": "integer"
+        },
+
+        "deprecatedConcepts": {
+          "type": "integer"
+        },
+
+        "crossDomainMappings": {
+          "type": "integer"
+        }
+
+      }
+
+    },
+
+    "conceptDrift": {
+
+      "type": "object",
+
+      "properties": {
+
+        "driftDetected": {
+          "type": "boolean"
+        },
+
+        "driftScore": {
+          "type": "number"
+        },
+
+        "affectedDomains": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "adaptationRequired": {
+          "type": "boolean"
+        }
+
+      }
+
+    },
+
+    "confidenceCalibration": {
+
+      "type": "object",
+
+      "properties": {
+
+        "expectedConfidence": {
+          "type": "number"
+        },
+
+        "observedConfidence": {
+          "type": "number"
+        },
+
+        "calibrationError": {
+          "type": "number"
+        },
+
+        "confidenceImprovement": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "knowledgeGovernance": {
+
+      "type": "object",
+
+      "properties": {
+
+        "qualityScore": {
+          "type": "number"
+        },
+
+        "consistencyScore": {
+          "type": "number"
+        },
+
+        "traceabilityScore": {
+          "type": "number"
+        },
+
+        "auditStatus": {
+
+          "type": "string",
+
+          "enum": [
+
+            "Verified",
+            "UnderReview",
+            "RequiresCorrection"
+
+          ]
+
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

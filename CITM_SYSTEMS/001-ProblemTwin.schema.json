@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/001-ProblemTwin.schema.json",
+  "title": "Problem Twin",
+  "description": "Digital representation of a problem within the Causal Inverse Twin Model.",
+  "type": "object",
+
+  "allOf": [
+    {
+      "$ref": "./000-Core.schema.json#/$defs/Identity"
+    }
+  ],
+
+  "required": [
+    "problem",
+    "context",
+    "impact",
+    "constraints",
+    "rootCause",
+    "evidence",
+    "confidence"
+  ],
+
+  "properties": {
+
+    "problem": {
+      "type": "object",
+      "required": [
+        "problemId",
+        "title",
+        "description",
+        "state"
+      ],
+      "properties": {
+        "problemId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "Observed",
+            "Verified",
+            "Active",
+            "Resolved",
+            "Dormant",
+            "Unknown"
+          ]
+        }
+      }
+    },
+
+    "context": {
+      "type": "object",
+      "properties": {
+        "environment": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "timeframe": {
+          "type": "string"
+        },
+        "actors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "impact": {
+      "type": "object",
+      "properties": {
+        "severity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "urgency": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "frequency": {
+          "type": "number"
+        },
+        "financialImpact": {
+          "type": "number"
+        },
+        "operationalImpact": {
+          "type": "number"
+        },
+        "riskScore": {
+          "type": "number"
+        }
+      }
+    },
+
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "technical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "financial": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "legal": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "environmental": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "physical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "rootCause": {
+      "type": "object",
+      "properties": {
+        "hypotheses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validatedCause": {
+          "type": "string"
+        },
+        "causalGraph": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "patternId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          }
+        }
+      }
+    },
+
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "featureId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "value": {},
+          "importance": {
+            "type": "number"
+          }
+        }
+      }
+    },
+
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "./000-Core.schema.json#/$defs/Evidence"
+      }
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    },
+
+    "validation": {
+      "$ref": "./000-Core.schema.json#/$defs/Validation"
+    },
+
+    "lifecycle": {
+      "$ref": "./000-Core.schema.json#/$defs/Lifecycle"
+    },
+
+    "version": {
+      "$ref": "./000-Core.schema.json#/$defs/Version"
+    }
+
+  }
+}

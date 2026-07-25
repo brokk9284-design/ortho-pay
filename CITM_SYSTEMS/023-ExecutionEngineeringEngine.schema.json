@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/023-ExecutionEngineeringEngine.schema.json",
+  "title": "Execution Engineering Engine",
+  "description": "Transforms approved strategies into executable workflows with adaptive control, monitoring, rollback and recovery mechanisms.",
+
+  "type": "object",
+
+  "required": [
+    "executionBlueprint",
+    "workflowConstruction",
+    "controlStrategy",
+    "monitoringPlan",
+    "rollbackStrategy",
+    "executionApproval"
+  ],
+
+  "properties": {
+
+    "executionBlueprint": {
+
+      "type": "object",
+
+      "properties": {
+
+        "blueprintId": {
+          "type": "string"
+        },
+
+        "strategyId": {
+          "type": "string"
+        },
+
+        "executionVersion": {
+          "type": "string"
+        },
+
+        "executionMode": {
+
+          "type": "string",
+
+          "enum": [
+            "Sequential",
+            "Parallel",
+            "Hybrid",
+            "EventDriven"
+          ]
+
+        }
+
+      }
+
+    },
+
+    "workflowConstruction": {
+
+      "type": "object",
+
+      "properties": {
+
+        "steps": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "stepId": {
+                "type": "string"
+              },
+
+              "description": {
+                "type": "string"
+              },
+
+              "dependencies": {
+
+                "type": "array",
+
+                "items": {
+                  "type": "string"
+                }
+
+              },
+
+              "expectedDuration": {
+                "type": "number"
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "controlStrategy": {
+
+      "type": "object",
+
+      "properties": {
+
+        "controlPoints": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "adaptationTriggers": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "decisionCheckpoints": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "monitoringPlan": {
+
+      "type": "object",
+
+      "properties": {
+
+        "metrics": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "samplingInterval": {
+          "type": "string"
+        },
+
+        "alertThresholds": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "rollbackStrategy": {
+
+      "type": "object",
+
+      "properties": {
+
+        "rollbackAvailable": {
+          "type": "boolean"
+        },
+
+        "rollbackTriggers": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "recoveryPlan": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "executionApproval": {
+
+      "type": "object",
+
+      "properties": {
+
+        "approved": {
+          "type": "boolean"
+        },
+
+        "approvalScore": {
+          "type": "number"
+        },
+
+        "approvalReason": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

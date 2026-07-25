@@ -1,0 +1,226 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/014-InformationAcquisitionEngine.schema.json",
+  "title": "Information Acquisition Engine",
+  "description": "Identifies information gaps, plans acquisition, evaluates source quality and validates collected evidence before reasoning.",
+
+  "type": "object",
+
+  "required": [
+    "informationRequest",
+    "gapAnalysis",
+    "acquisitionPlan",
+    "sourceEvaluation",
+    "evidenceValidation",
+    "acquisitionDecision"
+  ],
+
+  "properties": {
+
+    "informationRequest": {
+
+      "type": "object",
+
+      "properties": {
+
+        "requestId": {
+          "type": "string"
+        },
+
+        "objectiveId": {
+          "type": "string"
+        },
+
+        "problemId": {
+          "type": "string"
+        },
+
+        "priority": {
+          "type": "number"
+        },
+
+        "reason": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "gapAnalysis": {
+
+      "type": "object",
+
+      "properties": {
+
+        "knownInformation": {
+          "type": "integer"
+        },
+
+        "missingInformation": {
+          "type": "integer"
+        },
+
+        "criticalUnknowns": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "informationCompleteness": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "acquisitionPlan": {
+
+      "type": "object",
+
+      "properties": {
+
+        "strategy": {
+          "type": "string"
+        },
+
+        "requiredSources": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "estimatedCost": {
+          "type": "number"
+        },
+
+        "estimatedDuration": {
+          "type": "number"
+        },
+
+        "expectedCoverage": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "sourceEvaluation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "sources": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "sourceId": {
+                "type": "string"
+              },
+
+              "type": {
+                "type": "string"
+              },
+
+              "credibility": {
+                "type": "number"
+              },
+
+              "freshness": {
+                "type": "number"
+              },
+
+              "biasRisk": {
+                "type": "number"
+              },
+
+              "availability": {
+                "type": "number"
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "evidenceValidation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "validatedEvidence": {
+          "type": "integer"
+        },
+
+        "rejectedEvidence": {
+          "type": "integer"
+        },
+
+        "conflictingEvidence": {
+          "type": "integer"
+        },
+
+        "overallEvidenceQuality": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "acquisitionDecision": {
+
+      "type": "object",
+
+      "properties": {
+
+        "readyForReasoning": {
+          "type": "boolean"
+        },
+
+        "requiresAdditionalCollection": {
+          "type": "boolean"
+        },
+
+        "remainingGap": {
+          "type": "number"
+        },
+
+        "recommendation": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

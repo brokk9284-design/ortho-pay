@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/003b-MappingReasoning.schema.json",
+  "title": "Mapping Reasoning Engine",
+  "description": "Inference layer responsible for validating bidirectional problem-solution mappings.",
+
+  "type": "object",
+
+  "required": [
+    "inverseMapping",
+    "rootCauseValidation",
+    "evidenceAggregation",
+    "constraintEvaluation",
+    "decisionQualification",
+    "decisionQuantification",
+    "confidenceDecomposition"
+  ],
+
+  "properties": {
+
+    "inverseMapping": {
+      "type": "object",
+      "properties": {
+
+        "enabled": {
+          "type": "boolean"
+        },
+
+        "reverseInferenceEnabled": {
+          "type": "boolean"
+        },
+
+        "mappingCompleteness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+
+        "ambiguityScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+
+        "candidateProblems": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "candidateSolutions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+
+      }
+    },
+
+    "rootCauseValidation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "validated": {
+          "type": "boolean"
+        },
+
+        "rootCauseScore": {
+          "type": "number"
+        },
+
+        "causalConsistency": {
+          "type": "number"
+        },
+
+        "alternativeCauses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "causalEvidenceWeight": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "evidenceAggregation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "totalEvidence": {
+          "type": "integer"
+        },
+
+        "supportingEvidence": {
+          "type": "integer"
+        },
+
+        "contradictingEvidence": {
+          "type": "integer"
+        },
+
+        "missingEvidence": {
+          "type": "integer"
+        },
+
+        "evidenceCoverage": {
+          "type": "number"
+        },
+
+        "evidenceReliability": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "constraintEvaluation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "technicalSatisfied": {
+          "type": "boolean"
+        },
+
+        "businessSatisfied": {
+          "type": "boolean"
+        },
+
+        "legalSatisfied": {
+          "type": "boolean"
+        },
+
+        "physicalSatisfied": {
+          "type": "boolean"
+        },
+
+        "resourceSatisfied": {
+          "type": "boolean"
+        },
+
+        "overallConstraintScore": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "decisionQualification": {
+
+      "type": "object",
+
+      "properties": {
+
+        "qualified": {
+          "type": "boolean"
+        },
+
+        "qualificationScore": {
+          "type": "number"
+        },
+
+        "requiredManualReview": {
+          "type": "boolean"
+        },
+
+        "qualificationReason": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "decisionQuantification": {
+
+      "type": "object",
+
+      "properties": {
+
+        "expectedBenefit": {
+          "type": "number"
+        },
+
+        "expectedRisk": {
+          "type": "number"
+        },
+
+        "expectedCost": {
+          "type": "number"
+        },
+
+        "expectedImpact": {
+          "type": "number"
+        },
+
+        "decisionUtility": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "confidenceDecomposition": {
+
+      "type": "object",
+
+      "properties": {
+
+        "problemConfidence": {
+          "type": "number"
+        },
+
+        "solutionConfidence": {
+          "type": "number"
+        },
+
+        "evidenceConfidence": {
+          "type": "number"
+        },
+
+        "causalConfidence": {
+          "type": "number"
+        },
+
+        "constraintConfidence": {
+          "type": "number"
+        },
+
+        "predictionConfidence": {
+          "type": "number"
+        },
+
+        "overallConfidence": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "realityVerification": {
+
+      "type": "object",
+
+      "properties": {
+
+        "verifiedAgainstReality": {
+          "type": "boolean"
+        },
+
+        "realWorldAgreement": {
+          "type": "number"
+        },
+
+        "simulationAgreement": {
+          "type": "number"
+        },
+
+        "fieldValidationScore": {
+          "type": "number"
+        }
+
+      }
+
+    }
+
+  }
+
+}

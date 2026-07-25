@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/017-UncertaintyIntelligenceEngine.schema.json",
+  "title": "Uncertainty Intelligence Engine",
+  "description": "Identifies, classifies, quantifies, propagates and mitigates uncertainty throughout the reasoning lifecycle.",
+
+  "type": "object",
+
+  "required": [
+    "uncertaintyContext",
+    "uncertaintySources",
+    "uncertaintyClassification",
+    "uncertaintyPropagation",
+    "mitigation",
+    "uncertaintyAssessment"
+  ],
+
+  "properties": {
+
+    "uncertaintyContext": {
+
+      "type": "object",
+
+      "properties": {
+
+        "contextId": {
+          "type": "string"
+        },
+
+        "objectiveId": {
+          "type": "string"
+        },
+
+        "decisionId": {
+          "type": "string"
+        },
+
+        "domain": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "uncertaintySources": {
+
+      "type": "object",
+
+      "properties": {
+
+        "epistemic": {
+          "type": "number"
+        },
+
+        "aleatory": {
+          "type": "number"
+        },
+
+        "measurement": {
+          "type": "number"
+        },
+
+        "model": {
+          "type": "number"
+        },
+
+        "environment": {
+          "type": "number"
+        },
+
+        "human": {
+          "type": "number"
+        },
+
+        "unknownUnknowns": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "uncertaintyClassification": {
+
+      "type": "object",
+
+      "properties": {
+
+        "ambiguity": {
+          "type": "number"
+        },
+
+        "incompleteness": {
+          "type": "number"
+        },
+
+        "conflict": {
+          "type": "number"
+        },
+
+        "volatility": {
+          "type": "number"
+        },
+
+        "novelty": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "uncertaintyPropagation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "affectedModels": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "affectedDecisions": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "cascadeRisk": {
+          "type": "number"
+        },
+
+        "propagationScore": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "mitigation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "recommendedActions": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "hedgingStrategies": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "expectedReduction": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "uncertaintyAssessment": {
+
+      "type": "object",
+
+      "properties": {
+
+        "overallUncertainty": {
+          "type": "number"
+        },
+
+        "acceptable": {
+          "type": "boolean"
+        },
+
+        "requiresAdditionalEvidence": {
+          "type": "boolean"
+        },
+
+        "recommendedConfidence": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

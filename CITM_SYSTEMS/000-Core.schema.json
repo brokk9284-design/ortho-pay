@@ -1,0 +1,351 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/000-Core.schema.json",
+  "title": "CITM Core Ontology",
+  "description": "Universal foundation schema for the Causal Inverse Twin Model. All other schemas reference this schema.",
+  "type": "object",
+
+  "$defs": {
+
+    "Identity": {
+      "type": "object",
+      "required": [
+        "uuid",
+        "uri",
+        "type"
+      ],
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "uri": {
+          "type": "string",
+          "format": "uri"
+        },
+        "humanName": {
+          "type": "string"
+        },
+        "shortName": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "classification": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "Metadata": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "owner": {
+          "type": "string"
+        },
+        "organization": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "industry": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "Provenance": {
+      "type": "object",
+      "properties": {
+        "sourceType": {
+          "type": "string"
+        },
+        "sourceId": {
+          "type": "string"
+        },
+        "sourceUri": {
+          "type": "string"
+        },
+        "sourceVersion": {
+          "type": "string"
+        },
+        "acquisitionMethod": {
+          "type": "string"
+        },
+        "acquisitionDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "collectedBy": {
+          "type": "string"
+        },
+        "verifiedBy": {
+          "type": "string"
+        },
+        "verificationMethod": {
+          "type": "string"
+        },
+        "trustScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidenceReferences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "Confidence": {
+      "type": "object",
+      "properties": {
+        "overallConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mappingConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidenceConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "dataConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "modelConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "humanConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "predictionConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "unknownConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "residualRisk": {
+          "type": "number"
+        },
+        "confidenceInterval": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "confidenceHistory": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+
+    "Evidence": {
+      "type": "object",
+      "properties": {
+        "evidenceId": {
+          "type": "string"
+        },
+        "evidenceType": {
+          "type": "string"
+        },
+        "observation": {
+          "type": "string"
+        },
+        "measurement": {},
+        "source": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "weight": {
+          "type": "number"
+        },
+        "reliability": {
+          "type": "number"
+        },
+        "authenticity": {
+          "type": "number"
+        },
+        "integrity": {
+          "type": "number"
+        },
+        "hash": {
+          "type": "string"
+        }
+      }
+    },
+
+    "Relationship": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "relationshipType": {
+          "type": "string"
+        },
+        "strength": {
+          "type": "number"
+        },
+        "direction": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "weight": {
+          "type": "number"
+        }
+      }
+    },
+
+    "Validation": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "validator": {
+          "type": "string"
+        },
+        "validationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validationScore": {
+          "type": "number"
+        },
+        "failedChecks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "passedChecks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+
+    "Lifecycle": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "Draft",
+            "Candidate",
+            "Validated",
+            "Production",
+            "Deprecated",
+            "Archived",
+            "Retired"
+          ]
+        }
+      }
+    },
+
+    "Version": {
+      "type": "object",
+      "properties": {
+        "major": {
+          "type": "integer"
+        },
+        "minor": {
+          "type": "integer"
+        },
+        "patch": {
+          "type": "integer"
+        },
+        "previous": {
+          "type": "string"
+        },
+        "next": {
+          "type": "string"
+        },
+        "changeLog": {
+          "type": "string"
+        },
+        "compatibility": {
+          "type": "string"
+        },
+        "migrationPath": {
+          "type": "string"
+        }
+      }
+    }
+
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/019-MetaIntelligenceEngine.schema.json",
+  "title": "Meta Intelligence Engine",
+  "description": "Observes, evaluates and continuously improves the reasoning architecture, orchestration strategies and cognitive performance.",
+
+  "type": "object",
+
+  "required": [
+    "evaluationContext",
+    "reasoningAnalysis",
+    "enginePerformance",
+    "strategyEvaluation",
+    "selfOptimization",
+    "architectureEvolution"
+  ],
+
+  "properties": {
+
+    "evaluationContext": {
+
+      "type": "object",
+
+      "properties": {
+
+        "evaluationId": {
+          "type": "string"
+        },
+
+        "sessionId": {
+          "type": "string"
+        },
+
+        "objectiveId": {
+          "type": "string"
+        },
+
+        "reasoningCycle": {
+          "type": "integer"
+        }
+
+      }
+
+    },
+
+    "reasoningAnalysis": {
+
+      "type": "object",
+
+      "properties": {
+
+        "reasoningEfficiency": {
+          "type": "number"
+        },
+
+        "reasoningCompleteness": {
+          "type": "number"
+        },
+
+        "reasoningAccuracy": {
+          "type": "number"
+        },
+
+        "reasoningDepth": {
+          "type": "number"
+        },
+
+        "reasoningConsistency": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "enginePerformance": {
+
+      "type": "array",
+
+      "items": {
+
+        "type": "object",
+
+        "properties": {
+
+          "engine": {
+            "type": "string"
+          },
+
+          "executionTime": {
+            "type": "number"
+          },
+
+          "knowledgeContribution": {
+            "type": "number"
+          },
+
+          "confidenceContribution": {
+            "type": "number"
+          },
+
+          "cost": {
+            "type": "number"
+          },
+
+          "overallUtility": {
+            "type": "number"
+          }
+
+        }
+
+      }
+
+    },
+
+    "strategyEvaluation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "selectedStrategy": {
+          "type": "string"
+        },
+
+        "alternativeStrategies": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "strategyScore": {
+          "type": "number"
+        },
+
+        "recommendedStrategy": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "selfOptimization": {
+
+      "type": "object",
+
+      "properties": {
+
+        "workflowOptimizations": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "engineOptimizations": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "parameterOptimizations": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "estimatedImprovement": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "architectureEvolution": {
+
+      "type": "object",
+
+      "properties": {
+
+        "newCapabilitiesSuggested": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "obsoleteCapabilities": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "knowledgeGaps": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "architecturalHealth": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

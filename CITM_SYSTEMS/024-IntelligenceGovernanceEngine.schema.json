@@ -1,0 +1,170 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://vlthrlab.org/schema/citm/024-IntelligenceGovernanceEngine.schema.json",
+
+  "title":"Intelligence Governance Engine",
+
+  "description":"Supervises the intelligence lifecycle by determining whether reasoning should continue, pause, escalate, terminate or be restructured.",
+
+  "type":"object",
+
+  "required":[
+    "governanceContext",
+    "continuationAssessment",
+    "resourceGovernance",
+    "objectiveGovernance",
+    "reasoningGovernance",
+    "governanceDecision"
+  ],
+
+  "properties":{
+
+    "governanceContext":{
+
+      "type":"object",
+
+      "properties":{
+
+        "sessionId":{"type":"string"},
+
+        "objectiveId":{"type":"string"},
+
+        "reasoningCycle":{"type":"integer"},
+
+        "architectureVersion":{"type":"string"}
+
+      }
+
+    },
+
+    "continuationAssessment":{
+
+      "type":"object",
+
+      "properties":{
+
+        "continueReasoning":{"type":"boolean"},
+
+        "confidenceGrowthRate":{"type":"number"},
+
+        "knowledgeGrowthRate":{"type":"number"},
+
+        "diminishingReturns":{"type":"number"},
+
+        "terminationLikelihood":{"type":"number"}
+
+      }
+
+    },
+
+    "resourceGovernance":{
+
+      "type":"object",
+
+      "properties":{
+
+        "timeBudgetRemaining":{"type":"number"},
+
+        "computeBudgetRemaining":{"type":"number"},
+
+        "memoryBudgetRemaining":{"type":"number"},
+
+        "resourceEfficiency":{"type":"number"}
+
+      }
+
+    },
+
+    "objectiveGovernance":{
+
+      "type":"object",
+
+      "properties":{
+
+        "objectiveStillValid":{"type":"boolean"},
+
+        "objectiveDrift":{"type":"number"},
+
+        "conflictingObjectives":{
+
+          "type":"array",
+
+          "items":{"type":"string"}
+
+        }
+
+      }
+
+    },
+
+    "reasoningGovernance":{
+
+      "type":"object",
+
+      "properties":{
+
+        "reasoningLoopDetected":{"type":"boolean"},
+
+        "deadlockDetected":{"type":"boolean"},
+
+        "stagnationDetected":{"type":"boolean"},
+
+        "architectureHealth":{"type":"number"}
+
+      }
+
+    },
+
+    "governanceDecision":{
+
+      "type":"object",
+
+      "properties":{
+
+        "decision":{
+
+          "type":"string",
+
+          "enum":[
+
+            "Continue",
+
+            "Pause",
+
+            "Restart",
+
+            "AcquireInformation",
+
+            "Escalate",
+
+            "Terminate"
+
+          ]
+
+        },
+
+        "reason":{
+
+          "type":"string"
+
+        },
+
+        "nextEngine":{
+
+          "type":"string"
+
+        }
+
+      }
+
+    },
+
+    "confidence":{
+
+      "$ref":"./000-Core.schema.json#/$defs/Confidence"
+
+    }
+
+  }
+
+}

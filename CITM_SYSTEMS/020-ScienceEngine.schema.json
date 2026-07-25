@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/020-ScienceEngine.schema.json",
+  "title": "Science Engine",
+  "description": "Discovers reusable principles, evaluates generalizability across domains, and promotes validated knowledge into canonical scientific assets.",
+
+  "type": "object",
+
+  "required": [
+    "discoveryContext",
+    "candidatePrinciples",
+    "generalization",
+    "crossDomainEvaluation",
+    "promotionDecision",
+    "knowledgePublication"
+  ],
+
+  "properties": {
+
+    "discoveryContext": {
+
+      "type": "object",
+
+      "properties": {
+
+        "discoveryId": {
+          "type": "string"
+        },
+
+        "sessionId": {
+          "type": "string"
+        },
+
+        "objectiveId": {
+          "type": "string"
+        },
+
+        "domain": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "candidatePrinciples": {
+
+      "type": "array",
+
+      "items": {
+
+        "type": "object",
+
+        "properties": {
+
+          "principleId": {
+            "type": "string"
+          },
+
+          "statement": {
+            "type": "string"
+          },
+
+          "origin": {
+            "type": "string"
+          },
+
+          "supportingEvidence": {
+            "type": "integer"
+          },
+
+          "confidence": {
+            "type": "number"
+          }
+
+        }
+
+      }
+
+    },
+
+    "generalization": {
+
+      "type": "object",
+
+      "properties": {
+
+        "generalizationScore": {
+          "type": "number"
+        },
+
+        "boundaryConditions": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "failureConditions": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "crossDomainEvaluation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "testedDomains": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "successfulDomains": {
+          "type": "integer"
+        },
+
+        "transferabilityScore": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "promotionDecision": {
+
+      "type": "object",
+
+      "properties": {
+
+        "approved": {
+          "type": "boolean"
+        },
+
+        "promotionLevel": {
+
+          "type": "string",
+
+          "enum": [
+
+            "Observation",
+            "Pattern",
+            "Heuristic",
+            "Principle",
+            "Law",
+            "Canonical"
+
+          ]
+
+        },
+
+        "reason": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "knowledgePublication": {
+
+      "type": "object",
+
+      "properties": {
+
+        "published": {
+          "type": "boolean"
+        },
+
+        "knowledgeObjectId": {
+          "type": "string"
+        },
+
+        "ontologyUpdated": {
+          "type": "boolean"
+        },
+
+        "availableForReuse": {
+          "type": "boolean"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

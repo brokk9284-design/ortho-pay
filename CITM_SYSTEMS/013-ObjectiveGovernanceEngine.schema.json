@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/013-ObjectiveGovernanceEngine.schema.json",
+  "title": "Objective Governance Engine",
+  "description": "Defines, governs, validates and continuously protects system objectives throughout the reasoning lifecycle.",
+
+  "type": "object",
+
+  "required": [
+    "objective",
+    "alignment",
+    "constraints",
+    "priority",
+    "successCriteria",
+    "objectiveIntegrity"
+  ],
+
+  "properties": {
+
+    "objective": {
+
+      "type": "object",
+
+      "properties": {
+
+        "objectiveId": {
+          "type": "string"
+        },
+
+        "title": {
+          "type": "string"
+        },
+
+        "description": {
+          "type": "string"
+        },
+
+        "owner": {
+          "type": "string"
+        },
+
+        "status": {
+
+          "type": "string",
+
+          "enum": [
+            "Draft",
+            "Active",
+            "Completed",
+            "Cancelled",
+            "Suspended"
+          ]
+
+        }
+
+      }
+
+    },
+
+    "alignment": {
+
+      "type": "object",
+
+      "properties": {
+
+        "problemAlignment": {
+          "type": "number"
+        },
+
+        "solutionAlignment": {
+          "type": "number"
+        },
+
+        "decisionAlignment": {
+          "type": "number"
+        },
+
+        "executionAlignment": {
+          "type": "number"
+        },
+
+        "overallAlignment": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "constraints": {
+
+      "type": "object",
+
+      "properties": {
+
+        "mandatory": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "prohibited": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "preferred": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        }
+
+      }
+
+    },
+
+    "priority": {
+
+      "type": "object",
+
+      "properties": {
+
+        "importance": {
+          "type": "number"
+        },
+
+        "urgency": {
+          "type": "number"
+        },
+
+        "criticality": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "successCriteria": {
+
+      "type": "object",
+
+      "properties": {
+
+        "metrics": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        },
+
+        "minimumAcceptanceScore": {
+
+          "type": "number"
+
+        }
+
+      }
+
+    },
+
+    "objectiveIntegrity": {
+
+      "type": "object",
+
+      "properties": {
+
+        "objectiveDrift": {
+
+          "type": "number"
+
+        },
+
+        "conflictingObjectives": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        },
+
+        "integrityScore": {
+
+          "type": "number"
+
+        },
+
+        "requiresReview": {
+
+          "type": "boolean"
+
+        }
+
+      }
+
+    },
+
+    "confidence": {
+
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+
+    }
+
+  }
+
+}

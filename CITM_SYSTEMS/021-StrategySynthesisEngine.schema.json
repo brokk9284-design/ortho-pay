@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/021-StrategySynthesisEngine.schema.json",
+  "title": "Strategy Synthesis Engine",
+  "description": "Synthesizes validated knowledge into coherent strategies and execution intents while balancing objectives, constraints, uncertainty and expected outcomes.",
+
+  "type": "object",
+
+  "required": [
+    "strategyContext",
+    "strategyGeneration",
+    "tradeoffAnalysis",
+    "resourceAlignment",
+    "executionIntent",
+    "strategyEvaluation"
+  ],
+
+  "properties": {
+
+    "strategyContext": {
+
+      "type": "object",
+
+      "properties": {
+
+        "strategyId": {
+          "type": "string"
+        },
+
+        "objectiveId": {
+          "type": "string"
+        },
+
+        "decisionId": {
+          "type": "string"
+        },
+
+        "scienceReference": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "strategyGeneration": {
+
+      "type": "object",
+
+      "properties": {
+
+        "candidateStrategies": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "object",
+
+            "properties": {
+
+              "strategyId": {
+                "type": "string"
+              },
+
+              "description": {
+                "type": "string"
+              },
+
+              "expectedOutcome": {
+                "type": "string"
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "tradeoffAnalysis": {
+
+      "type": "object",
+
+      "properties": {
+
+        "benefitScore": {
+          "type": "number"
+        },
+
+        "costScore": {
+          "type": "number"
+        },
+
+        "riskScore": {
+          "type": "number"
+        },
+
+        "resilienceScore": {
+          "type": "number"
+        },
+
+        "sustainabilityScore": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "resourceAlignment": {
+
+      "type": "object",
+
+      "properties": {
+
+        "requiredResources": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "availableResources": {
+
+          "type": "array",
+
+          "items": {
+            "type": "string"
+          }
+
+        },
+
+        "resourceGap": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "executionIntent": {
+
+      "type": "object",
+
+      "properties": {
+
+        "intentId": {
+          "type": "string"
+        },
+
+        "recommendedStrategy": {
+          "type": "string"
+        },
+
+        "priority": {
+          "type": "number"
+        },
+
+        "executionReadiness": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "strategyEvaluation": {
+
+      "type": "object",
+
+      "properties": {
+
+        "alignmentScore": {
+          "type": "number"
+        },
+
+        "robustnessScore": {
+          "type": "number"
+        },
+
+        "adaptabilityScore": {
+          "type": "number"
+        },
+
+        "overallScore": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}

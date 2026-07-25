@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vlthrlab.org/schema/citm/009-QualityControlEngine.schema.json",
+  "title": "Quality Control Engine",
+  "description": "Independent quality assurance and governance engine for validating the integrity, completeness and reliability of the entire reasoning pipeline.",
+
+  "type": "object",
+
+  "required": [
+    "auditContext",
+    "pipelineAudit",
+    "consistencyAudit",
+    "completenessAudit",
+    "evidenceAudit",
+    "qualityDecision"
+  ],
+
+  "properties": {
+
+    "auditContext": {
+
+      "type": "object",
+
+      "properties": {
+
+        "auditId": {
+          "type": "string"
+        },
+
+        "targetEngine": {
+          "type": "string"
+        },
+
+        "auditTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+
+        "auditor": {
+          "type": "string"
+        }
+
+      }
+
+    },
+
+    "pipelineAudit": {
+
+      "type": "object",
+
+      "properties": {
+
+        "problemValidated": {
+          "type": "boolean"
+        },
+
+        "rootCauseValidated": {
+          "type": "boolean"
+        },
+
+        "patternValidated": {
+          "type": "boolean"
+        },
+
+        "featureValidated": {
+          "type": "boolean"
+        },
+
+        "mappingValidated": {
+          "type": "boolean"
+        },
+
+        "decisionValidated": {
+          "type": "boolean"
+        },
+
+        "realityValidated": {
+          "type": "boolean"
+        }
+
+      }
+
+    },
+
+    "consistencyAudit": {
+
+      "type": "object",
+
+      "properties": {
+
+        "semanticConsistency": {
+          "type": "number"
+        },
+
+        "logicalConsistency": {
+          "type": "number"
+        },
+
+        "causalConsistency": {
+          "type": "number"
+        },
+
+        "mathematicalConsistency": {
+          "type": "number"
+        },
+
+        "crossDomainConsistency": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "completenessAudit": {
+
+      "type": "object",
+
+      "properties": {
+
+        "requiredFieldsComplete": {
+          "type": "boolean"
+        },
+
+        "evidenceCoverage": {
+          "type": "number"
+        },
+
+        "knowledgeCoverage": {
+          "type": "number"
+        },
+
+        "unknownCoverage": {
+          "type": "number"
+        },
+
+        "overallCompleteness": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "evidenceAudit": {
+
+      "type": "object",
+
+      "properties": {
+
+        "supportingEvidence": {
+          "type": "integer"
+        },
+
+        "contradictingEvidence": {
+          "type": "integer"
+        },
+
+        "missingEvidence": {
+          "type": "integer"
+        },
+
+        "evidenceQuality": {
+          "type": "number"
+        },
+
+        "traceabilityScore": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "optimizationAudit": {
+
+      "type": "object",
+
+      "properties": {
+
+        "oversolutionDetected": {
+          "type": "boolean"
+        },
+
+        "optimizationPressure": {
+          "type": "number"
+        },
+
+        "goodhartRisk": {
+          "type": "number"
+        },
+
+        "constraintViolations": {
+          "type": "integer"
+        }
+
+      }
+
+    },
+
+    "explainabilityAudit": {
+
+      "type": "object",
+
+      "properties": {
+
+        "reasoningTraceAvailable": {
+          "type": "boolean"
+        },
+
+        "decisionExplainable": {
+          "type": "boolean"
+        },
+
+        "rootCauseExplainable": {
+          "type": "boolean"
+        },
+
+        "confidenceExplainable": {
+          "type": "boolean"
+        },
+
+        "explainabilityScore": {
+          "type": "number"
+        }
+
+      }
+
+    },
+
+    "qualityDecision": {
+
+      "type": "object",
+
+      "properties": {
+
+        "status": {
+
+          "type": "string",
+
+          "enum": [
+
+            "Approved",
+            "ApprovedWithWarnings",
+            "Rejected",
+            "RequiresReview"
+
+          ]
+
+        },
+
+        "overallQualityScore": {
+          "type": "number"
+        },
+
+        "criticalFindings": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        },
+
+        "recommendations": {
+
+          "type": "array",
+
+          "items": {
+
+            "type": "string"
+
+          }
+
+        }
+
+      }
+
+    },
+
+    "confidence": {
+      "$ref": "./000-Core.schema.json#/$defs/Confidence"
+    }
+
+  }
+
+}
